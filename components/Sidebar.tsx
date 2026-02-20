@@ -2,97 +2,63 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Heart, Radio, Grid, Plus, Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { Home, Heart, Radio, Grid3x3, DollarSign, Search } from 'lucide-react';
+
+const navItems = [
+  { href: '/', label: 'Home', icon: Home },
+  { href: '/favorites', label: 'Favorites', icon: Heart },
+  { href: '/shows', label: 'Shows', icon: Radio },
+  { href: '/categories', label: 'Categories', icon: Grid3x3 },
+  { href: '/pricing', label: 'Pricing', icon: DollarSign },
+];
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const [isOpen, setIsOpen] = useState(false);
-
-  const navItems = [
-    { href: '/', label: 'Home', icon: Home },
-    { href: '/favorites', label: 'Favorites', icon: Heart },
-    { href: '/browse', label: 'Browse', icon: Radio },
-    { href: '/add', label: 'Add Show', icon: Plus },
-  ];
-
-  const isActive = (href: string) => {
-    if (href === '/') return pathname === '/';
-    return pathname.startsWith(href);
-  };
 
   return (
-    <>
-      {/* Mobile hamburger */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-dark-card text-white"
-      >
-        {isOpen ? <X size={24} /> : <Menu size={24} />}
-      </button>
+    <aside className="w-[180px] bg-[#0a0a0a] h-screen fixed left-0 top-0 flex flex-col border-r border-gray-900">
+      {/* Logo */}
+      <Link href="/" className="flex items-center gap-2 p-6">
+        <img src="/logo.png" alt="PodShrink" className="w-8 h-8" />
+        <span className="text-xl font-bold text-white">PodShrink</span>
+      </Link>
 
-      {/* Overlay */}
-      {isOpen && (
-        <div
-          className="lg:hidden fixed inset-0 bg-black/50 z-30"
-          onClick={() => setIsOpen(false)}
-        />
-      )}
-
-      {/* Sidebar */}
-      <aside
-        className={`
-          fixed top-0 left-0 h-full w-64 bg-dark-card border-r border-gray-800 z-40
-          transform transition-transform duration-300 ease-in-out
-          ${isOpen ? 'translate-x-0' : '-translate-x-full'} 
-          lg:translate-x-0
-        `}
-      >
-        <div className="flex flex-col h-full">
-          {/* Logo */}
-          <div className="p-6 border-b border-gray-800">
-            <Link href="/" className="flex items-center gap-3" onClick={() => setIsOpen(false)}>
-              <img src="/logo.png" alt="PodShrink" className="w-10 h-10 object-contain" />
-              <div>
-                <h1 className="text-xl font-bold text-white">PodShrink</h1>
-                <p className="text-xs text-gray-400">AI Podcast Summaries</p>
-              </div>
-            </Link>
-          </div>
-
-          {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-1">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const active = isActive(item.href);
-              
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setIsOpen(false)}
-                  className={`
-                    flex items-center gap-3 px-4 py-3 rounded-lg transition-colors
-                    ${active 
-                      ? 'bg-dark-accent text-white font-medium' 
-                      : 'text-gray-400 hover:text-white hover:bg-dark-hover'
-                    }
-                  `}
-                >
-                  <Icon size={20} />
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
-          </nav>
-
-          {/* Footer */}
-          <div className="p-4 border-t border-gray-800 text-xs text-gray-500">
-            <p>© 2024 PodShrink</p>
-            <p className="mt-1">Powered by ElevenLabs & OpenAI</p>
-          </div>
+      {/* Search */}
+      <div className="px-4 mb-6">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={16} />
+          <input
+            type="text"
+            placeholder="Search"
+            className="w-full bg-[#1a1a1a] text-white text-sm rounded-md pl-9 pr-3 py-2 border border-gray-800 focus:outline-none focus:border-purple-500"
+          />
         </div>
-      </aside>
-    </>
+      </div>
+
+      {/* Navigation */}
+      <nav className="flex-1 px-4">
+        <ul className="space-y-1">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = pathname === item.href;
+            return (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-colors ${
+                    isActive
+                      ? 'bg-purple-600 text-white'
+                      : 'text-gray-400 hover:text-white hover:bg-[#1a1a1a]'
+                  }`}
+                >
+                  <Icon size={18} />
+                  {item.label}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+    </aside>
   );
 }

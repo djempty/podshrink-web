@@ -19,9 +19,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="flex min-h-screen">
+        <div className="flex min-h-screen bg-[#121212]">
           <Sidebar />
-          <main className="flex-1 lg:ml-64 pb-24">
+          <main className="flex-1 ml-[180px]">
             {children}
           </main>
         </div>

@@ -24,7 +24,7 @@ export default function PodcastCarousel({ label, podcasts, onPodcastClick }: Pod
 
   return (
     <section className="relative group">
-      <h2 className="text-2xl font-bold mb-4">{label}</h2>
+      <h2 className="text-2xl font-bold mb-6 text-white">{label}</h2>
       
       {/* Left arrow */}
       <button
@@ -56,7 +56,7 @@ export default function PodcastCarousel({ label, podcasts, onPodcastClick }: Pod
             onClick={() => onPodcastClick?.(podcast)}
             className="flex-shrink-0 w-[160px] cursor-pointer group/card"
           >
-            <div className="relative aspect-square rounded-lg overflow-hidden mb-2 bg-dark-card">
+            <div className="relative aspect-square rounded-lg overflow-hidden mb-3 bg-[#1a1a1a]">
               {podcast.image ? (
                 <img
                   src={podcast.image}
@@ -70,10 +70,10 @@ export default function PodcastCarousel({ label, podcasts, onPodcastClick }: Pod
                 </div>
               )}
             </div>
-            <p className="font-medium text-sm leading-tight line-clamp-2 group-hover/card:text-purple-400 transition-colors">
+            <p className="font-medium text-sm leading-tight line-clamp-2 text-white group-hover/card:text-purple-400 transition-colors">
               {podcast.title}
             </p>
-            <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{podcast.category}</p>
+            <p className="text-xs text-gray-500 mt-1 line-clamp-1">{podcast.category}</p>
           </div>
         ))}
       </div>
