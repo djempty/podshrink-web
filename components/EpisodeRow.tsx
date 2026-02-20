@@ -48,14 +48,9 @@ export default function EpisodeRow({ episode, showTitle, showImage }: EpisodeRow
   };
 
   return (
-    <div className="group flex items-start gap-4 py-6 px-4 border-b border-gray-800 hover:bg-[#1a1a1a] transition-colors relative">
-      {/* Episode Number Badge */}
-      <div className="flex-shrink-0 w-4 mt-1">
-        <span className="text-gray-500 text-xs">•</span>
-      </div>
-
-      {/* Thumbnail */}
-      <div className="flex-shrink-0">
+    <div className="group flex items-start gap-3 md:gap-4 py-5 md:py-6 px-3 md:px-4 border-b border-gray-800 hover:bg-[#1a1a1a] transition-colors relative">
+      {/* Thumbnail - hidden on mobile */}
+      <div className="hidden md:block flex-shrink-0">
         <img
           src={episode.imageUrl || showImage || '/logo.png'}
           alt={episode.title}

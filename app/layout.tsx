@@ -22,7 +22,7 @@ export default function RootLayout({
         <div className="flex min-h-screen bg-[#121212]">
           <Sidebar />
           <AudioPlayer />
-          <main className="flex-1 ml-[260px] overflow-x-hidden">
+          <main className="flex-1 md:ml-[260px] md:pt-[56px] pt-[52px] overflow-x-hidden pb-20 md:pb-0">
             {children}
           </main>
         </div>
