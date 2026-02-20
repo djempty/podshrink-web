@@ -52,7 +52,7 @@ export default function EpisodeCard({ episode, shrinkStatus, shrinkAudioUrl }: E
               {shrinkStatus === 'complete' && shrinkAudioUrl && (
                 <button
                   onClick={handlePlayShrink}
-                  className="flex-shrink-0 w-8 h-8 rounded-full bg-purple-600 hover:bg-purple-700 flex items-center justify-center transition-colors"
+                  className="flex-shrink-0 w-8 h-8 rounded-full bg-[#2EA84A] hover:bg-[#259A3F] flex items-center justify-center transition-colors"
                   title="Play shrunk episode"
                 >
                   <Play size={14} className="text-white ml-0.5" fill="currentColor" />

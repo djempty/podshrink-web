@@ -53,7 +53,7 @@ export default async function HomePage() {
               <Sparkles className="text-purple-400" size={28} />
               Recently Shrunk
             </h2>
-            <div className="space-y-3">
+            <div className="space-y-1">
               {recentShrinks
                 .filter((shrink) => shrink.status === 'complete' && shrink.episode)
                 .slice(0, 5)

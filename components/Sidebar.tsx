@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Heart, Radio, Grid3x3, DollarSign, Search, Menu, X, LogIn, User, Sparkles } from 'lucide-react';
+import { Home, Heart, Radio, Grid3x3, DollarSign, Menu, X, LogIn, User, Sparkles } from 'lucide-react';
+import SearchInput from './SearchInput';
 
 const navItems = [
   { href: '/', label: 'Home', icon: Home },
@@ -46,14 +47,7 @@ export default function Sidebar() {
 
           {/* Search */}
           <div className="my-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-500" size={16} />
-              <input
-                type="text"
-                placeholder="Search"
-                className="w-full bg-[#1a1a1a] text-white text-sm rounded-md pl-9 pr-3 py-3 border border-gray-700 focus:outline-none focus:border-purple-500"
-              />
-            </div>
+            <SearchInput className="py-1" />
           </div>
 
           {/* Nav */}
@@ -103,14 +97,7 @@ export default function Sidebar() {
 
         {/* Search */}
         <div className="px-4 mb-6 mt-2">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-500" size={16} />
-            <input
-              type="text"
-              placeholder="Search"
-              className="w-full bg-[#1a1a1a] text-white text-sm rounded-md pl-9 pr-3 py-2 border border-gray-800 focus:outline-none focus:border-purple-500"
-            />
-          </div>
+          <SearchInput />
         </div>
 
         {/* Navigation */}

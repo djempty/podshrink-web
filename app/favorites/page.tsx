@@ -1,65 +1,73 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
 import { Show } from '@/lib/types';
-import ShowCard from '@/components/ShowCard';
+import { useFavorites } from '@/lib/favoritesStore';
 import { Heart } from 'lucide-react';
 
 export default function FavoritesPage() {
+  const router = useRouter();
+  const { favoriteShowIds, toggle } = useFavorites();
   const [shows, setShows] = useState<Show[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchShows = async () => {
-      try {
-        // TODO: Implement favorites functionality in backend
-        // For now, just show all shows
-        const data = await api.getShows();
-        setShows(data);
-      } catch (error) {
-        console.error('Failed to fetch favorites:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    api.getShows()
+      .then((allShows) => {
+        const favs = allShows.filter(s => favoriteShowIds.has(s.id));
+        setShows(favs);
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, [favoriteShowIds]);
 
-    fetchShows();
-  }, []);
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500" />
+      </div>
+    );
+  }
 
   return (
-    <div className="p-6 lg:p-8 space-y-6">
-      <div>
-        <h1 className="text-4xl font-bold mb-2 flex items-center gap-3">
-          <Heart className="text-red-500" size={36} />
-          Favorites
-        </h1>
-        <p className="text-gray-400">Your saved shows</p>
-      </div>
+    <div className="min-h-screen bg-[#121212] px-4 md:px-8 py-6">
+      <h1 className="text-2xl md:text-3xl font-bold text-white mb-8">Favorites</h1>
 
-      {loading ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {[...Array(8)].map((_, i) => (
-            <div key={i} className="animate-pulse">
-              <div className="aspect-square bg-dark-card rounded-lg mb-2" />
-              <div className="h-4 bg-dark-card rounded w-3/4 mb-2" />
-              <div className="h-3 bg-dark-card rounded w-1/2" />
-            </div>
-          ))}
-        </div>
-      ) : shows.length > 0 ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {shows.map((show) => (
-            <ShowCard key={show.id} show={show} />
-          ))}
+      {shows.length === 0 ? (
+        <div className="text-center py-16 text-gray-400">
+          <Heart size={48} className="mx-auto mb-4 text-gray-600" />
+          <p className="text-lg mb-2">No favorites yet</p>
+          <p className="text-sm">Click the heart icon on any show to add it here.</p>
         </div>
       ) : (
-        <div className="bg-dark-card rounded-lg p-12 text-center">
-          <Heart size={48} className="mx-auto text-gray-600 mb-4" />
-          <p className="text-gray-400 text-lg mb-2">No favorites yet</p>
-          <p className="text-gray-500 text-sm">
-            Start adding shows to your favorites to see them here
-          </p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5">
+          {shows.map((show) => (
+            <div
+              key={show.id}
+              className="relative cursor-pointer group"
+              onClick={() => router.push(`/shows/${show.id}`)}
+            >
+              <div className="relative aspect-square rounded-lg overflow-hidden mb-3 bg-[#1a1a1a]">
+                <img
+                  src={show.imageUrl || '/logo.png'}
+                  alt={show.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+              <p className="font-medium text-sm leading-tight line-clamp-2 text-white group-hover:text-purple-400 transition-colors">
+                {show.title}
+              </p>
+              <p className="text-xs text-gray-500 mt-1 line-clamp-1">{show.author}</p>
+              <button
+                onClick={(e) => { e.stopPropagation(); toggle(show.id); }}
+                className="absolute top-2 right-2 p-1.5 bg-black/60 rounded-full"
+              >
+                <Heart size={16} className="text-blue-500 fill-blue-500" />
+              </button>
+            </div>
+          ))}
         </div>
       )}
     </div>

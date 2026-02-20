@@ -55,6 +55,7 @@ export default function ShowPage() {
               episode={episode}
               showTitle={show?.title}
               showImage={show?.imageUrl}
+              showId={show?.id}
               shrinkState={shrinkStates[episode.id]}
               onShrinkClick={() => setShrinkEpisode(episode)}
             />
