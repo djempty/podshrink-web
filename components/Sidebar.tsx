@@ -18,13 +18,13 @@ export default function Sidebar() {
   return (
     <aside className="w-[260px] bg-[#0a0a0a] h-screen fixed left-0 top-0 flex flex-col border-r border-gray-800 z-50">
       {/* Logo */}
-      <Link href="/" className="flex items-center gap-2 p-6">
-        <img src="/logo.png" alt="PodShrink" className="w-8 h-8" />
-        <span className="text-xl font-bold text-white">PodShrink</span>
+      <Link href="/" className="flex items-center gap-3 p-6 pb-8">
+        <img src="/logo.png" alt="PodShrink" className="w-11 h-11" />
+        <span className="text-2xl font-bold text-white">PodShrink</span>
       </Link>
 
       {/* Search */}
-      <div className="px-4 mb-6">
+      <div className="px-4 mb-6 mt-2">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-500" size={16} />
           <input

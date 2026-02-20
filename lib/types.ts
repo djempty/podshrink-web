@@ -15,10 +15,14 @@ export interface Episode {
   description: string;
   audio_url: string;
   pub_date: string;
+  published_at: string;
   duration: number;
   guid: string;
+  episode_number?: number;
+  image_url?: string;
   created_at: string;
   show?: Show;
+  show_title?: string;
 }
 
 export interface Voice {

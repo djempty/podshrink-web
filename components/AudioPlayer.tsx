@@ -1,137 +1,191 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { Play, Pause, Volume2, VolumeX } from 'lucide-react';
-import { useAudioStore } from '@/lib/store';
-import Image from 'next/image';
+import { useEffect, useRef, useState } from 'react';
+import { useAudioPlayer } from '@/lib/audioPlayerStore';
+import { Play, Pause, RotateCcw, RotateCw, Volume2 } from 'lucide-react';
 
 export default function AudioPlayer() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const {
+    track,
     isPlaying,
-    currentTrack,
     currentTime,
     duration,
     volume,
-    setAudioElement,
-    togglePlayPause,
+    playbackRate,
+    play,
+    pause,
     setCurrentTime,
     setDuration,
     setVolume,
-  } = useAudioStore();
+    setPlaybackRate,
+    skipForward,
+    skipBackward,
+  } = useAudioPlayer();
 
+  const [isDragging, setIsDragging] = useState(false);
+
+  // Sync audio element with store
   useEffect(() => {
-    if (audioRef.current) {
-      setAudioElement(audioRef.current);
+    if (!audioRef.current) return;
+
+    if (isPlaying) {
+      audioRef.current.play().catch(console.error);
+    } else {
+      audioRef.current.pause();
     }
-  }, [setAudioElement]);
+  }, [isPlaying]);
 
   useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
+    if (!audioRef.current) return;
+    audioRef.current.volume = volume;
+  }, [volume]);
 
-    const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
-    const handleDurationChange = () => setDuration(audio.duration);
-    const handleEnded = () => useAudioStore.getState().pause();
+  useEffect(() => {
+    if (!audioRef.current) return;
+    audioRef.current.playbackRate = playbackRate;
+  }, [playbackRate]);
 
-    audio.addEventListener('timeupdate', handleTimeUpdate);
-    audio.addEventListener('durationchange', handleDurationChange);
-    audio.addEventListener('ended', handleEnded);
+  useEffect(() => {
+    if (!audioRef.current || isDragging) return;
+    audioRef.current.currentTime = currentTime;
+  }, [currentTime, isDragging]);
 
-    return () => {
-      audio.removeEventListener('timeupdate', handleTimeUpdate);
-      audio.removeEventListener('durationchange', handleDurationChange);
-      audio.removeEventListener('ended', handleEnded);
-    };
-  }, [setCurrentTime, setDuration]);
+  const handleTimeUpdate = () => {
+    if (!audioRef.current || isDragging) return;
+    setCurrentTime(audioRef.current.currentTime);
+  };
 
-  const formatTime = (seconds: number) => {
-    if (isNaN(seconds)) return '0:00';
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  const handleLoadedMetadata = () => {
+    if (!audioRef.current) return;
+    setDuration(audioRef.current.duration);
   };
 
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTime = parseFloat(e.target.value);
     setCurrentTime(newTime);
+    if (audioRef.current) {
+      audioRef.current.currentTime = newTime;
+    }
   };
 
-  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newVolume = parseFloat(e.target.value);
-    setVolume(newVolume);
+  const formatTime = (seconds: number) => {
+    if (!seconds || isNaN(seconds)) return '0:00';
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  if (!currentTrack) return null;
+  if (!track) {
+    return null;
+  }
 
   return (
-    <>
-      <audio ref={audioRef} />
-      
-      <div className="fixed bottom-0 left-0 right-0 h-24 bg-dark-card border-t border-gray-800 z-50">
-        <div className="h-full max-w-screen-2xl mx-auto px-4 flex items-center gap-4">
-          {/* Artwork & Track Info */}
-          <div className="flex items-center gap-3 min-w-0 flex-1">
-            <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-800 flex-shrink-0">
-              <Image
-                src={currentTrack.artwork || '/placeholder.png'}
-                alt={currentTrack.title}
-                fill
-                className="object-cover"
-              />
-            </div>
-            <div className="min-w-0">
-              <h4 className="text-white font-medium truncate">{currentTrack.title}</h4>
-              <p className="text-sm text-gray-400 truncate">{currentTrack.show}</p>
-            </div>
-          </div>
+    <div className="fixed bottom-0 left-0 right-0 bg-[#1a1a1a] border-t border-gray-800 z-50">
+      <audio
+        ref={audioRef}
+        src={track.audioUrl}
+        onTimeUpdate={handleTimeUpdate}
+        onLoadedMetadata={handleLoadedMetadata}
+        onEnded={() => pause()}
+      />
 
-          {/* Controls */}
-          <div className="flex-1 max-w-2xl">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={togglePlayPause}
-                className="w-10 h-10 rounded-full bg-white hover:bg-gray-200 flex items-center justify-center transition-colors flex-shrink-0"
-              >
-                {isPlaying ? (
-                  <Pause size={20} className="text-black" fill="currentColor" />
-                ) : (
-                  <Play size={20} className="text-black ml-0.5" fill="currentColor" />
-                )}
-              </button>
-
-              <span className="text-xs text-gray-400 w-10 text-right">{formatTime(currentTime)}</span>
-              
-              <input
-                type="range"
-                min="0"
-                max={duration || 0}
-                value={currentTime}
-                onChange={handleSeek}
-                className="flex-1 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white"
-              />
-              
-              <span className="text-xs text-gray-400 w-10">{formatTime(duration)}</span>
-            </div>
-          </div>
-
-          {/* Volume */}
-          <div className="flex items-center gap-2 flex-1 justify-end">
-            <button onClick={() => setVolume(volume === 0 ? 1 : 0)} className="text-gray-400 hover:text-white">
-              {volume === 0 ? <VolumeX size={20} /> : <Volume2 size={20} />}
-            </button>
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-              value={volume}
-              onChange={handleVolumeChange}
-              className="w-24 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white"
-            />
-          </div>
+      {/* Progress Bar */}
+      <div className="px-8 pt-2 pb-1">
+        <input
+          type="range"
+          min="0"
+          max={duration || 0}
+          value={currentTime}
+          onChange={handleSeek}
+          onMouseDown={() => setIsDragging(true)}
+          onMouseUp={() => setIsDragging(false)}
+          className="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+          style={{
+            background: `linear-gradient(to right, #9333ea 0%, #9333ea ${(currentTime / duration) * 100}%, #374151 ${(currentTime / duration) * 100}%, #374151 100%)`
+          }}
+        />
+        <div className="flex justify-between text-xs text-gray-400 mt-1">
+          <span>{formatTime(currentTime)}</span>
+          <span>{formatTime(duration)}</span>
         </div>
       </div>
-    </>
+
+      {/* Controls */}
+      <div className="flex items-center justify-between px-8 pb-4">
+        {/* Left: Thumbnail + Controls */}
+        <div className="flex items-center gap-4 flex-1">
+          <img
+            src={track.imageUrl || '/placeholder.png'}
+            alt={track.title}
+            className="w-12 h-12 rounded object-cover"
+          />
+
+          <div className="flex items-center gap-3">
+            {/* Playback Speed */}
+            <select
+              value={playbackRate}
+              onChange={(e) => setPlaybackRate(parseFloat(e.target.value))}
+              className="bg-[#2a2a2a] text-white text-sm px-2 py-1 rounded border border-gray-700 focus:outline-none focus:border-purple-500"
+            >
+              <option value="0.5">0.5x</option>
+              <option value="0.75">0.75x</option>
+              <option value="1">1x</option>
+              <option value="1.25">1.25x</option>
+              <option value="1.5">1.5x</option>
+              <option value="2">2x</option>
+            </select>
+
+            {/* Skip Back */}
+            <button
+              onClick={() => skipBackward(15)}
+              className="p-2 hover:bg-gray-800 rounded-full transition-colors"
+            >
+              <RotateCcw size={20} className="text-white" />
+            </button>
+
+            {/* Play/Pause */}
+            <button
+              onClick={() => (isPlaying ? pause() : play())}
+              className="p-3 bg-purple-600 hover:bg-purple-700 rounded-full transition-colors"
+            >
+              {isPlaying ? (
+                <Pause size={24} className="text-white" fill="white" />
+              ) : (
+                <Play size={24} className="text-white" fill="white" />
+              )}
+            </button>
+
+            {/* Skip Forward */}
+            <button
+              onClick={() => skipForward(15)}
+              className="p-2 hover:bg-gray-800 rounded-full transition-colors"
+            >
+              <RotateCw size={20} className="text-white" />
+            </button>
+          </div>
+        </div>
+
+        {/* Center: Track Info */}
+        <div className="flex-1 text-center px-8">
+          <p className="text-white font-medium text-sm line-clamp-1">{track.title}</p>
+          <p className="text-gray-400 text-xs line-clamp-1">{track.showTitle}</p>
+        </div>
+
+        {/* Right: Volume */}
+        <div className="flex items-center gap-3 flex-1 justify-end">
+          <Volume2 size={20} className="text-gray-400" />
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            value={volume}
+            onChange={(e) => setVolume(parseFloat(e.target.value))}
+            className="w-24 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+          />
+        </div>
+      </div>
+    </div>
   );
 }

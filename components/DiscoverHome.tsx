@@ -11,10 +11,18 @@ interface DiscoverHomeProps {
 export default function DiscoverHome({ sections }: DiscoverHomeProps) {
   const router = useRouter();
 
-  const handlePodcastClick = (podcast: DiscoverPodcast) => {
-    // Navigate to add page with the feed URL pre-filled
+  const handlePodcastClick = async (podcast: DiscoverPodcast) => {
+    // Add the show to the backend first, then navigate to its episodes page
     if (podcast.feedUrl) {
-      router.push(`/add?url=${encodeURIComponent(podcast.feedUrl)}&title=${encodeURIComponent(podcast.title)}`);
+      try {
+        const { api } = await import('@/lib/api');
+        const show = await api.addShow(podcast.feedUrl);
+        router.push(`/shows/${show.id}`);
+      } catch (error) {
+        console.error('Failed to add show:', error);
+        // Fallback to add page
+        router.push(`/add?url=${encodeURIComponent(podcast.feedUrl)}&title=${encodeURIComponent(podcast.title)}`);
+      }
     }
   };
 
