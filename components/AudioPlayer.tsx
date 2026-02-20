@@ -2,11 +2,13 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useAudioPlayer } from '@/lib/audioPlayerStore';
-import { Play, Pause, RotateCcw, RotateCw, Volume2 } from 'lucide-react';
+import { Play, Pause, RotateCcw, RotateCw } from 'lucide-react';
 
 export default function AudioPlayer() {
   const audioRef = useRef<HTMLAudioElement>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [isHoveringProgress, setIsHoveringProgress] = useState(false);
   const {
     track,
     isPlaying,
@@ -28,35 +30,21 @@ export default function AudioPlayer() {
     if (!audioRef.current || !track) return;
     audioRef.current.src = track.audioUrl;
     audioRef.current.load();
-    if (isPlaying) {
-      audioRef.current.play().catch(console.error);
-    }
+    if (isPlaying) audioRef.current.play().catch(console.error);
   }, [track?.audioUrl]);
 
   useEffect(() => {
     if (!audioRef.current || !track) return;
-    if (isPlaying) {
-      audioRef.current.play().catch(console.error);
-    } else {
-      audioRef.current.pause();
-    }
+    if (isPlaying) audioRef.current.play().catch(console.error);
+    else audioRef.current.pause();
   }, [isPlaying]);
 
-  useEffect(() => {
-    if (!audioRef.current) return;
-    audioRef.current.volume = volume;
-  }, [volume]);
-
-  useEffect(() => {
-    if (!audioRef.current) return;
-    audioRef.current.playbackRate = playbackRate;
-  }, [playbackRate]);
+  useEffect(() => { if (audioRef.current) audioRef.current.volume = volume; }, [volume]);
+  useEffect(() => { if (audioRef.current) audioRef.current.playbackRate = playbackRate; }, [playbackRate]);
 
   useEffect(() => {
     if (!audioRef.current || isDragging) return;
-    if (Math.abs(audioRef.current.currentTime - currentTime) > 1) {
-      audioRef.current.currentTime = currentTime;
-    }
+    if (Math.abs(audioRef.current.currentTime - currentTime) > 1) audioRef.current.currentTime = currentTime;
   }, [currentTime]);
 
   const handleTimeUpdate = () => {
@@ -65,16 +53,25 @@ export default function AudioPlayer() {
   };
 
   const handleLoadedMetadata = () => {
-    if (!audioRef.current) return;
-    setDuration(audioRef.current.duration);
+    if (audioRef.current) setDuration(audioRef.current.duration);
   };
 
-  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newTime = parseFloat(e.target.value);
+  const seekFromEvent = (e: React.MouseEvent | MouseEvent) => {
+    if (!progressRef.current || !duration) return;
+    const rect = progressRef.current.getBoundingClientRect();
+    const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    const newTime = pct * duration;
     setCurrentTime(newTime);
-    if (audioRef.current) {
-      audioRef.current.currentTime = newTime;
-    }
+    if (audioRef.current) audioRef.current.currentTime = newTime;
+  };
+
+  const handleProgressMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    seekFromEvent(e);
+    const onMove = (ev: MouseEvent) => seekFromEvent(ev);
+    const onUp = () => { setIsDragging(false); window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
   };
 
   const formatTime = (seconds: number) => {
@@ -86,104 +83,101 @@ export default function AudioPlayer() {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const pct = duration ? (currentTime / duration) * 100 : 0;
   const remaining = duration - currentTime;
 
-  // DESKTOP: Top bar (always visible, even with no track)
-  // MOBILE: Bottom bar (only when track loaded)
   return (
     <>
-      <audio
-        ref={audioRef}
-        onTimeUpdate={handleTimeUpdate}
-        onLoadedMetadata={handleLoadedMetadata}
-        onEnded={() => pause()}
-        preload="auto"
-      />
+      <audio ref={audioRef} onTimeUpdate={handleTimeUpdate} onLoadedMetadata={handleLoadedMetadata} onEnded={() => pause()} preload="auto" />
 
-      {/* DESKTOP PLAYER - always visible at top */}
-      <div className="hidden md:flex fixed top-0 left-[260px] right-0 bg-[#0e0e0e] border-b border-gray-800 z-40 h-[56px] items-center px-4 gap-3">
-        {/* Playback Speed */}
-        <select
-          value={playbackRate}
-          onChange={(e) => setPlaybackRate(parseFloat(e.target.value))}
-          className="bg-transparent text-white text-xs px-1 py-0.5 rounded border border-gray-700 focus:outline-none cursor-pointer min-w-[38px]"
-        >
-          <option value="0.5">0.5x</option>
-          <option value="0.75">0.75x</option>
-          <option value="1">1x</option>
-          <option value="1.25">1.25x</option>
-          <option value="1.5">1.5x</option>
-          <option value="2">2x</option>
-        </select>
+      {/* DESKTOP PLAYER */}
+      <div className="hidden md:block fixed top-0 left-[260px] right-0 z-40">
+        {/* Main bar */}
+        <div className="bg-[#2a2a2a] h-[52px] flex items-center px-4 gap-3">
+          {/* Left controls */}
+          <div className="flex items-center gap-2">
+            <button onClick={() => skipBackward(15)} className="text-gray-400 hover:text-white transition-colors" disabled={!track}>
+              <RotateCcw size={16} />
+            </button>
+            <button
+              onClick={() => track && (isPlaying ? pause() : play())}
+              className={`transition-colors ${track ? 'text-white hover:text-purple-400' : 'text-gray-600'}`}
+              disabled={!track}
+            >
+              {isPlaying ? <Pause size={20} fill="white" /> : <Play size={20} fill={track ? 'white' : '#4B5563'} />}
+            </button>
+            <button onClick={() => skipForward(15)} className="text-gray-400 hover:text-white transition-colors" disabled={!track}>
+              <RotateCw size={16} />
+            </button>
+          </div>
 
-        {/* Skip Back */}
-        <button onClick={() => skipBackward(15)} className="text-gray-400 hover:text-white transition-colors">
-          <RotateCcw size={16} />
-        </button>
-
-        {/* Play/Pause */}
-        <button
-          onClick={() => track && (isPlaying ? pause() : play())}
-          className={`transition-colors ${track ? 'text-white hover:text-purple-400' : 'text-gray-600'}`}
-          disabled={!track}
-        >
-          {isPlaying ? <Pause size={20} fill="white" /> : <Play size={20} fill={track ? 'white' : '#4B5563'} />}
-        </button>
-
-        {/* Skip Forward */}
-        <button onClick={() => skipForward(15)} className="text-gray-400 hover:text-white transition-colors">
-          <RotateCw size={16} />
-        </button>
-
-        {/* Current Time */}
-        <span className="text-[11px] text-gray-500 min-w-[32px] text-right">{track ? formatTime(currentTime) : '0:00'}</span>
-
-        {/* Center: Thumbnail + Progress + Info */}
-        <div className="flex-1 flex items-center gap-3">
+          {/* Thumbnail */}
           {track ? (
-            <>
-              <img src={track.imageUrl || '/logo.png'} alt="" className="w-9 h-9 rounded object-cover flex-shrink-0" />
-              <div className="flex-1 flex flex-col justify-center min-w-0">
-                <input
-                  type="range"
-                  min="0"
-                  max={duration || 0}
-                  value={currentTime}
-                  onChange={handleSeek}
-                  onMouseDown={() => setIsDragging(true)}
-                  onMouseUp={() => setIsDragging(false)}
-                  className="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-500"
-                  style={{
-                    background: duration
-                      ? `linear-gradient(to right, #7c3aed 0%, #7c3aed ${(currentTime / duration) * 100}%, #374151 ${(currentTime / duration) * 100}%, #374151 100%)`
-                      : '#374151',
-                  }}
-                />
-              </div>
-            </>
+            <img src={track.imageUrl || '/logo.png'} alt="" className="w-10 h-10 rounded object-cover flex-shrink-0" />
           ) : (
-            <div className="flex-1" />
+            <div className="w-10 h-10" />
           )}
+
+          {/* Time / Info area */}
+          {track && isPlaying ? (
+            /* PLAYING STATE: show title + source + times */
+            <div className="flex-1 flex items-center gap-3 min-w-0">
+              <span className="text-xs text-gray-400 min-w-[36px]">{formatTime(currentTime)}</span>
+              <div className="flex-1 min-w-0 text-center">
+                <p className="text-white text-sm font-medium truncate">{track.title}</p>
+                <p className="text-gray-500 text-xs truncate">{track.showTitle}</p>
+              </div>
+              <span className="text-xs text-gray-400 min-w-[40px] text-right">-{formatTime(remaining)}</span>
+            </div>
+          ) : track ? (
+            /* PAUSED WITH TRACK: show time + logo center + remaining */
+            <div className="flex-1 flex items-center gap-3 min-w-0">
+              <span className="text-xs text-gray-400 min-w-[36px]">{formatTime(currentTime)}</span>
+              <div className="flex-1 flex justify-center">
+                <img src="/logo.png" alt="PodShrink" className="h-7 opacity-60" />
+              </div>
+              <span className="text-xs text-gray-400 min-w-[40px] text-right">-{formatTime(remaining)}</span>
+            </div>
+          ) : (
+            /* NO TRACK: show logo center + 0:00 */
+            <div className="flex-1 flex items-center gap-3 min-w-0">
+              <span className="text-xs text-gray-500 min-w-[36px]">0:00</span>
+              <div className="flex-1 flex justify-center">
+                <img src="/logo.png" alt="PodShrink" className="h-7 opacity-40" />
+              </div>
+              <span className="text-xs text-gray-500 min-w-[40px] text-right">0:00</span>
+            </div>
+          )}
+
+          {/* Volume */}
+          <input
+            type="range" min="0" max="1" step="0.01" value={volume}
+            onChange={(e) => setVolume(parseFloat(e.target.value))}
+            className="w-20 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer accent-purple-500"
+          />
         </div>
 
-        {/* Remaining Time */}
-        <span className="text-[11px] text-gray-500 min-w-[36px]">{track ? `-${formatTime(remaining)}` : '0:00'}</span>
-
-        {/* Volume */}
-        <div className="flex items-center gap-2">
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="0.01"
-            value={volume}
-            onChange={(e) => setVolume(parseFloat(e.target.value))}
-            className="w-20 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-500"
-          />
+        {/* Progress bar underneath */}
+        <div
+          ref={progressRef}
+          className="h-[3px] bg-[#1a1a1a] cursor-pointer relative group"
+          onMouseDown={handleProgressMouseDown}
+          onMouseEnter={() => setIsHoveringProgress(true)}
+          onMouseLeave={() => { if (!isDragging) setIsHoveringProgress(false); }}
+        >
+          {/* Filled */}
+          <div className="absolute top-0 left-0 h-full bg-blue-500 transition-none" style={{ width: `${pct}%` }} />
+          {/* Hover/drag handle */}
+          {(isHoveringProgress || isDragging) && track && (
+            <div
+              className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-blue-400 rounded-full shadow-lg transition-none"
+              style={{ left: `calc(${pct}% - 6px)` }}
+            />
+          )}
         </div>
       </div>
 
-      {/* MOBILE PLAYER - bottom bar, only when track is loaded */}
+      {/* MOBILE PLAYER */}
       {track && (
         <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#1a1a1a] border-t border-gray-800 z-50 px-4 py-3">
           <div className="flex items-center gap-3">
@@ -193,14 +187,9 @@ export default function AudioPlayer() {
               <p className="text-gray-500 text-xs truncate">{track.showTitle}</p>
               <span className="text-gray-500 text-xs">-{formatTime(remaining)}</span>
             </div>
-            {/* Pause/Play */}
-            <button
-              onClick={() => (isPlaying ? pause() : play())}
-              className="text-white p-2"
-            >
+            <button onClick={() => (isPlaying ? pause() : play())} className="text-white p-2">
               {isPlaying ? <Pause size={28} fill="white" /> : <Play size={28} fill="white" />}
             </button>
-            {/* Skip Forward */}
             <button onClick={() => skipForward(10)} className="text-gray-400">
               <RotateCw size={22} />
             </button>
