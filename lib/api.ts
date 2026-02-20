@@ -60,4 +60,29 @@ export const api = {
   // Voices
   getVoices: () => 
     fetchAPI<Voice[]>('/api/voices'),
+
+  // Discover
+  getDiscover: () =>
+    fetchAPI<DiscoverSection[]>('/api/discover'),
+  
+  getDiscoverCategory: (category: string, limit?: number) =>
+    fetchAPI<DiscoverSection>(`/api/discover/${category}${limit ? `?limit=${limit}` : ''}`),
+  
+  searchPodcasts: (term: string) =>
+    fetchAPI<DiscoverSection>(`/api/discover/search/${encodeURIComponent(term)}`),
 };
+
+export interface DiscoverPodcast {
+  id: string;
+  title: string;
+  artist: string;
+  image: string;
+  category: string;
+  feedUrl?: string;
+}
+
+export interface DiscoverSection {
+  key: string;
+  label: string;
+  podcasts: DiscoverPodcast[];
+}
