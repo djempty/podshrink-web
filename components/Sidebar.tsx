@@ -52,13 +52,7 @@ export default function Sidebar() {
           {/* Logo */}
           <div className="p-6 border-b border-gray-800">
             <Link href="/" className="flex items-center gap-3" onClick={() => setIsOpen(false)}>
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center">
-                <svg viewBox="0 0 24 24" className="w-6 h-6 text-white" fill="currentColor">
-                  <path d="M12 3v18m0-18C8.5 3 6 5.5 6 9v6c0 3.5 2.5 6 6 6m0-18c3.5 0 6 2.5 6 6v6c0 3.5-2.5 6-6 6" 
-                        stroke="currentColor" strokeWidth="2" fill="none"/>
-                  <circle cx="12" cy="12" r="2" />
-                </svg>
-              </div>
+              <img src="/logo.png" alt="PodShrink" className="w-10 h-10 object-contain" />
               <div>
                 <h1 className="text-xl font-bold text-white">PodShrink</h1>
                 <p className="text-xs text-gray-400">AI Podcast Summaries</p>
