@@ -16,7 +16,7 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-[180px] bg-[#0a0a0a] h-screen fixed left-0 top-0 flex flex-col border-r border-gray-900">
+    <aside className="w-[260px] bg-[#0a0a0a] h-screen fixed left-0 top-0 flex flex-col border-r border-gray-800 z-50">
       {/* Logo */}
       <Link href="/" className="flex items-center gap-2 p-6">
         <img src="/logo.png" alt="PodShrink" className="w-8 h-8" />
@@ -26,7 +26,7 @@ export default function Sidebar() {
       {/* Search */}
       <div className="px-4 mb-6">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={16} />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-500" size={16} />
           <input
             type="text"
             placeholder="Search"
@@ -51,7 +51,7 @@ export default function Sidebar() {
                       : 'text-gray-400 hover:text-white hover:bg-[#1a1a1a]'
                   }`}
                 >
-                  <Icon size={18} />
+                  <Icon size={18} className={isActive ? 'text-white' : 'text-blue-500'} />
                   {item.label}
                 </Link>
               </li>

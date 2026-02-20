@@ -15,7 +15,7 @@ export default function PodcastCarousel({ label, podcasts, onPodcastClick }: Pod
 
   const scroll = (direction: 'left' | 'right') => {
     if (!scrollRef.current) return;
-    const scrollAmount = 300;
+    const scrollAmount = 400;
     scrollRef.current.scrollBy({
       left: direction === 'left' ? -scrollAmount : scrollAmount,
       behavior: 'smooth',
@@ -23,33 +23,38 @@ export default function PodcastCarousel({ label, podcasts, onPodcastClick }: Pod
   };
 
   return (
-    <section className="relative group">
+    <section className="relative group mb-12">
       <h2 className="text-2xl font-bold mb-6 text-white">{label}</h2>
       
       {/* Left arrow */}
       <button
         onClick={() => scroll('left')}
-        className="absolute left-0 top-1/2 mt-4 z-10 bg-black/70 hover:bg-black/90 rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2"
+        className="absolute left-0 top-[50%] z-10 bg-black/80 hover:bg-black rounded-full p-3 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
         aria-label="Scroll left"
       >
-        <ChevronLeft size={24} />
+        <ChevronLeft size={24} className="text-white" />
       </button>
 
       {/* Right arrow */}
       <button
         onClick={() => scroll('right')}
-        className="absolute right-0 top-1/2 mt-4 z-10 bg-black/70 hover:bg-black/90 rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity translate-x-2"
+        className="absolute right-0 top-[50%] z-10 bg-black/80 hover:bg-black rounded-full p-3 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
         aria-label="Scroll right"
       >
-        <ChevronRight size={24} />
+        <ChevronRight size={24} className="text-white" />
       </button>
 
       {/* Scrollable row */}
       <div
         ref={scrollRef}
-        className="flex gap-4 overflow-x-auto scrollbar-hide pb-2"
+        className="flex gap-4 overflow-x-auto pb-2 scroll-smooth"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
+        <style jsx>{`
+          div::-webkit-scrollbar {
+            display: none;
+          }
+        `}</style>
         {podcasts.map((podcast) => (
           <div
             key={podcast.id}

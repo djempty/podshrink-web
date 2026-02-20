@@ -10,8 +10,14 @@ export default async function HomePage() {
   let sections: DiscoverSection[] = [];
   let recentShrinks: Awaited<ReturnType<typeof api.getRecentShrinks>> = [];
 
+  // Fetch all categories
+  const categories = ['popular', 'technology', 'news', 'society-culture', 'comedy', 'business', 'true-crime', 'health'];
+  
   try {
-    sections = await api.getDiscover();
+    const results = await Promise.all(
+      categories.map(cat => api.getDiscoverCategory(cat).catch(() => null))
+    );
+    sections = results.filter((s): s is DiscoverSection => s !== null);
   } catch (error) {
     console.error('Failed to fetch discover data:', error);
   }
@@ -24,8 +30,8 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-[#121212]">
-      {/* Header */}
-      <header className="flex items-center justify-between px-8 py-6 border-b border-gray-900">
+      {/* Sticky Header */}
+      <header className="sticky top-0 z-40 flex items-center justify-between px-8 py-6 bg-[#121212] border-b border-gray-800">
         <h1 className="text-3xl font-bold text-white">Shows</h1>
         <Link
           href="/signup"
@@ -35,14 +41,14 @@ export default async function HomePage() {
         </Link>
       </header>
 
-      {/* Content */}
-      <div className="px-8 py-8 space-y-12">
-        {/* Discover Sections (Popular, Technology, News) */}
+      {/* Scrollable Content */}
+      <div className="px-8 py-8">
+        {/* Discover Sections */}
         <DiscoverHome sections={sections} />
 
         {/* Recently Shrunk */}
         {recentShrinks.length > 0 && (
-          <section>
+          <section className="mt-12">
             <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-white">
               <Sparkles className="text-purple-400" size={28} />
               Recently Shrunk
