@@ -26,14 +26,15 @@ export default function EpisodeCard({ episode, shrinkStatus, shrinkAudioUrl }: E
 
   const handlePlayShrink = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (shrinkAudioUrl && episode.show) {
+    e.stopPropagation();
+    if (shrinkAudioUrl) {
       setTrack({
-        id: episode.id,
-        title: `${episode.title} (Shrunk)`,
-        showTitle: episode.show.title,
+        id: episode.id + 100000,
+        title: `${episode.title} (PodShrink)`,
+        showTitle: episode.show?.title || '',
         audioUrl: shrinkAudioUrl,
-        imageUrl: episode.imageUrl || episode.show.imageUrl || '',
-        duration: episode.duration || 0,
+        imageUrl: episode.imageUrl || episode.show?.imageUrl || '',
+        duration: 0,
       });
       play();
     }
