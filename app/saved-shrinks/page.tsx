@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { api } from '@/lib/api';
+import { api, resolveAudioUrl } from '@/lib/api';
 import { Shrink } from '@/lib/types';
 import { Play, Download, Clock, Calendar } from 'lucide-react';
 import { useAudioPlayer } from '@/lib/audioPlayerStore';
@@ -25,7 +25,7 @@ export default function SavedShrinksPage() {
       id: shrink.id + 200000,
       title: `${shrink.episode?.title || 'Episode'} (PodShrink)`,
       showTitle: (shrink as any).show?.title || '',
-      audioUrl: shrink.audioUrl,
+      audioUrl: resolveAudioUrl(shrink.audioUrl),
       imageUrl: shrink.episode?.imageUrl || (shrink as any).show?.imageUrl || '',
       duration: ((shrink as any).targetDurationMinutes || shrink.targetDuration || 0) * 60,
     });
@@ -35,7 +35,7 @@ export default function SavedShrinksPage() {
   const handleDownload = (shrink: Shrink) => {
     if (!shrink.audioUrl) return;
     const a = document.createElement('a');
-    a.href = shrink.audioUrl;
+    a.href = resolveAudioUrl(shrink.audioUrl);
     a.download = `podshrink-${shrink.episode?.title || shrink.id}.mp3`;
     a.click();
   };

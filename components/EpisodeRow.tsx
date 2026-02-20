@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Episode } from '@/lib/types';
 import { Play, Pause, MoreVertical, Bookmark } from 'lucide-react';
 import { useAudioPlayer } from '@/lib/audioPlayerStore';
+import { resolveAudioUrl } from '@/lib/api';
 
 interface EpisodeRowProps {
   episode: Episode;
@@ -38,7 +39,7 @@ export default function EpisodeRow({ episode, showTitle, showImage, shrinkState,
         id: episode.id + 100000,
         title: `${episode.title} (PodShrink)`,
         showTitle: showTitle || episode.show?.title || '',
-        audioUrl: shrinkState.audioUrl,
+        audioUrl: resolveAudioUrl(shrinkState.audioUrl),
         imageUrl: episode.imageUrl || showImage || '',
         duration: 0,
       });

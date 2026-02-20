@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
-import { api } from '@/lib/api';
+import { api, resolveAudioUrl } from '@/lib/api';
 import { Episode, Shrink } from '@/lib/types';
 import Link from 'next/link';
 import { Play, Pause, Loader2 } from 'lucide-react';
@@ -89,7 +89,7 @@ export default function EpisodePage() {
       id: episode.id + 100000,
       title: `${episode.title} (PodShrink)`,
       showTitle: episode.show?.title || '',
-      audioUrl: shrinkState.audioUrl,
+      audioUrl: resolveAudioUrl(shrinkState.audioUrl),
       imageUrl: episode.imageUrl || episode.show?.imageUrl || '',
       duration: 0,
     });
