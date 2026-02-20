@@ -28,7 +28,7 @@ export const api = {
   addShow: (rssUrl: string) => 
     fetchAPI<Show>('/api/shows', {
       method: 'POST',
-      body: JSON.stringify({ rss_url: rssUrl }),
+      body: JSON.stringify({ rssUrl }),
     }),
   
   searchShows: (query: string) => 
