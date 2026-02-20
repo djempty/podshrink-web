@@ -28,3 +28,11 @@ body {
 *::-webkit-scrollbar-thumb:hover {
   background-color: #3a3a3a;
 }
+
+@keyframes slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+.animate-slide-in {
+  animation: slide-in-right 0.3s ease-out;
+}

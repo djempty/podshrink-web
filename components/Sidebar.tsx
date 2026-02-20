@@ -3,13 +3,14 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Heart, Radio, Grid3x3, DollarSign, Search, Menu, X, LogIn, User } from 'lucide-react';
+import { Home, Heart, Radio, Grid3x3, DollarSign, Search, Menu, X, LogIn, User, Sparkles } from 'lucide-react';
 
 const navItems = [
   { href: '/', label: 'Home', icon: Home },
   { href: '/favorites', label: 'Favorites', icon: Heart },
   { href: '/shows', label: 'Shows', icon: Radio },
   { href: '/categories', label: 'Categories', icon: Grid3x3 },
+  { href: '/saved-shrinks', label: 'Saved Shrinks', icon: Sparkles },
   { href: '/pricing', label: 'Pricing', icon: DollarSign },
 ];
 
