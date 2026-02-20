@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { api } from '@/lib/api';
-import { Episode } from '@/lib/types';
+import { Episode, Shrink } from '@/lib/types';
 import Link from 'next/link';
-import { Play, Pause } from 'lucide-react';
+import { Play, Pause, Loader2 } from 'lucide-react';
 import { useAudioPlayer } from '@/lib/audioPlayerStore';
+import ShrinkPanel from '@/components/ShrinkPanel';
 
 export default function EpisodePage() {
   const params = useParams();
@@ -14,15 +15,57 @@ export default function EpisodePage() {
   
   const [episode, setEpisode] = useState<Episode | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showShrinkPanel, setShowShrinkPanel] = useState(false);
+  const [shrinkState, setShrinkState] = useState<{ status: 'shrinking' | 'complete'; audioUrl?: string } | null>(null);
 
   const { track, isPlaying, setTrack, play, pause } = useAudioPlayer();
+
+  // Check for existing shrinks on this episode
+  const checkExistingShrinks = useCallback(async () => {
+    try {
+      const allShrinks = await api.getAllShrinks();
+      const episodeShrink = allShrinks.find(
+        (s: Shrink) => s.episodeId === episodeId && s.status === 'complete' && s.audioUrl
+      );
+      if (episodeShrink) {
+        setShrinkState({ status: 'complete', audioUrl: episodeShrink.audioUrl });
+      }
+      // Check for in-progress shrinks
+      const activeShrink = allShrinks.find(
+        (s: Shrink) => s.episodeId === episodeId && !['complete', 'error'].includes(s.status)
+      );
+      if (activeShrink) {
+        setShrinkState({ status: 'shrinking' });
+        // Poll until done
+        pollShrinkStatus(activeShrink.id);
+      }
+    } catch {}
+  }, [episodeId]);
+
+  const pollShrinkStatus = (shrinkId: number) => {
+    const interval = setInterval(async () => {
+      try {
+        const s = await api.getShrinkStatus(episodeId, shrinkId);
+        if (s.status === 'complete' && s.audioUrl) {
+          setShrinkState({ status: 'complete', audioUrl: s.audioUrl });
+          clearInterval(interval);
+        } else if (s.status === 'error') {
+          setShrinkState(null);
+          clearInterval(interval);
+        }
+      } catch {
+        clearInterval(interval);
+      }
+    }, 3000);
+  };
 
   useEffect(() => {
     api.getEpisode(episodeId)
       .then(setEpisode)
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [episodeId]);
+    checkExistingShrinks();
+  }, [episodeId, checkExistingShrinks]);
 
   const isCurrentTrack = track?.id === episode?.id;
 
@@ -36,6 +79,19 @@ export default function EpisodePage() {
       audioUrl: episode.audioUrl,
       imageUrl: episode.imageUrl || episode.show?.imageUrl || '',
       duration: episode.duration || 0,
+    });
+    play();
+  };
+
+  const handlePlayShrink = () => {
+    if (!episode || !shrinkState?.audioUrl) return;
+    setTrack({
+      id: episode.id + 100000,
+      title: `${episode.title} (PodShrink)`,
+      showTitle: episode.show?.title || '',
+      audioUrl: shrinkState.audioUrl,
+      imageUrl: episode.imageUrl || episode.show?.imageUrl || '',
+      duration: 0,
     });
     play();
   };
@@ -67,6 +123,57 @@ export default function EpisodePage() {
       </div>
     );
   }
+
+  // Determine the primary action button
+  const renderActionButton = () => {
+    if (shrinkState?.status === 'shrinking') {
+      return (
+        <button disabled className="mt-4 flex items-center gap-2 px-6 py-2.5 bg-yellow-600/80 text-white rounded-md text-sm font-medium cursor-not-allowed">
+          <Loader2 size={16} className="animate-spin" /> Shrinking...
+        </button>
+      );
+    }
+    if (shrinkState?.status === 'complete') {
+      return (
+        <div className="flex items-center gap-3 mt-4">
+          <button
+            onClick={handlePlayShrink}
+            className="flex items-center gap-2 px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm font-medium transition-colors"
+          >
+            <Play size={16} fill="white" /> Play PodShrink
+          </button>
+          <button
+            onClick={handlePlay}
+            className="flex items-center gap-2 px-6 py-2.5 bg-gray-700 hover:bg-gray-600 text-white rounded-md text-sm font-medium transition-colors"
+          >
+            <Play size={16} fill="white" /> Original
+          </button>
+        </div>
+      );
+    }
+    return (
+      <div className="flex items-center gap-3 mt-4">
+        <button
+          onClick={handlePlay}
+          className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-colors"
+        >
+          {isCurrentTrack && isPlaying ? (
+            <><Pause size={16} fill="white" /> Pause</>
+          ) : isCurrentTrack ? (
+            <><Play size={16} fill="white" /> Resume</>
+          ) : (
+            <><Play size={16} fill="white" /> Play</>
+          )}
+        </button>
+        <button
+          onClick={() => setShowShrinkPanel(true)}
+          className="px-6 py-2.5 border border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white rounded-md text-sm font-medium transition-colors"
+        >
+          Shrink It!
+        </button>
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-[#121212] px-4 md:px-8 py-6">
@@ -103,19 +210,7 @@ export default function EpisodePage() {
             <p className="text-gray-400 text-sm">{episode.show.author}</p>
           )}
 
-          {/* Play/Resume button */}
-          <button
-            onClick={handlePlay}
-            className="mt-4 flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-colors"
-          >
-            {isCurrentTrack && isPlaying ? (
-              <><Pause size={16} fill="white" /> Pause</>
-            ) : isCurrentTrack ? (
-              <><Play size={16} fill="white" /> Resume</>
-            ) : (
-              <><Play size={16} fill="white" /> Play</>
-            )}
-          </button>
+          {renderActionButton()}
         </div>
       </div>
 
@@ -126,6 +221,22 @@ export default function EpisodePage() {
       <div className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap max-w-3xl">
         {episode.description || 'No description available.'}
       </div>
+
+      {/* Shrink Panel */}
+      {showShrinkPanel && (
+        <ShrinkPanel
+          episode={episode}
+          showImage={episode.show?.imageUrl}
+          onClose={() => setShowShrinkPanel(false)}
+          onShrinkStarted={(shrinkId) => {
+            setShrinkState({ status: 'shrinking' });
+          }}
+          onShrinkComplete={(_id, audioUrl) => {
+            setShrinkState({ status: 'complete', audioUrl });
+            setShowShrinkPanel(false);
+          }}
+        />
+      )}
     </div>
   );
 }

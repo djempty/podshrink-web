@@ -63,11 +63,11 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
             setProgress(20);
             setProgressLabel('Transcribing audio...');
             break;
-          case 'generating_script':
+          case 'scripting':
             setProgress(50);
             setProgressLabel('Building shrink outline...');
             break;
-          case 'creating_audio':
+          case 'generating_audio':
             setProgress(75);
             setProgressLabel('Generating audio...');
             break;

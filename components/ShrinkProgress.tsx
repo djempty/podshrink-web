@@ -67,8 +67,8 @@ export default function ShrinkProgress({ shrinkId, onComplete }: ShrinkProgressP
 
   const steps = [
     { key: 'transcribing', label: 'Transcribing Audio' },
-    { key: 'generating_script', label: 'Generating Script' },
-    { key: 'creating_audio', label: 'Creating Audio' },
+    { key: 'scripting', label: 'Generating Script' },
+    { key: 'generating_audio', label: 'Creating Audio' },
     { key: 'complete', label: 'Complete' },
   ];
 

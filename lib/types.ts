@@ -36,9 +36,10 @@ export interface Voice {
 export interface Shrink {
   id: number;
   episodeId: number;
-  targetDuration: number;
+  targetDuration: number; // maps to targetDurationMinutes from API
+  targetDurationMinutes?: number;
   voiceId: string;
-  status: 'pending' | 'queued' | 'transcribing' | 'generating_script' | 'creating_audio' | 'complete' | 'error';
+  status: 'queued' | 'transcribing' | 'scripting' | 'generating_audio' | 'complete' | 'error';
   scriptText?: string;
   audioUrl?: string;
   errorMessage?: string;

@@ -27,7 +27,7 @@ export default function SavedShrinksPage() {
       showTitle: (shrink as any).show?.title || '',
       audioUrl: shrink.audioUrl,
       imageUrl: shrink.episode?.imageUrl || (shrink as any).show?.imageUrl || '',
-      duration: (shrink.targetDuration || 0) * 60,
+      duration: ((shrink as any).targetDurationMinutes || shrink.targetDuration || 0) * 60,
     });
     play();
   };
@@ -86,7 +86,7 @@ export default function SavedShrinksPage() {
                   </p>
                   <p className="text-gray-500 text-xs truncate">{(shrink as any).show?.title || ''}</p>
                   <div className="flex items-center gap-3 text-xs text-gray-500 mt-1">
-                    <span className="flex items-center gap-1"><Clock size={12} />{shrink.targetDuration} min</span>
+                    <span className="flex items-center gap-1"><Clock size={12} />{(shrink as any).targetDurationMinutes || shrink.targetDuration} min</span>
                     <span className="flex items-center gap-1"><Calendar size={12} />{formatDate(shrink.createdAt)}</span>
                     <span className={`font-medium ${shrink.status === 'complete' ? 'text-green-500' : shrink.status === 'error' ? 'text-red-400' : 'text-yellow-500'}`}>
                       {shrink.status}
