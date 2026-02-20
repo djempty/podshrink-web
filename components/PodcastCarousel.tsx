@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { DiscoverPodcast } from '@/lib/api';
 
@@ -12,6 +12,27 @@ interface PodcastCarouselProps {
 
 export default function PodcastCarousel({ label, podcasts, onPodcastClick }: PodcastCarouselProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  const checkScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 10);
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 10);
+  }, []);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    checkScroll();
+    el.addEventListener('scroll', checkScroll, { passive: true });
+    window.addEventListener('resize', checkScroll);
+    return () => {
+      el.removeEventListener('scroll', checkScroll);
+      window.removeEventListener('resize', checkScroll);
+    };
+  }, [checkScroll, podcasts]);
 
   const scroll = (direction: 'left' | 'right') => {
     if (!scrollRef.current) return;
@@ -26,23 +47,27 @@ export default function PodcastCarousel({ label, podcasts, onPodcastClick }: Pod
     <section className="relative group mb-12">
       <h2 className="text-2xl font-bold mb-6 text-white">{label}</h2>
       
-      {/* Left arrow */}
-      <button
-        onClick={() => scroll('left')}
-        className="absolute left-0 top-[50%] z-10 bg-black/80 hover:bg-black rounded-full p-3 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
-        aria-label="Scroll left"
-      >
-        <ChevronLeft size={24} className="text-white" />
-      </button>
+      {/* Left arrow — hidden on mobile, hidden when at start */}
+      {canScrollLeft && (
+        <button
+          onClick={() => scroll('left')}
+          className="hidden md:block absolute left-0 top-[50%] z-10 bg-black/80 hover:bg-black rounded-full p-3 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+          aria-label="Scroll left"
+        >
+          <ChevronLeft size={24} className="text-white" />
+        </button>
+      )}
 
-      {/* Right arrow */}
-      <button
-        onClick={() => scroll('right')}
-        className="absolute right-0 top-[50%] z-10 bg-black/80 hover:bg-black rounded-full p-3 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
-        aria-label="Scroll right"
-      >
-        <ChevronRight size={24} className="text-white" />
-      </button>
+      {/* Right arrow — hidden on mobile, hidden when at end */}
+      {canScrollRight && (
+        <button
+          onClick={() => scroll('right')}
+          className="hidden md:block absolute right-0 top-[50%] z-10 bg-black/80 hover:bg-black rounded-full p-3 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+          aria-label="Scroll right"
+        >
+          <ChevronRight size={24} className="text-white" />
+        </button>
+      )}
 
       {/* Scrollable row */}
       <div

@@ -113,9 +113,9 @@ export default function AudioPlayer() {
 
           {/* Thumbnail */}
           {track ? (
-            <img src={track.imageUrl || '/logo.png'} alt="" className="w-10 h-10 rounded object-cover flex-shrink-0" />
+            <img src={track.imageUrl || '/logo.png'} alt="" className="w-10 h-10 rounded object-cover flex-shrink-0 self-center" />
           ) : (
-            <div className="w-10 h-10" />
+            <div className="w-10 h-10 flex-shrink-0" />
           )}
 
           {/* Time / Info area */}

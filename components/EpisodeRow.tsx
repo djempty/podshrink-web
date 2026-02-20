@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { Episode } from '@/lib/types';
-import { Play, Pause, MoreVertical, Bookmark } from 'lucide-react';
+import { Play, Pause, MoreVertical, Bookmark, Loader2 } from 'lucide-react';
 import { useAudioPlayer } from '@/lib/audioPlayerStore';
 import { resolveAudioUrl } from '@/lib/api';
 
@@ -16,12 +16,14 @@ interface EpisodeRowProps {
 
 export default function EpisodeRow({ episode, showTitle, showImage, shrinkState, onShrinkClick }: EpisodeRowProps) {
   const router = useRouter();
-  const { track, isPlaying, currentTime, setTrack, play, pause } = useAudioPlayer();
+  const { track, isPlaying, currentTime, setTrack, play, pause, togglePlayPause } = useAudioPlayer();
 
   const isCurrentTrack = track?.id === episode.id;
+  const isShrinkTrack = track?.id === episode.id + 100000;
 
   const handlePlay = () => {
     if (isCurrentTrack && isPlaying) { pause(); return; }
+    if (isCurrentTrack) { play(); return; }
     setTrack({
       id: episode.id,
       title: episode.title,
@@ -34,6 +36,8 @@ export default function EpisodeRow({ episode, showTitle, showImage, shrinkState,
   };
 
   const handlePlayShrink = () => {
+    if (isShrinkTrack && isPlaying) { pause(); return; }
+    if (isShrinkTrack) { play(); return; }
     if (shrinkState?.audioUrl) {
       setTrack({
         id: episode.id + 100000,
@@ -59,11 +63,11 @@ export default function EpisodeRow({ episode, showTitle, showImage, shrinkState,
     return `${Math.floor(seconds / 60)} mins`;
   };
 
-  // Determine play button state
   const renderPlayButton = () => {
     if (shrinkState?.status === 'shrinking') {
       return (
-        <button disabled className="flex items-center gap-2 px-5 py-2 bg-yellow-600/80 text-white rounded-md text-sm font-medium cursor-not-allowed">
+        <button disabled className="flex items-center gap-2 px-5 py-2 bg-purple-600/40 text-purple-300 rounded-md text-sm font-medium cursor-not-allowed">
+          <Loader2 size={14} className="animate-spin" />
           Shrinking...
         </button>
       );
@@ -72,17 +76,22 @@ export default function EpisodeRow({ episode, showTitle, showImage, shrinkState,
       return (
         <button
           onClick={(e) => { e.stopPropagation(); handlePlayShrink(); }}
-          className="flex items-center gap-2 px-5 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm font-medium transition-colors"
+          className="flex items-center gap-2 px-5 py-2 bg-[#2EA84A] hover:bg-[#259A3F] text-white rounded-md text-sm font-medium transition-colors"
         >
-          <Play size={14} fill="white" />
-          Play PodShrink
+          {isShrinkTrack && isPlaying ? (
+            <><Pause size={14} fill="white" />Pause</>
+          ) : isShrinkTrack ? (
+            <><Play size={14} fill="white" />Resume</>
+          ) : (
+            <><Play size={14} fill="white" />Play PodShrink</>
+          )}
         </button>
       );
     }
     return (
       <button
         onClick={(e) => { e.stopPropagation(); handlePlay(); }}
-        className="flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-colors"
+        className="flex items-center gap-2 px-5 py-2 border border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white rounded-md text-sm font-medium transition-colors"
       >
         {isCurrentTrack && isPlaying ? (
           <><Pause size={14} fill="white" />Pause</>
@@ -109,8 +118,8 @@ export default function EpisodeRow({ episode, showTitle, showImage, shrinkState,
         />
       </div>
 
-      {/* Episode Info */}
-      <div className="flex-1 min-w-0">
+      {/* Episode Info — 75% width */}
+      <div className="flex-1 min-w-0 max-w-[75%]">
         <p className="text-xs text-gray-500 mb-1">{formatDate(episode.pubDate)}</p>
         <h3 className="text-white font-semibold text-base leading-tight mb-1">{episode.title}</h3>
         <p className="text-gray-500 text-xs mb-2">{formatDuration(episode.duration)}</p>

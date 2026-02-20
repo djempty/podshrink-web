@@ -83,8 +83,12 @@ export default function EpisodePage() {
     play();
   };
 
+  const isShrinkTrack = track?.id === (episode?.id ?? 0) + 100000;
+
   const handlePlayShrink = () => {
     if (!episode || !shrinkState?.audioUrl) return;
+    if (isShrinkTrack && isPlaying) { pause(); return; }
+    if (isShrinkTrack) { play(); return; }
     setTrack({
       id: episode.id + 100000,
       title: `${episode.title} (PodShrink)`,
@@ -94,6 +98,16 @@ export default function EpisodePage() {
       duration: 0,
     });
     play();
+  };
+
+  const linkifyText = (text: string) => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts = text.split(urlRegex);
+    return parts.map((part, i) => 
+      urlRegex.test(part) 
+        ? <a key={i} href={part} target="_blank" rel="noopener noreferrer" className="text-purple-400 hover:text-purple-300 underline">{part}</a>
+        : part
+    );
   };
 
   const formatDate = (dateString: string) => {
@@ -128,7 +142,7 @@ export default function EpisodePage() {
   const renderActionButton = () => {
     if (shrinkState?.status === 'shrinking') {
       return (
-        <button disabled className="mt-4 flex items-center gap-2 px-6 py-2.5 bg-yellow-600/80 text-white rounded-md text-sm font-medium cursor-not-allowed">
+        <button disabled className="mt-4 flex items-center gap-2 px-6 py-2.5 bg-purple-600/40 text-purple-300 rounded-md text-sm font-medium cursor-not-allowed">
           <Loader2 size={16} className="animate-spin" /> Shrinking...
         </button>
       );
@@ -138,15 +152,25 @@ export default function EpisodePage() {
         <div className="flex items-center gap-3 mt-4">
           <button
             onClick={handlePlayShrink}
-            className="flex items-center gap-2 px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm font-medium transition-colors"
+            className="flex items-center gap-2 px-6 py-2.5 bg-[#2EA84A] hover:bg-[#259A3F] text-white rounded-md text-sm font-medium transition-colors"
           >
-            <Play size={16} fill="white" /> Play PodShrink
+            {isShrinkTrack && isPlaying ? (
+              <><Pause size={16} fill="white" /> Pause</>
+            ) : isShrinkTrack ? (
+              <><Play size={16} fill="white" /> Resume</>
+            ) : (
+              <><Play size={16} fill="white" /> Play PodShrink</>
+            )}
           </button>
           <button
             onClick={handlePlay}
             className="flex items-center gap-2 px-6 py-2.5 bg-gray-700 hover:bg-gray-600 text-white rounded-md text-sm font-medium transition-colors"
           >
-            <Play size={16} fill="white" /> Original
+            {isCurrentTrack && isPlaying ? (
+              <><Pause size={16} fill="white" /> Pause</>
+            ) : (
+              <><Play size={16} fill="white" /> Original</>
+            )}
           </button>
         </div>
       );
@@ -155,7 +179,7 @@ export default function EpisodePage() {
       <div className="flex items-center gap-3 mt-4">
         <button
           onClick={handlePlay}
-          className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-colors"
+          className="flex items-center gap-2 px-6 py-2.5 border border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white rounded-md text-sm font-medium transition-colors"
         >
           {isCurrentTrack && isPlaying ? (
             <><Pause size={16} fill="white" /> Pause</>
@@ -219,7 +243,7 @@ export default function EpisodePage() {
 
       {/* Full description */}
       <div className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap max-w-3xl">
-        {episode.description || 'No description available.'}
+        {episode.description ? linkifyText(episode.description) : 'No description available.'}
       </div>
 
       {/* Shrink Panel */}

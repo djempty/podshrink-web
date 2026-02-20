@@ -8,7 +8,7 @@ import { Home, Heart, Radio, Grid3x3, DollarSign, Search, Menu, X, LogIn, User, 
 const navItems = [
   { href: '/', label: 'Home', icon: Home },
   { href: '/favorites', label: 'Favorites', icon: Heart },
-  { href: '/shows', label: 'Shows', icon: Radio },
+  { href: '/', label: 'Shows', icon: Radio },
   { href: '/categories', label: 'Categories', icon: Grid3x3 },
   { href: '/saved-shrinks', label: 'Saved Shrinks', icon: Sparkles },
   { href: '/pricing', label: 'Pricing', icon: DollarSign },

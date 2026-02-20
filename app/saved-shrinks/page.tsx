@@ -3,14 +3,14 @@
 import { useState, useEffect } from 'react';
 import { api, resolveAudioUrl } from '@/lib/api';
 import { Shrink } from '@/lib/types';
-import { Play, Download, Clock, Calendar } from 'lucide-react';
+import { Play, Pause, Download, Clock, Calendar } from 'lucide-react';
 import { useAudioPlayer } from '@/lib/audioPlayerStore';
 import Link from 'next/link';
 
 export default function SavedShrinksPage() {
   const [shrinks, setShrinks] = useState<Shrink[]>([]);
   const [loading, setLoading] = useState(true);
-  const { setTrack, play } = useAudioPlayer();
+  const { track, isPlaying, setTrack, play, pause } = useAudioPlayer();
 
   useEffect(() => {
     api.getAllShrinks()
@@ -21,8 +21,11 @@ export default function SavedShrinksPage() {
 
   const handlePlay = (shrink: Shrink) => {
     if (!shrink.audioUrl) return;
+    const trackId = shrink.id + 200000;
+    if (track?.id === trackId && isPlaying) { pause(); return; }
+    if (track?.id === trackId) { play(); return; }
     setTrack({
-      id: shrink.id + 200000,
+      id: trackId,
       title: `${shrink.episode?.title || 'Episode'} (PodShrink)`,
       showTitle: (shrink as any).show?.title || '',
       audioUrl: resolveAudioUrl(shrink.audioUrl),
@@ -31,6 +34,8 @@ export default function SavedShrinksPage() {
     });
     play();
   };
+
+  const isShrinkPlaying = (shrink: Shrink) => track?.id === shrink.id + 200000 && isPlaying;
 
   const handleDownload = (shrink: Shrink) => {
     if (!shrink.audioUrl) return;
@@ -99,9 +104,13 @@ export default function SavedShrinksPage() {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => handlePlay(shrink)}
-                      className="p-2 bg-green-600 hover:bg-green-700 rounded-full transition-colors"
+                      className="p-2 bg-[#2EA84A] hover:bg-[#259A3F] rounded-full transition-colors"
                     >
-                      <Play size={16} fill="white" className="text-white ml-0.5" />
+                      {isShrinkPlaying(shrink) ? (
+                        <Pause size={16} fill="white" className="text-white" />
+                      ) : (
+                        <Play size={16} fill="white" className="text-white ml-0.5" />
+                      )}
                     </button>
                     <button
                       onClick={() => handleDownload(shrink)}

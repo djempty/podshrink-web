@@ -156,7 +156,7 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
 
         {status === 'processing' && (
           <div>
-            <button disabled className="w-full py-3 bg-gray-700 text-gray-400 rounded-md font-medium cursor-not-allowed">
+            <button disabled className="w-full py-3 bg-purple-600/40 text-purple-300 rounded-md font-medium cursor-not-allowed">
               Processing...
             </button>
             <div className="mt-4">
@@ -174,7 +174,7 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
 
         {status === 'complete' && (
           <div>
-            <button disabled className="w-full py-3 bg-green-600 text-white rounded-md font-medium">
+            <button disabled className="w-full py-3 bg-[#2EA84A] text-white rounded-md font-medium">
               Completed!
             </button>
             <p className="text-xs text-gray-400 mt-3 text-center">
