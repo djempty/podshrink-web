@@ -21,11 +21,11 @@ export default function RootLayout({
       <body className={inter.className}>
         <div className="flex min-h-screen bg-[#121212]">
           <Sidebar />
-          <main className="flex-1 ml-[260px] overflow-x-hidden pb-32">
+          <AudioPlayer />
+          <main className="flex-1 ml-[260px] overflow-x-hidden">
             {children}
           </main>
         </div>
-        <AudioPlayer />
       </body>
     </html>
   );

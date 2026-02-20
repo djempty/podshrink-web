@@ -6,6 +6,7 @@ import { Play, Pause, RotateCcw, RotateCw, Volume2 } from 'lucide-react';
 
 export default function AudioPlayer() {
   const audioRef = useRef<HTMLAudioElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
   const {
     track,
     isPlaying,
@@ -23,12 +24,19 @@ export default function AudioPlayer() {
     skipBackward,
   } = useAudioPlayer();
 
-  const [isDragging, setIsDragging] = useState(false);
-
-  // Sync audio element with store
+  // Load new track
   useEffect(() => {
-    if (!audioRef.current) return;
+    if (!audioRef.current || !track) return;
+    audioRef.current.src = track.audioUrl;
+    audioRef.current.load();
+    if (isPlaying) {
+      audioRef.current.play().catch(console.error);
+    }
+  }, [track?.audioUrl]);
 
+  // Play/pause sync
+  useEffect(() => {
+    if (!audioRef.current || !track) return;
     if (isPlaying) {
       audioRef.current.play().catch(console.error);
     } else {
@@ -46,10 +54,13 @@ export default function AudioPlayer() {
     audioRef.current.playbackRate = playbackRate;
   }, [playbackRate]);
 
+  // Seek from store (skip fwd/back)
   useEffect(() => {
     if (!audioRef.current || isDragging) return;
-    audioRef.current.currentTime = currentTime;
-  }, [currentTime, isDragging]);
+    if (Math.abs(audioRef.current.currentTime - currentTime) > 1) {
+      audioRef.current.currentTime = currentTime;
+    }
+  }, [currentTime]);
 
   const handleTimeUpdate = () => {
     if (!audioRef.current || isDragging) return;
@@ -71,27 +82,67 @@ export default function AudioPlayer() {
 
   const formatTime = (seconds: number) => {
     if (!seconds || isNaN(seconds)) return '0:00';
-    const mins = Math.floor(seconds / 60);
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
     const secs = Math.floor(seconds % 60);
+    if (hrs > 0) {
+      return `${hrs}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  if (!track) {
-    return null;
-  }
+  const remaining = duration - currentTime;
+
+  if (!track) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-[#1a1a1a] border-t border-gray-800 z-50">
+    <div className="fixed top-0 left-[260px] right-0 bg-[#0e0e0e] border-b border-gray-800 z-40 h-[60px] flex items-center px-6 gap-4">
       <audio
         ref={audioRef}
-        src={track.audioUrl}
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
         onEnded={() => pause()}
+        preload="auto"
       />
 
-      {/* Progress Bar */}
-      <div className="px-8 pt-2 pb-1">
+      {/* Playback Speed */}
+      <select
+        value={playbackRate}
+        onChange={(e) => setPlaybackRate(parseFloat(e.target.value))}
+        className="bg-transparent text-white text-xs px-1 py-0.5 rounded border border-gray-700 focus:outline-none cursor-pointer min-w-[42px]"
+      >
+        <option value="0.5">0.5x</option>
+        <option value="0.75">0.75x</option>
+        <option value="1">1x</option>
+        <option value="1.25">1.25x</option>
+        <option value="1.5">1.5x</option>
+        <option value="2">2x</option>
+      </select>
+
+      {/* Skip Back */}
+      <button onClick={() => skipBackward(15)} className="text-gray-300 hover:text-white transition-colors">
+        <RotateCcw size={18} />
+      </button>
+
+      {/* Play/Pause */}
+      <button
+        onClick={() => (isPlaying ? pause() : play())}
+        className="text-white hover:text-purple-400 transition-colors"
+      >
+        {isPlaying ? <Pause size={22} fill="white" /> : <Play size={22} fill="white" />}
+      </button>
+
+      {/* Skip Forward */}
+      <button onClick={() => skipForward(15)} className="text-gray-300 hover:text-white transition-colors">
+        <RotateCw size={18} />
+      </button>
+
+      {/* Current Time */}
+      <span className="text-xs text-gray-400 min-w-[40px] text-right">{formatTime(currentTime)}</span>
+
+      {/* Progress Bar + Track Info Container */}
+      <div className="flex-1 flex flex-col items-center justify-center gap-0.5">
+        {/* Progress Bar */}
         <input
           type="range"
           min="0"
@@ -100,91 +151,38 @@ export default function AudioPlayer() {
           onChange={handleSeek}
           onMouseDown={() => setIsDragging(true)}
           onMouseUp={() => setIsDragging(false)}
-          className="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+          className="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-500"
           style={{
-            background: `linear-gradient(to right, #9333ea 0%, #9333ea ${(currentTime / duration) * 100}%, #374151 ${(currentTime / duration) * 100}%, #374151 100%)`
+            background: duration
+              ? `linear-gradient(to right, #9333ea 0%, #9333ea ${(currentTime / duration) * 100}%, #374151 ${(currentTime / duration) * 100}%, #374151 100%)`
+              : '#374151',
           }}
         />
-        <div className="flex justify-between text-xs text-gray-400 mt-1">
-          <span>{formatTime(currentTime)}</span>
-          <span>{formatTime(duration)}</span>
+        {/* Track Info */}
+        <div className="flex items-center gap-3 w-full">
+          <img src={track.imageUrl || '/logo.png'} alt="" className="w-6 h-6 rounded object-cover" />
+          <p className="text-xs text-gray-300 truncate">
+            <span className="text-white font-medium">{track.title}</span>
+            {track.showTitle && <span className="text-gray-500"> · {track.showTitle}</span>}
+          </p>
         </div>
       </div>
 
-      {/* Controls */}
-      <div className="flex items-center justify-between px-8 pb-4">
-        {/* Left: Thumbnail + Controls */}
-        <div className="flex items-center gap-4 flex-1">
-          <img
-            src={track.imageUrl || '/placeholder.png'}
-            alt={track.title}
-            className="w-12 h-12 rounded object-cover"
-          />
+      {/* Remaining Time */}
+      <span className="text-xs text-gray-400 min-w-[40px]">-{formatTime(remaining)}</span>
 
-          <div className="flex items-center gap-3">
-            {/* Playback Speed */}
-            <select
-              value={playbackRate}
-              onChange={(e) => setPlaybackRate(parseFloat(e.target.value))}
-              className="bg-[#2a2a2a] text-white text-sm px-2 py-1 rounded border border-gray-700 focus:outline-none focus:border-purple-500"
-            >
-              <option value="0.5">0.5x</option>
-              <option value="0.75">0.75x</option>
-              <option value="1">1x</option>
-              <option value="1.25">1.25x</option>
-              <option value="1.5">1.5x</option>
-              <option value="2">2x</option>
-            </select>
-
-            {/* Skip Back */}
-            <button
-              onClick={() => skipBackward(15)}
-              className="p-2 hover:bg-gray-800 rounded-full transition-colors"
-            >
-              <RotateCcw size={20} className="text-white" />
-            </button>
-
-            {/* Play/Pause */}
-            <button
-              onClick={() => (isPlaying ? pause() : play())}
-              className="p-3 bg-purple-600 hover:bg-purple-700 rounded-full transition-colors"
-            >
-              {isPlaying ? (
-                <Pause size={24} className="text-white" fill="white" />
-              ) : (
-                <Play size={24} className="text-white" fill="white" />
-              )}
-            </button>
-
-            {/* Skip Forward */}
-            <button
-              onClick={() => skipForward(15)}
-              className="p-2 hover:bg-gray-800 rounded-full transition-colors"
-            >
-              <RotateCw size={20} className="text-white" />
-            </button>
-          </div>
-        </div>
-
-        {/* Center: Track Info */}
-        <div className="flex-1 text-center px-8">
-          <p className="text-white font-medium text-sm line-clamp-1">{track.title}</p>
-          <p className="text-gray-400 text-xs line-clamp-1">{track.showTitle}</p>
-        </div>
-
-        {/* Right: Volume */}
-        <div className="flex items-center gap-3 flex-1 justify-end">
-          <Volume2 size={20} className="text-gray-400" />
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="0.01"
-            value={volume}
-            onChange={(e) => setVolume(parseFloat(e.target.value))}
-            className="w-24 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer"
-          />
-        </div>
+      {/* Volume */}
+      <div className="flex items-center gap-2">
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.01"
+          value={volume}
+          onChange={(e) => setVolume(parseFloat(e.target.value))}
+          className="w-20 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-500"
+        />
+        <Volume2 size={16} className="text-gray-400" />
       </div>
     </div>
   );

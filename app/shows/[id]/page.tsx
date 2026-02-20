@@ -30,7 +30,7 @@ export default async function ShowPage({ params }: ShowPageProps) {
   return (
     <div className="min-h-screen bg-[#121212]">
       {/* Sticky Header */}
-      <header className="sticky top-0 z-40 flex items-center justify-between px-8 py-6 bg-[#121212] border-b border-gray-800">
+      <header className="sticky top-0 z-30 flex items-center justify-between px-8 py-6 bg-[#121212] border-b border-gray-800">
         <h1 className="text-3xl font-bold text-white">Episodes</h1>
         <Link
           href="/signup"
@@ -41,18 +41,21 @@ export default async function ShowPage({ params }: ShowPageProps) {
       </header>
 
       {/* Episodes List */}
-      <div className="px-8 py-8">
-        <div className="space-y-4">
-          {episodes && episodes.length > 0 ? (
-            episodes.map((episode) => (
-              <EpisodeRow key={episode.id} episode={episode} showId={showId} />
-            ))
-          ) : (
-            <div className="text-center py-12 text-gray-400">
-              No episodes found for this show.
-            </div>
-          )}
-        </div>
+      <div className="px-4">
+        {episodes && episodes.length > 0 ? (
+          episodes.map((episode) => (
+            <EpisodeRow
+              key={episode.id}
+              episode={episode}
+              showTitle={show.title}
+              showImage={show.imageUrl}
+            />
+          ))
+        ) : (
+          <div className="text-center py-12 text-gray-400">
+            No episodes found for this show.
+          </div>
+        )}
       </div>
     </div>
   );

@@ -3,26 +3,27 @@ export interface Show {
   title: string;
   author: string;
   description: string;
-  artwork_url: string;
-  rss_url: string;
-  created_at: string;
+  imageUrl: string;
+  rssUrl: string;
+  language?: string;
+  createdAt: string;
+  updatedAt?: string;
 }
 
 export interface Episode {
   id: number;
-  show_id: number;
+  showId: number;
   title: string;
   description: string;
-  audio_url: string;
-  pub_date: string;
-  published_at: string;
+  audioUrl: string;
+  imageUrl?: string;
+  pubDate: string;
   duration: number;
   guid: string;
-  episode_number?: number;
-  image_url?: string;
-  created_at: string;
+  link?: string;
+  episodeNumber?: number;
+  createdAt: string;
   show?: Show;
-  show_title?: string;
 }
 
 export interface Voice {
@@ -34,29 +35,14 @@ export interface Voice {
 
 export interface Shrink {
   id: number;
-  episode_id: number;
-  target_duration: number;
-  voice_id: string;
+  episodeId: number;
+  targetDuration: number;
+  voiceId: string;
   status: 'pending' | 'transcribing' | 'generating_script' | 'creating_audio' | 'complete' | 'error';
-  script_text?: string;
-  audio_url?: string;
-  error_message?: string;
-  created_at: string;
-  completed_at?: string;
+  scriptText?: string;
+  audioUrl?: string;
+  errorMessage?: string;
+  createdAt: string;
+  completedAt?: string;
   episode?: Episode;
-}
-
-export interface AudioPlayerState {
-  isPlaying: boolean;
-  currentTrack: {
-    title: string;
-    show: string;
-    artwork: string;
-    audioUrl: string;
-    episodeId?: number;
-    shrinkId?: number;
-  } | null;
-  currentTime: number;
-  duration: number;
-  volume: number;
 }

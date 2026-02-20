@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { Episode } from '@/lib/types';
 import { Play, Clock, Sparkles } from 'lucide-react';
-import { useAudioStore } from '@/lib/store';
+import { useAudioPlayer } from '@/lib/audioPlayerStore';
 
 interface EpisodeCardProps {
   episode: Episode;
@@ -12,7 +12,7 @@ interface EpisodeCardProps {
 }
 
 export default function EpisodeCard({ episode, shrinkStatus, shrinkAudioUrl }: EpisodeCardProps) {
-  const play = useAudioStore((state) => state.play);
+  const { setTrack, play } = useAudioPlayer();
 
   const formatDuration = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -27,13 +27,15 @@ export default function EpisodeCard({ episode, shrinkStatus, shrinkAudioUrl }: E
   const handlePlayShrink = (e: React.MouseEvent) => {
     e.preventDefault();
     if (shrinkAudioUrl && episode.show) {
-      play({
+      setTrack({
+        id: episode.id,
         title: `${episode.title} (Shrunk)`,
-        show: episode.show.title,
-        artwork: episode.show.artwork_url,
+        showTitle: episode.show.title,
         audioUrl: shrinkAudioUrl,
-        episodeId: episode.id,
+        imageUrl: episode.imageUrl || episode.show.imageUrl || '',
+        duration: episode.duration || 0,
       });
+      play();
     }
   };
 
@@ -64,17 +66,11 @@ export default function EpisodeCard({ episode, shrinkStatus, shrinkAudioUrl }: E
                 <Clock size={14} />
                 {formatDuration(episode.duration)}
               </span>
-              <span>{formatDate(episode.pub_date)}</span>
+              <span>{formatDate(episode.pubDate)}</span>
               {shrinkStatus === 'complete' && (
                 <span className="flex items-center gap-1 text-purple-400 font-medium">
                   <Sparkles size={14} />
                   Shrunk
-                </span>
-              )}
-              {shrinkStatus === 'pending' && (
-                <span className="flex items-center gap-1 text-yellow-400 font-medium">
-                  <Sparkles size={14} />
-                  Processing...
                 </span>
               )}
             </div>

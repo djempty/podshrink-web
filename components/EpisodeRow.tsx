@@ -1,86 +1,101 @@
 'use client';
 
 import { Episode } from '@/lib/types';
-import { Play, MoreVertical, Bookmark } from 'lucide-react';
+import { Play, Pause, MoreVertical, Bookmark } from 'lucide-react';
 import { useAudioPlayer } from '@/lib/audioPlayerStore';
 
 interface EpisodeRowProps {
   episode: Episode;
-  showId: number;
+  showTitle?: string;
+  showImage?: string;
 }
 
-export default function EpisodeRow({ episode, showId }: EpisodeRowProps) {
-  const { setTrack, play } = useAudioPlayer();
+export default function EpisodeRow({ episode, showTitle, showImage }: EpisodeRowProps) {
+  const { track, isPlaying, setTrack, play, pause } = useAudioPlayer();
+
+  const isCurrentTrack = track?.id === episode.id;
 
   const handlePlay = () => {
+    if (isCurrentTrack && isPlaying) {
+      pause();
+      return;
+    }
     setTrack({
       id: episode.id,
       title: episode.title,
-      showTitle: episode.show_title || episode.show?.title || '',
-      audioUrl: episode.audio_url,
-      imageUrl: episode.image_url || episode.show?.artwork_url || '',
+      showTitle: showTitle || episode.show?.title || '',
+      audioUrl: episode.audioUrl,
+      imageUrl: episode.imageUrl || showImage || '',
       duration: episode.duration || 0,
     });
     play();
   };
 
   const formatDate = (dateString: string) => {
+    if (!dateString) return '';
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '';
     const month = (date.getMonth() + 1).toString();
-    const day = date.getDate().toString();
+    const day = date.getDate().toString().padStart(2, '0');
     const year = date.getFullYear().toString().slice(-2);
     return `${month}/${day}/${year}`;
   };
 
   const formatDuration = (seconds: number) => {
+    if (!seconds) return '';
     const mins = Math.floor(seconds / 60);
     return `${mins} mins`;
   };
 
   return (
-    <div className="group flex items-start gap-4 p-4 rounded-lg hover:bg-[#1a1a1a] transition-colors relative">
+    <div className="group flex items-start gap-4 py-6 px-4 border-b border-gray-800 hover:bg-[#1a1a1a] transition-colors relative">
       {/* Episode Number Badge */}
-      <div className="flex-shrink-0 w-8 h-8 bg-gray-800 rounded flex items-center justify-center text-white text-sm font-medium">
-        {episode.episode_number || '•'}
+      <div className="flex-shrink-0 w-4 mt-1">
+        <span className="text-gray-500 text-xs">•</span>
       </div>
 
       {/* Thumbnail */}
       <div className="flex-shrink-0">
         <img
-          src={episode.image_url || '/placeholder.png'}
+          src={episode.imageUrl || showImage || '/logo.png'}
           alt={episode.title}
-          className="w-20 h-20 rounded object-cover"
+          className="w-[100px] h-[100px] rounded-lg object-cover"
         />
       </div>
 
       {/* Episode Info */}
       <div className="flex-1 min-w-0">
-        <div className="flex items-start justify-between mb-2">
-          <div className="flex-1 mr-4">
-            <p className="text-xs text-gray-500 mb-1">{formatDate(episode.pub_date)}</p>
-            <h3 className="text-white font-semibold text-base leading-tight mb-1 line-clamp-2">
-              {episode.title}
-            </h3>
-            <p className="text-gray-500 text-xs mb-2">
-              {episode.duration ? formatDuration(episode.duration) : ''}
-            </p>
-            <p className="text-gray-400 text-sm leading-relaxed line-clamp-3">
-              {episode.description || 'No description available.'}
-            </p>
-          </div>
-        </div>
+        <p className="text-xs text-gray-500 mb-1">{formatDate(episode.pubDate)}</p>
+        <h3 className="text-white font-semibold text-base leading-tight mb-1">
+          {episode.title}
+        </h3>
+        <p className="text-gray-500 text-xs mb-2">
+          {formatDuration(episode.duration)}
+        </p>
+        <p className="text-gray-400 text-sm leading-relaxed line-clamp-3">
+          {episode.description || 'No description available.'}
+        </p>
 
         {/* Action Buttons */}
         <div className="flex items-center gap-3 mt-4">
           <button
             onClick={handlePlay}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-colors"
+            className="flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-colors"
           >
-            <Play size={16} fill="white" />
-            Play
+            {isCurrentTrack && isPlaying ? (
+              <>
+                <Pause size={14} fill="white" />
+                Resume
+              </>
+            ) : (
+              <>
+                <Play size={14} fill="white" />
+                Play
+              </>
+            )}
           </button>
           <button
-            className="px-4 py-2 border border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white rounded-md text-sm font-medium transition-colors"
+            className="px-5 py-2 border border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white rounded-md text-sm font-medium transition-colors"
           >
             Shrink It!
           </button>
@@ -88,7 +103,7 @@ export default function EpisodeRow({ episode, showId }: EpisodeRowProps) {
       </div>
 
       {/* Hover Actions */}
-      <div className="absolute top-4 right-4 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="absolute top-6 right-4 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
         <button className="p-2 hover:bg-gray-800 rounded-full transition-colors">
           <MoreVertical size={18} className="text-gray-400" />
         </button>

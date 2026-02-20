@@ -28,7 +28,7 @@ export default function ShrinkProgress({ shrinkId, onComplete }: ShrinkProgressP
             onComplete(data);
           }
           if (data.status === 'error') {
-            setError(data.error_message || 'Unknown error occurred');
+            setError(data.errorMessage || 'Unknown error occurred');
           }
         }
       } catch (err) {

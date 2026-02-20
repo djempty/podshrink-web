@@ -14,7 +14,7 @@ export default function ShowCard({ show }: ShowCardProps) {
       <div className="bg-dark-card rounded-lg overflow-hidden hover:bg-dark-hover transition-all duration-200 hover:scale-105">
         <div className="relative aspect-square">
           <Image
-            src={show.artwork_url || '/placeholder.png'}
+            src={show.imageUrl || '/placeholder.png'}
             alt={show.title}
             fill
             className="object-cover"
