@@ -38,7 +38,7 @@ export interface Shrink {
   episodeId: number;
   targetDuration: number;
   voiceId: string;
-  status: 'pending' | 'transcribing' | 'generating_script' | 'creating_audio' | 'complete' | 'error';
+  status: 'pending' | 'queued' | 'transcribing' | 'generating_script' | 'creating_audio' | 'complete' | 'error';
   scriptText?: string;
   audioUrl?: string;
   errorMessage?: string;
