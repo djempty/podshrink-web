@@ -3,9 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { api } from '@/lib/api';
-import { Episode, Shrink } from '@/lib/types';
+import { Episode } from '@/lib/types';
 import Link from 'next/link';
-import { ArrowLeft, Play, Calendar, Clock, ChevronDown, ChevronUp } from 'lucide-react';
+import { Play, Pause } from 'lucide-react';
 import { useAudioPlayer } from '@/lib/audioPlayerStore';
 
 export default function EpisodePage() {
@@ -14,112 +14,117 @@ export default function EpisodePage() {
   
   const [episode, setEpisode] = useState<Episode | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  const { setTrack, play } = useAudioPlayer();
+  const { track, isPlaying, setTrack, play, pause } = useAudioPlayer();
 
   useEffect(() => {
-    const fetchEpisode = async () => {
-      try {
-        const data = await api.getEpisode(episodeId);
-        setEpisode(data);
-      } catch (err) {
-        console.error('Failed to fetch episode:', err);
-        setError('Failed to load episode');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchEpisode();
+    api.getEpisode(episodeId)
+      .then(setEpisode)
+      .catch(console.error)
+      .finally(() => setLoading(false));
   }, [episodeId]);
 
-  const handlePlayOriginal = () => {
-    if (episode) {
-      setTrack({
-        id: episode.id,
-        title: episode.title,
-        showTitle: episode.show?.title || '',
-        audioUrl: episode.audioUrl,
-        imageUrl: episode.imageUrl || episode.show?.imageUrl || '',
-        duration: episode.duration || 0,
-      });
-      play();
-    }
+  const isCurrentTrack = track?.id === episode?.id;
+
+  const handlePlay = () => {
+    if (!episode) return;
+    if (isCurrentTrack && isPlaying) { pause(); return; }
+    setTrack({
+      id: episode.id,
+      title: episode.title,
+      showTitle: episode.show?.title || '',
+      audioUrl: episode.audioUrl,
+      imageUrl: episode.imageUrl || episode.show?.imageUrl || '',
+      duration: episode.duration || 0,
+    });
+    play();
+  };
+
+  const formatDate = (dateString: string) => {
+    if (!dateString) return '';
+    const d = new Date(dateString);
+    if (isNaN(d.getTime())) return '';
+    return `${d.getMonth() + 1}/${d.getDate().toString().padStart(2, '0')}/${d.getFullYear().toString().slice(-2)}`;
   };
 
   const formatDuration = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    return `${mins} mins`;
+    if (!seconds) return '';
+    return `${Math.floor(seconds / 60)} mins`;
   };
 
   if (loading) {
     return (
-      <div className="p-6 lg:p-8 flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-purple-500" />
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500" />
       </div>
     );
   }
 
-  if (error || !episode) {
+  if (!episode) {
     return (
-      <div className="p-6 lg:p-8">
-        <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-8 text-center">
-          <p className="text-red-400">{error || 'Episode not found'}</p>
-          <Link href="/" className="inline-block mt-4 text-purple-400 hover:text-purple-300">
-            Go Home
-          </Link>
-        </div>
+      <div className="p-8 text-center text-gray-400">
+        Episode not found. <Link href="/" className="text-purple-400 hover:underline">Go Home</Link>
       </div>
     );
   }
 
   return (
-    <div className="p-6 lg:p-8 max-w-5xl mx-auto space-y-8">
+    <div className="min-h-screen bg-[#121212] px-4 md:px-8 py-6">
+      {/* Back link */}
       <Link
         href={`/shows/${episode.showId}`}
-        className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+        className="text-blue-500 hover:text-blue-400 text-sm mb-6 inline-block"
       >
-        <ArrowLeft size={20} />
-        Back to Show
+        &lt;&lt; Episodes
       </Link>
 
-      <div className="flex flex-col md:flex-row gap-6">
-        <div className="w-48 h-48 rounded-lg overflow-hidden shadow-lg flex-shrink-0">
+      {/* Episode header */}
+      <div className="flex flex-col md:flex-row gap-6 mb-8">
+        {/* Large thumbnail */}
+        <div className="flex-shrink-0">
           <img
             src={episode.imageUrl || episode.show?.imageUrl || '/logo.png'}
             alt={episode.title}
-            className="w-full h-full object-cover"
+            className="w-[200px] h-[200px] rounded-lg object-cover"
           />
         </div>
 
+        {/* Info */}
         <div className="flex-1">
+          <p className="text-xs text-gray-500 mb-1">{formatDate(episode.pubDate)}</p>
+          <h1 className="text-xl md:text-2xl font-bold text-white mb-2">{episode.title}</h1>
           {episode.show && (
-            <p className="text-purple-400 font-medium mb-2">{episode.show.title}</p>
+            <Link href={`/shows/${episode.showId}`} className="text-blue-500 hover:text-blue-400 text-lg font-semibold block mb-1">
+              {episode.show.title}
+            </Link>
           )}
-          <h1 className="text-3xl font-bold mb-4">{episode.title}</h1>
-          
-          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400 mb-4">
-            <div className="flex items-center gap-1">
-              <Calendar size={16} />
-              {new Date(episode.pubDate).toLocaleDateString()}
-            </div>
-            <div className="flex items-center gap-1">
-              <Clock size={16} />
-              {formatDuration(episode.duration)}
-            </div>
-          </div>
+          <p className="text-gray-400 text-sm mb-1">{formatDuration(episode.duration)}</p>
+          {episode.show?.author && (
+            <p className="text-gray-400 text-sm">{episode.show.author}</p>
+          )}
 
-          <p className="text-gray-300 leading-relaxed line-clamp-6">{episode.description}</p>
-
+          {/* Play/Resume button */}
           <button
-            onClick={handlePlayOriginal}
-            className="mt-6 inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+            onClick={handlePlay}
+            className="mt-4 flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-colors"
           >
-            <Play size={20} fill="currentColor" />
-            Play Original Episode
+            {isCurrentTrack && isPlaying ? (
+              <><Pause size={16} fill="white" /> Pause</>
+            ) : isCurrentTrack ? (
+              <><Play size={16} fill="white" /> Resume</>
+            ) : (
+              <><Play size={16} fill="white" /> Play</>
+            )}
           </button>
         </div>
+      </div>
+
+      {/* Divider */}
+      <div className="border-t border-gray-800 mb-8" />
+
+      {/* Full description */}
+      <div className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap max-w-3xl">
+        {episode.description || 'No description available.'}
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { Episode } from '@/lib/types';
 import { Play, Pause, MoreVertical, Bookmark } from 'lucide-react';
 import { useAudioPlayer } from '@/lib/audioPlayerStore';
@@ -11,6 +12,7 @@ interface EpisodeRowProps {
 }
 
 export default function EpisodeRow({ episode, showTitle, showImage }: EpisodeRowProps) {
+  const router = useRouter();
   const { track, isPlaying, setTrack, play, pause } = useAudioPlayer();
 
   const isCurrentTrack = track?.id === episode.id;
@@ -48,7 +50,10 @@ export default function EpisodeRow({ episode, showTitle, showImage }: EpisodeRow
   };
 
   return (
-    <div className="group flex items-start gap-3 md:gap-4 py-5 md:py-6 px-3 md:px-4 border-b border-gray-800 hover:bg-[#1a1a1a] transition-colors relative">
+    <div
+      onClick={() => router.push(`/episodes/${episode.id}`)}
+      className="group flex items-start gap-3 md:gap-4 py-5 md:py-6 px-3 md:px-4 border-b border-gray-800 hover:bg-[#1a1a1a] transition-colors relative cursor-pointer"
+    >
       {/* Thumbnail - hidden on mobile */}
       <div className="hidden md:block flex-shrink-0">
         <img
@@ -74,7 +79,7 @@ export default function EpisodeRow({ episode, showTitle, showImage }: EpisodeRow
         {/* Action Buttons */}
         <div className="flex items-center gap-3 mt-4">
           <button
-            onClick={handlePlay}
+            onClick={(e) => { e.stopPropagation(); handlePlay(); }}
             className="flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-colors"
           >
             {isCurrentTrack && isPlaying ? (
@@ -90,6 +95,7 @@ export default function EpisodeRow({ episode, showTitle, showImage }: EpisodeRow
             )}
           </button>
           <button
+            onClick={(e) => e.stopPropagation()}
             className="px-5 py-2 border border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white rounded-md text-sm font-medium transition-colors"
           >
             Shrink It!
