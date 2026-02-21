@@ -1,7 +1,6 @@
 import { api, DiscoverSection } from '@/lib/api';
 import DiscoverHome from '@/components/DiscoverHome';
-import { Sparkles } from 'lucide-react';
-import EpisodeCard from '@/components/EpisodeCard';
+import RecentShrinks from '@/components/RecentShrinks';
 import PageHeader from '@/components/PageHeader';
 
 export const dynamic = 'force-dynamic';
@@ -38,27 +37,16 @@ export default async function HomePage() {
         <DiscoverHome sections={sections} />
 
         {/* Recently Shrunk */}
-        {recentShrinks.length > 0 && (
-          <section className="mt-12">
-            <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-white">
-              <Sparkles className="text-purple-400" size={28} />
-              Recently Shrunk
-            </h2>
-            <div className="space-y-1">
-              {recentShrinks
-                .filter((shrink) => shrink.status === 'complete' && shrink.episode)
-                .slice(0, 5)
-                .map((shrink) => (
-                  <EpisodeCard
-                    key={shrink.id}
-                    episode={shrink.episode!}
-                    shrinkStatus="complete"
-                    shrinkAudioUrl={api.getShrinkAudioUrl(shrink.id)}
-                  />
-                ))}
-            </div>
-          </section>
-        )}
+        <RecentShrinks
+          shrinks={recentShrinks
+            .filter((shrink) => shrink.status === 'complete' && shrink.episode)
+            .slice(0, 5)
+            .map((shrink) => ({
+              id: shrink.id,
+              episode: shrink.episode!,
+              audioUrl: api.getShrinkAudioUrl(shrink.id),
+            }))}
+        />
       </div>
     </div>
   );
