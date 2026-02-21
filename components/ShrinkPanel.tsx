@@ -225,11 +225,19 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
             <button disabled className="w-full py-3 bg-purple-600/40 text-purple-300 rounded-md font-medium cursor-not-allowed">
               Processing...
             </button>
-            <div className="mt-3 bg-gray-800 rounded-full h-2 overflow-hidden">
+            <div className="mt-3 bg-gray-800 rounded-full h-2 overflow-hidden relative">
+              {/* Base fill */}
               <div
-                className="h-full bg-purple-600 transition-all duration-500"
+                className="absolute inset-y-0 left-0 bg-purple-600 transition-all duration-1000 ease-out"
                 style={{ width: `${progress}%` }}
               />
+              {/* Animated shimmer overlay */}
+              <div
+                className="absolute inset-y-0 left-0 overflow-hidden"
+                style={{ width: `${progress}%` }}
+              >
+                <div className="h-full w-[200%] bg-gradient-to-r from-transparent via-purple-400/30 to-transparent animate-shimmer" />
+              </div>
             </div>
             <p className="text-xs text-gray-500 mt-2 text-center">{progress}%</p>
             <p className="text-xs text-gray-400 text-center">{progressLabel}</p>

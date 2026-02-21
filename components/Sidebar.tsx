@@ -9,7 +9,7 @@ import SearchInput from './SearchInput';
 const navItems = [
   { href: '/', label: 'Home', icon: Home },
   { href: '/favorites', label: 'Favorites', icon: Heart },
-  { href: '/', label: 'Shows', icon: Radio },
+  { href: '/shows', label: 'Shows', icon: Radio },
   { href: '/categories', label: 'Categories', icon: Grid3x3 },
   { href: '/saved-shrinks', label: 'Saved Shrinks', icon: Sparkles },
   { href: '/pricing', label: 'Pricing', icon: DollarSign },
@@ -22,19 +22,19 @@ export default function Sidebar() {
   return (
     <>
       {/* MOBILE HEADER */}
-      <div className="md:hidden fixed top-0 left-0 right-0 bg-[#0a0a0a] z-50 flex items-center justify-between px-4 py-3 border-b border-gray-800">
-        <Link href="/" className="flex items-center gap-2">
-          <img src="/logo.png" alt="PodShrink" className="w-8 h-8" />
-          <span className="text-xl font-bold text-white">PodShrink</span>
+      <div className="md:hidden fixed top-0 left-0 right-0 bg-[#0a0a0a] z-50 flex items-center justify-between px-5 py-4 border-b border-gray-800">
+        <Link href="/" className="flex items-center gap-3">
+          <img src="/logo.png" alt="PodShrink" className="w-10 h-10" />
+          <span className="text-2xl font-bold text-white">PodShrink</span>
         </Link>
-        <button onClick={() => setMobileOpen(!mobileOpen)} className="text-white p-2">
-          {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+        <button onClick={() => setMobileOpen(!mobileOpen)} className="text-blue-500 p-2">
+          {mobileOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
       </div>
 
       {/* MOBILE DRAWER */}
       {mobileOpen && (
-        <div className="md:hidden fixed inset-0 bg-[#0a0a0a] z-40 pt-16 px-6">
+        <div className="md:hidden fixed inset-0 bg-[#0a0a0a] z-40 pt-20 px-6">
           {/* Login */}
           <Link
             href="/login"
