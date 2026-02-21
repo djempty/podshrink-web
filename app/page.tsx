@@ -12,6 +12,22 @@ export default function LandingPage() {
   const router = useRouter();
   const [popularShows, setPopularShows] = useState<DiscoverPodcast[]>([]);
 
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'PodShrink',
+    description: 'AI-powered podcast summaries. Transform hours of podcasts into minutes of narrated audio summaries.',
+    url: 'https://podshrink.com',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: 'https://podshrink.com/shows?search={search_term_string}',
+      },
+      'query-input': 'required name=search_term_string',
+    },
+  };
+
   useEffect(() => {
     api.getDiscoverCategory('popular', 8)
       .then(data => setPopularShows(data.podcasts.slice(0, 8)))
@@ -33,6 +49,12 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-[#121212]">
+      {/* Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      
       {/* Hero Section */}
       <section className="relative max-w-4xl mx-auto px-6 pt-8 md:pt-16 pb-10 md:pb-20 text-center overflow-hidden">
         <ParticleBackground />

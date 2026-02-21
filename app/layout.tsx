@@ -10,7 +10,31 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'PodShrink - AI Podcast Summaries',
-  description: 'Get bite-sized podcast summaries powered by AI',
+  description: 'Get bite-sized podcast summaries powered by AI. Transform hours of podcasts into minutes of narrated audio summaries with flexible duration and premium AI voices.',
+  metadataBase: new URL('https://podshrink.com'),
+  openGraph: {
+    title: 'PodShrink - AI Podcast Summaries',
+    description: 'Get bite-sized podcast summaries powered by AI. Transform hours of podcasts into minutes of narrated audio summaries with flexible duration and premium AI voices.',
+    type: 'website',
+    siteName: 'PodShrink',
+    images: [
+      {
+        url: '/logo.png',
+        width: 1200,
+        height: 630,
+        alt: 'PodShrink - AI Podcast Summaries',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'PodShrink - AI Podcast Summaries',
+    description: 'Get bite-sized podcast summaries powered by AI. Transform hours of podcasts into minutes of narrated audio summaries.',
+    images: ['/logo.png'],
+  },
+  alternates: {
+    canonical: '/',
+  },
 };
 
 export const viewport: Viewport = {
