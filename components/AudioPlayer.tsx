@@ -133,7 +133,7 @@ export default function AudioPlayer() {
             /* PAUSED WITH TRACK: show time + logo center + remaining */
             <div className="flex-1 flex items-center gap-3 min-w-0">
               <span className="text-xs text-gray-400 min-w-[36px]">{formatTime(currentTime)}</span>
-              <div className="flex-1 flex justify-center">
+              <div className="flex-1 flex justify-center -ml-8">
                 <img src="/logo.png" alt="PodShrink" className="h-7 opacity-60" />
               </div>
               <span className="text-xs text-gray-400 min-w-[40px] text-right">-{formatTime(remaining)}</span>
@@ -142,7 +142,7 @@ export default function AudioPlayer() {
             /* NO TRACK: show logo center + 0:00 */
             <div className="flex-1 flex items-center gap-3 min-w-0">
               <span className="text-xs text-gray-500 min-w-[36px]">0:00</span>
-              <div className="flex-1 flex justify-center">
+              <div className="flex-1 flex justify-center -ml-8">
                 <img src="/logo.png" alt="PodShrink" className="h-7 opacity-40" />
               </div>
               <span className="text-xs text-gray-500 min-w-[40px] text-right">0:00</span>

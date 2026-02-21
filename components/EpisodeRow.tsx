@@ -98,11 +98,11 @@ export default function EpisodeRow({ episode, showTitle, showImage, showId, shri
         className="flex items-center gap-2 px-5 py-2 border border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white rounded-md text-sm font-medium transition-colors"
       >
         {isCurrentTrack && isPlaying ? (
-          <><Pause size={14} className="text-purple-400" />Pause</>
+          <><Pause size={14} fill="currentColor" />Pause</>
         ) : isCurrentTrack && currentTime > 0 ? (
-          <><Play size={14} className="text-purple-400" fill="currentColor" />Resume</>
+          <><Play size={14} fill="currentColor" />Resume</>
         ) : (
-          <><Play size={14} className="text-purple-400" fill="currentColor" />Play</>
+          <><Play size={14} fill="currentColor" />Play</>
         )}
       </button>
     );

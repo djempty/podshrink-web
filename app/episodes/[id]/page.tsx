@@ -155,9 +155,9 @@ export default function EpisodePage() {
             className="flex items-center gap-2 px-6 py-2.5 bg-[#2EA84A] hover:bg-[#259A3F] text-white rounded-md text-sm font-medium transition-colors"
           >
             {isShrinkTrack && isPlaying ? (
-              <><Pause size={16} fill="white" /> Pause</>
+              <><Pause size={16} fill="currentColor" /> Pause</>
             ) : isShrinkTrack ? (
-              <><Play size={16} fill="white" /> Resume</>
+              <><Play size={16} fill="currentColor" /> Resume</>
             ) : (
               <><Play size={16} fill="white" /> Play PodShrink</>
             )}
@@ -167,7 +167,7 @@ export default function EpisodePage() {
             className="flex items-center gap-2 px-6 py-2.5 bg-gray-700 hover:bg-gray-600 text-white rounded-md text-sm font-medium transition-colors"
           >
             {isCurrentTrack && isPlaying ? (
-              <><Pause size={16} fill="white" /> Pause</>
+              <><Pause size={16} fill="currentColor" /> Pause</>
             ) : (
               <><Play size={16} fill="white" /> Original</>
             )}
@@ -182,11 +182,11 @@ export default function EpisodePage() {
           className="flex items-center gap-2 px-6 py-2.5 border border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white rounded-md text-sm font-medium transition-colors"
         >
           {isCurrentTrack && isPlaying ? (
-            <><Pause size={16} fill="white" /> Pause</>
+            <><Pause size={16} fill="currentColor" /> Pause</>
           ) : isCurrentTrack ? (
-            <><Play size={16} fill="white" /> Resume</>
+            <><Play size={16} fill="currentColor" /> Resume</>
           ) : (
-            <><Play size={16} fill="white" /> Play</>
+            <><Play size={16} fill="currentColor" /> Play</>
           )}
         </button>
         <button

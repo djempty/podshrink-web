@@ -3,20 +3,20 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { api, DiscoverPodcast } from '@/lib/api';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Flame, Monitor, Newspaper, Users, Laugh, Briefcase, Search, Dumbbell, FlaskConical, Trophy, GraduationCap, LucideIcon } from 'lucide-react';
 
-const CATEGORIES = [
-  { key: 'popular', label: 'Popular', color: 'from-purple-600 to-indigo-700', emoji: '🔥' },
-  { key: 'technology', label: 'Technology', color: 'from-blue-600 to-cyan-700', emoji: '💻' },
-  { key: 'news', label: 'News', color: 'from-red-600 to-orange-700', emoji: '📰' },
-  { key: 'society-culture', label: 'Society & Culture', color: 'from-pink-600 to-rose-700', emoji: '🌍' },
-  { key: 'comedy', label: 'Comedy', color: 'from-yellow-600 to-amber-700', emoji: '😂' },
-  { key: 'business', label: 'Business', color: 'from-green-600 to-emerald-700', emoji: '💼' },
-  { key: 'true-crime', label: 'True Crime', color: 'from-gray-700 to-gray-900', emoji: '🔎' },
-  { key: 'health', label: 'Health & Fitness', color: 'from-teal-600 to-green-700', emoji: '🏋️' },
-  { key: 'science', label: 'Science', color: 'from-violet-600 to-purple-800', emoji: '🔬' },
-  { key: 'sports', label: 'Sports', color: 'from-orange-600 to-red-700', emoji: '⚽' },
-  { key: 'education', label: 'Education', color: 'from-sky-600 to-blue-800', emoji: '📚' },
+const CATEGORIES: { key: string; label: string; color: string; icon: LucideIcon }[] = [
+  { key: 'popular', label: 'Popular', color: 'from-purple-600 to-indigo-700', icon: Flame },
+  { key: 'technology', label: 'Technology', color: 'from-blue-600 to-cyan-700', icon: Monitor },
+  { key: 'news', label: 'News', color: 'from-red-600 to-orange-700', icon: Newspaper },
+  { key: 'society-culture', label: 'Society & Culture', color: 'from-pink-600 to-rose-700', icon: Users },
+  { key: 'comedy', label: 'Comedy', color: 'from-yellow-600 to-amber-700', icon: Laugh },
+  { key: 'business', label: 'Business', color: 'from-green-600 to-emerald-700', icon: Briefcase },
+  { key: 'true-crime', label: 'True Crime', color: 'from-gray-700 to-gray-900', icon: Search },
+  { key: 'health', label: 'Health & Fitness', color: 'from-teal-600 to-green-700', icon: Dumbbell },
+  { key: 'science', label: 'Science', color: 'from-violet-600 to-purple-800', icon: FlaskConical },
+  { key: 'sports', label: 'Sports', color: 'from-orange-600 to-red-700', icon: Trophy },
+  { key: 'education', label: 'Education', color: 'from-sky-600 to-blue-800', icon: GraduationCap },
 ];
 
 export default function CategoriesPage() {
@@ -111,7 +111,7 @@ export default function CategoriesPage() {
             onClick={() => handleCategoryClick(cat.key, cat.label)}
             className={`relative overflow-hidden rounded-xl p-6 text-left bg-gradient-to-br ${cat.color} hover:opacity-90 transition-opacity group`}
           >
-            <span className="text-3xl mb-2 block">{cat.emoji}</span>
+            <cat.icon size={32} className="text-white/80 mb-2" />
             <h2 className="text-white text-xl font-bold">{cat.label}</h2>
             <ChevronRight size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/60 group-hover:text-white transition-colors" />
           </button>
