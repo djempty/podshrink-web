@@ -1,8 +1,6 @@
 import NextAuth, { NextAuthConfig } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import AppleProvider from "next-auth/providers/apple";
-
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 export const authConfig: NextAuthConfig = {
@@ -49,10 +47,11 @@ export const authConfig: NextAuthConfig = {
       clientId: process.env.GOOGLE_CLIENT_ID || "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
     }),
-    AppleProvider({
-      clientId: process.env.APPLE_ID || "",
-      clientSecret: process.env.APPLE_SECRET || "",
-    })
+    // Apple provider - uncomment when credentials are available
+    // AppleProvider({
+    //   clientId: process.env.APPLE_ID || "",
+    //   clientSecret: process.env.APPLE_SECRET || "",
+    // })
   ],
   pages: {
     signIn: '/login',
