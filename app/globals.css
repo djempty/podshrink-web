@@ -56,6 +56,11 @@ body {
   padding-right: 32px;
 }
 
+/* Remove focus outline on player buttons */
+button:focus-visible {
+  outline: none;
+}
+
 /* Prevent iOS zoom on input focus */
 @media screen and (max-width: 768px) {
   input[type="text"],

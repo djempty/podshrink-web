@@ -28,7 +28,7 @@ interface ShrinkPanelProps {
 export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStarted, onShrinkComplete }: ShrinkPanelProps) {
   const { data: session, status: sessionStatus } = useSession();
   const router = useRouter();
-  const [duration, setDuration] = useState(1);
+  const [duration, setDuration] = useState(0);
   const [voiceId, setVoiceId] = useState('');
   const [voices, setVoices] = useState<VoiceOption[]>([]);
   const [status, setStatus] = useState<'idle' | 'processing' | 'complete' | 'error'>('idle');
@@ -57,7 +57,7 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
           return 0;
         });
         setVoices(voiceList);
-        if (voiceList.length > 0 && !voiceId) {
+        if (false) {
           setVoiceId(voiceList[0].voiceId);
         }
       })
@@ -219,7 +219,7 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
             disabled={status === 'processing'}
             className="w-full bg-[#252525] text-white text-sm rounded-md px-3 py-2.5 border border-gray-700 focus:outline-none focus:border-purple-500 shrink-select"
           >
-            <option value="" disabled>Choose duration</option>
+            <option value={0} disabled>Choose duration</option>
             <option value={1}>1 minute</option>
             <option value={5}>5 minutes</option>
             <option value={10}>10 minutes</option>

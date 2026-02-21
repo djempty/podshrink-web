@@ -101,7 +101,7 @@ export default function AudioPlayer() {
             </button>
             <button
               onClick={() => track && (isPlaying ? pause() : play())}
-              className={`transition-colors ${track ? 'text-white hover:text-purple-400' : 'text-gray-600'}`}
+              className={`transition-colors ${track ? 'text-white hover:text-gray-300' : 'text-gray-600'}`}
               disabled={!track}
             >
               {isPlaying ? <Pause size={20} fill="white" /> : <Play size={20} fill={track ? 'white' : '#4B5563'} />}
