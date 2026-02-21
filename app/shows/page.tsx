@@ -45,6 +45,8 @@ export default async function HomePage() {
               id: shrink.id,
               episode: shrink.episode!,
               audioUrl: api.getShrinkAudioUrl(shrink.id),
+              targetDurationMinutes: (shrink as any).targetDurationMinutes || (shrink as any).targetDuration,
+              createdAt: shrink.createdAt,
             }))}
         />
       </div>
