@@ -118,7 +118,7 @@ export default function EpisodeRow({ episode, showTitle, showImage, showId, shri
       <div className="flex-1 min-w-0">
         <p className="text-xs text-gray-500 mb-0.5">{formatRelativeDate(episode.pubDate)}</p>
         <h3 className="text-white font-semibold text-sm leading-tight mb-1 line-clamp-1">{episode.title}</h3>
-        <p className="text-gray-500 text-xs leading-relaxed line-clamp-2">{episode.description || ''}</p>
+        <p className="text-gray-500 text-xs leading-relaxed line-clamp-2 max-w-[75%]">{episode.description || ''}</p>
 
         <div className="flex items-center gap-2 mt-2.5">
           <button

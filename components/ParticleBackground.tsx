@@ -61,8 +61,8 @@ export default function ParticleBackground() {
         y: Math.random() * h(),
         vx: (Math.random() - 0.5) * 0.4,
         vy: (Math.random() - 0.5) * 0.4,
-        size: (Math.random() * 1.8 + 0.5) * depth, // smaller particles far away
-        opacity: (Math.random() * 0.12 + 0.04) * depth,
+        size: (Math.random() * 2.5 + 1) * depth,
+        opacity: (Math.random() * 0.25 + 0.15) * depth,
         color: colors[Math.floor(Math.random() * colors.length)],
         depth,
         angle: Math.random() * Math.PI * 2,
