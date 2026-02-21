@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { api } from '@/lib/api';
 import { Show, Episode } from '@/lib/types';
-import { Heart, Play } from 'lucide-react';
+import { Heart, Play, Pause } from 'lucide-react';
 import EpisodeRow from '@/components/EpisodeRow';
 import ShrinkPanel from '@/components/ShrinkPanel';
 import { useFavorites } from '@/lib/favoritesStore';
@@ -20,7 +20,7 @@ export default function ShowPage() {
   const [shrinkEpisode, setShrinkEpisode] = useState<Episode | null>(null);
   const [shrinkStates, setShrinkStates] = useState<Record<number, { status: 'shrinking' | 'complete'; audioUrl?: string }>>({});
   const { isFavorite, toggle } = useFavorites();
-  const { setTrack, play } = useAudioPlayer();
+  const { track, isPlaying, setTrack, play, pause } = useAudioPlayer();
 
   useEffect(() => {
     Promise.all([api.getShow(showId), api.getEpisodes(showId)])
@@ -37,16 +37,21 @@ export default function ShowPage() {
       .finally(() => setLoading(false));
   }, [showId]);
 
+  const latestEpisode = episodes.length > 0 ? episodes[0] : null;
+  const isLatestPlaying = latestEpisode && track?.id === latestEpisode.id && isPlaying;
+  const isLatestLoaded = latestEpisode && track?.id === latestEpisode.id;
+
   const handlePlayLatest = () => {
-    if (episodes.length === 0) return;
-    const latest = episodes[0];
+    if (!latestEpisode) return;
+    if (isLatestPlaying) { pause(); return; }
+    if (isLatestLoaded) { play(); return; }
     setTrack({
-      id: latest.id,
-      title: latest.title,
+      id: latestEpisode.id,
+      title: latestEpisode.title,
       showTitle: show?.title || '',
-      audioUrl: latest.audioUrl,
-      imageUrl: latest.imageUrl || show?.imageUrl || '',
-      duration: latest.duration || 0,
+      audioUrl: latestEpisode.audioUrl,
+      imageUrl: latestEpisode.imageUrl || show?.imageUrl || '',
+      duration: latestEpisode.duration || 0,
     });
     play();
   };
@@ -108,13 +113,18 @@ export default function ShowPage() {
 
             {/* Actions row */}
             <div className="flex items-center gap-4">
-              {episodes.length > 0 && (
+              {latestEpisode && (
                 <button
                   onClick={handlePlayLatest}
                   className="flex items-center gap-2 px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-full text-sm font-semibold transition-colors"
                 >
-                  <Play size={16} fill="white" />
-                  Latest Episode
+                  {isLatestPlaying ? (
+                    <><Pause size={16} fill="white" />Pause</>
+                  ) : isLatestLoaded ? (
+                    <><Play size={16} fill="white" />Resume</>
+                  ) : (
+                    <><Play size={16} fill="white" />Latest Episode</>
+                  )}
                 </button>
               )}
               <button

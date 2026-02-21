@@ -56,9 +56,11 @@ export default function LandingPage() {
       />
       
       {/* Hero Section */}
-      <section className="relative max-w-4xl mx-auto px-6 pt-8 md:pt-16 pb-10 md:pb-20 text-center overflow-hidden">
-        <ParticleBackground />
-        <div className="relative z-10">
+      <section className="relative px-6 pt-8 md:pt-16 pb-10 md:pb-20 text-center overflow-hidden">
+        <div className="absolute inset-0 w-full h-full">
+          <ParticleBackground />
+        </div>
+        <div className="relative z-10 max-w-4xl mx-auto">
           <div className="inline-flex items-center gap-2 bg-purple-600/20 border border-purple-500/30 rounded-full px-4 py-1.5 mb-8">
             <Sparkles size={14} className="text-purple-400" />
             <span className="text-purple-300 text-sm font-medium">AI-Powered Podcast Summaries</span>

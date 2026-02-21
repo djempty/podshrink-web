@@ -27,16 +27,28 @@ export default function ParticleBackground() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    const getSize = () => {
+      const parent = canvas.parentElement;
+      return {
+        w: parent?.offsetWidth || canvas.offsetWidth || window.innerWidth,
+        h: parent?.offsetHeight || canvas.offsetHeight || 600,
+      };
+    };
+
     const resizeCanvas = () => {
-      canvas.width = canvas.offsetWidth * (window.devicePixelRatio || 1);
-      canvas.height = canvas.offsetHeight * (window.devicePixelRatio || 1);
-      ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
+      const dpr = window.devicePixelRatio || 1;
+      const { w: cw, h: ch } = getSize();
+      canvas.style.width = cw + 'px';
+      canvas.style.height = ch + 'px';
+      canvas.width = cw * dpr;
+      canvas.height = ch * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    const w = () => canvas.offsetWidth;
-    const h = () => canvas.offsetHeight;
+    const w = () => getSize().w;
+    const h = () => getSize().h;
 
     // Create particles — more of them, smaller, for dust-like effect
     const count = 180;
