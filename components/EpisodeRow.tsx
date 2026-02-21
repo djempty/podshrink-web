@@ -74,32 +74,6 @@ export default function EpisodeRow({ episode, showTitle, showImage, showId, shri
     return `${mins}m`;
   };
 
-  const renderPlayButton = () => {
-    if (shrinkState?.status === 'shrinking') {
-      return (
-        <button disabled className="flex items-center gap-2 px-4 py-1.5 bg-purple-600/40 text-purple-300 rounded-md text-xs font-medium cursor-not-allowed">
-          <Loader2 size={12} className="animate-spin" />
-          Shrinking...
-        </button>
-      );
-    }
-    if (shrinkState?.status === 'complete') {
-      return (
-        <button
-          onClick={(e) => { e.stopPropagation(); handlePlayShrink(); }}
-          className="flex items-center gap-1.5 px-4 py-1.5 bg-[#2EA84A] hover:bg-[#259A3F] text-white rounded-md text-xs font-medium transition-colors"
-        >
-          {isShrinkTrack && isPlaying ? (
-            <><Pause size={12} fill="white" />Pause</>
-          ) : (
-            <><Play size={12} fill="white" />PodShrink</>
-          )}
-        </button>
-      );
-    }
-    return null;
-  };
-
   return (
     <div
       onClick={() => router.push(`/episodes/${episode.id}`)}
@@ -131,13 +105,30 @@ export default function EpisodeRow({ episode, showTitle, showImage, showId, shri
               <><Play size={14} fill="white" />Play</>
             )}
           </button>
-          <button
-            onClick={(e) => { e.stopPropagation(); onShrinkClick?.(); }}
-            className="px-5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-sm font-medium transition-colors"
-          >
-            Shrink It!
-          </button>
-          {renderPlayButton()}
+          {shrinkState?.status === 'complete' && shrinkState?.audioUrl ? (
+            <button
+              onClick={(e) => { e.stopPropagation(); handlePlayShrink(); }}
+              className="flex items-center gap-2 px-5 py-2 bg-[#2EA84A] hover:bg-[#259A3F] text-white rounded-md text-sm font-medium transition-colors"
+            >
+              {isShrinkTrack && isPlaying ? (
+                <><Pause size={14} fill="white" />Pause PodShrink</>
+              ) : (
+                <><Play size={14} fill="white" />Play PodShrink</>
+              )}
+            </button>
+          ) : shrinkState?.status === 'shrinking' ? (
+            <button disabled className="flex items-center gap-2 px-5 py-2 bg-purple-600/40 text-purple-300 rounded-md text-sm font-medium cursor-not-allowed">
+              <Loader2 size={14} className="animate-spin" />
+              Shrinking...
+            </button>
+          ) : (
+            <button
+              onClick={(e) => { e.stopPropagation(); onShrinkClick?.(); }}
+              className="px-5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-sm font-medium transition-colors"
+            >
+              Shrink It!
+            </button>
+          )}
         </div>
       </div>
 

@@ -144,19 +144,19 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
 
         switch (shrink.status) {
           case 'queued':
-            setProgress(5);
+            setProgress(prev => Math.min(prev + 1, 18));
             setProgressLabel('Queued...');
             break;
           case 'transcribing':
-            setProgress(20);
+            setProgress(prev => prev < 20 ? 20 : Math.min(prev + 1.5, 48));
             setProgressLabel('Transcribing audio...');
             break;
           case 'scripting':
-            setProgress(50);
+            setProgress(prev => prev < 50 ? 50 : Math.min(prev + 1.5, 73));
             setProgressLabel('Building shrink outline...');
             break;
           case 'generating_audio':
-            setProgress(75);
+            setProgress(prev => prev < 75 ? 75 : Math.min(prev + 0.8, 95));
             setProgressLabel('Creating audio...');
             break;
           case 'complete':
@@ -298,7 +298,7 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
                 <button
                   onClick={handleGenerate}
                   disabled={!voiceId || !duration}
-                  className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-md font-medium transition-colors disabled:opacity-50"
+                  className="w-full py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-md font-semibold text-base transition-colors disabled:opacity-50"
                 >
                   Generate Shrink
                 </button>

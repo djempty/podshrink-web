@@ -1,6 +1,7 @@
 'use client';
 
 import { Sparkles, Play, Pause, Download, Clock } from 'lucide-react';
+import Link from 'next/link';
 import { Episode } from '@/lib/types';
 import { useAudioPlayer } from '@/lib/audioPlayerStore';
 import { resolveAudioUrl } from '@/lib/api';
@@ -19,6 +20,9 @@ export default function RecentShrinks({ shrinks }: RecentShrinksProps) {
   const { track, isPlaying, setTrack, play, pause } = useAudioPlayer();
 
   if (shrinks.length === 0) return null;
+
+  const hasMore = shrinks.length > 10;
+  const displayShrinks = shrinks.slice(0, 10);
 
   const isShrinkPlaying = (shrink: RecentShrinksProps['shrinks'][0]) =>
     track?.id === shrink.id + 200000 && isPlaying;
@@ -60,7 +64,7 @@ export default function RecentShrinks({ shrinks }: RecentShrinksProps) {
         Recently Shrunk
       </h2>
       <div className="space-y-1">
-        {shrinks.map((shrink) => (
+        {displayShrinks.map((shrink) => (
           <div key={shrink.id} className="flex items-center gap-4 py-4 px-4 border-b border-gray-800 hover:bg-[#1a1a1a] transition-colors rounded">
             {/* Thumbnail */}
             <img
@@ -114,6 +118,16 @@ export default function RecentShrinks({ shrinks }: RecentShrinksProps) {
           </div>
         ))}
       </div>
+      {hasMore && (
+        <div className="text-center mt-4">
+          <Link
+            href="/saved-shrinks"
+            className="text-purple-400 hover:text-purple-300 text-sm font-medium transition-colors"
+          >
+            View all Saved Shrinks →
+          </Link>
+        </div>
+      )}
     </section>
   );
 }

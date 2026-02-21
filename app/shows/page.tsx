@@ -40,7 +40,7 @@ export default async function HomePage() {
         <RecentShrinks
           shrinks={recentShrinks
             .filter((shrink) => shrink.status === 'complete' && shrink.episode)
-            .slice(0, 5)
+            .slice(0, 15)
             .map((shrink) => ({
               id: shrink.id,
               episode: shrink.episode!,
