@@ -49,10 +49,10 @@ export const api = {
     fetchAPI<Episode>(`/api/episodes/${id}`),
 
   // Shrinks
-  createShrink: (episodeId: number, targetDuration: number, voiceId: string) =>
+  createShrink: (episodeId: number, targetDuration: number, voiceId: string, userId?: string) =>
     fetchAPI<Shrink>(`/api/episodes/${episodeId}/shrink`, {
       method: 'POST',
-      body: JSON.stringify({ targetDuration, voiceId }),
+      body: JSON.stringify({ targetDuration, voiceId, userId }),
     }),
   
   getShrinkStatus: (episodeId: number, shrinkId: number) =>

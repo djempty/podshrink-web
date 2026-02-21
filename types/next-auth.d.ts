@@ -4,6 +4,10 @@ declare module "next-auth" {
   interface Session {
     user: {
       id: string;
+      plan?: string;
+      shrinkCount?: number;
+      shrinkLimit?: number | null;
+      shrinkCountResetAt?: string;
     } & DefaultSession["user"];
   }
 
@@ -17,5 +21,9 @@ declare module "next-auth" {
 declare module "next-auth/jwt" {
   interface JWT {
     id: string;
+    plan?: string;
+    shrinkCount?: number;
+    shrinkLimit?: number | null;
+    shrinkCountResetAt?: string;
   }
 }

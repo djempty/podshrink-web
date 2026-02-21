@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { X, Play, Pause } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
 import { Episode } from '@/lib/types';
 
@@ -24,6 +26,8 @@ interface ShrinkPanelProps {
 }
 
 export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStarted, onShrinkComplete }: ShrinkPanelProps) {
+  const { data: session, status: sessionStatus } = useSession();
+  const router = useRouter();
   const [duration, setDuration] = useState(1);
   const [voiceId, setVoiceId] = useState('');
   const [voices, setVoices] = useState<VoiceOption[]>([]);
@@ -34,6 +38,12 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
   const [errorMsg, setErrorMsg] = useState('');
   const [previewPlaying, setPreviewPlaying] = useState(false);
   const previewAudioRef = useRef<HTMLAudioElement | null>(null);
+  const [usageInfo, setUsageInfo] = useState<{
+    plan: string;
+    shrinkCount: number;
+    shrinkLimit: number | null;
+    shrinkCountResetAt: string | null;
+  } | null>(null);
 
   // Load voices
   useEffect(() => {
@@ -47,6 +57,23 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
       })
       .catch(() => {});
   }, []);
+
+  // Fetch usage info if logged in
+  useEffect(() => {
+    if (session?.user?.id) {
+      fetch(`${API_URL}/api/auth/me?userId=${session.user.id}`)
+        .then(res => res.json())
+        .then(data => {
+          setUsageInfo({
+            plan: data.plan || 'free',
+            shrinkCount: data.shrinkCount || 0,
+            shrinkLimit: data.shrinkLimit,
+            shrinkCountResetAt: data.shrinkCountResetAt || null
+          });
+        })
+        .catch(() => {});
+    }
+  }, [session]);
 
   // Stop preview when voice changes
   useEffect(() => {
@@ -82,10 +109,22 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
     setProgressLabel('Starting shrink...');
 
     try {
-      const shrink = await api.createShrink(episode.id, duration, voiceId);
+      const shrink = await api.createShrink(episode.id, duration, voiceId, session?.user?.id);
       setShrinkId(shrink.id);
       onShrinkStarted(shrink.id);
       pollStatus(shrink.id);
+      
+      // Refresh usage info after starting shrink
+      if (session?.user?.id) {
+        const res = await fetch(`${API_URL}/api/auth/me?userId=${session.user.id}`);
+        const data = await res.json();
+        setUsageInfo({
+          plan: data.plan || 'free',
+          shrinkCount: data.shrinkCount || 0,
+          shrinkLimit: data.shrinkLimit,
+          shrinkCountResetAt: data.shrinkCountResetAt || null
+        });
+      }
     } catch (err: any) {
       setStatus('error');
       setErrorMsg(err.message || 'Failed to start shrink');
@@ -211,13 +250,66 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
 
         {/* Action button */}
         {status === 'idle' && (
-          <button
-            onClick={handleGenerate}
-            disabled={!voiceId}
-            className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-md font-medium transition-colors disabled:opacity-50"
-          >
-            Generate Shrink
-          </button>
+          <>
+            {/* Not logged in */}
+            {sessionStatus !== 'loading' && !session && (
+              <div className="bg-purple-900/20 border border-purple-700 rounded-lg p-4 text-center">
+                <p className="text-purple-300 text-sm mb-3">Sign up to start shrinking podcasts</p>
+                <button
+                  onClick={() => router.push('/signup')}
+                  className="w-full py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-md font-medium transition-colors"
+                >
+                  Sign Up Free
+                </button>
+              </div>
+            )}
+
+            {/* Logged in but at limit */}
+            {session && usageInfo && usageInfo.shrinkLimit !== null && usageInfo.shrinkCount >= usageInfo.shrinkLimit && (
+              <div className="bg-amber-900/20 border border-amber-700 rounded-lg p-4 text-center">
+                <p className="text-amber-300 text-sm mb-1 font-medium">
+                  You've used all {usageInfo.shrinkLimit} {usageInfo.plan} shrinks this month
+                </p>
+                <p className="text-amber-400/70 text-xs mb-3">
+                  Resets {usageInfo.shrinkCountResetAt ? new Date(usageInfo.shrinkCountResetAt).toLocaleDateString() : 'soon'}
+                </p>
+                <button
+                  onClick={() => router.push('/pricing')}
+                  className="w-full py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-md font-medium transition-colors"
+                >
+                  Upgrade Plan
+                </button>
+              </div>
+            )}
+
+            {/* Logged in and under limit */}
+            {session && usageInfo && (usageInfo.shrinkLimit === null || usageInfo.shrinkCount < usageInfo.shrinkLimit) && (
+              <div>
+                <button
+                  onClick={handleGenerate}
+                  disabled={!voiceId}
+                  className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-md font-medium transition-colors disabled:opacity-50"
+                >
+                  Generate Shrink
+                </button>
+                {usageInfo.shrinkLimit !== null && (
+                  <p className="text-gray-500 text-xs mt-2 text-center">
+                    {usageInfo.shrinkLimit - usageInfo.shrinkCount} of {usageInfo.shrinkLimit} shrinks remaining
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Loading state */}
+            {sessionStatus === 'loading' && (
+              <button
+                disabled
+                className="w-full py-3 bg-purple-600/40 text-purple-300 rounded-md font-medium cursor-not-allowed"
+              >
+                Loading...
+              </button>
+            )}
+          </>
         )}
 
         {status === 'processing' && (

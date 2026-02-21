@@ -2,7 +2,10 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { Check, Zap, Crown, Sparkles } from 'lucide-react';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
 const PLANS = [
   {
@@ -71,12 +74,70 @@ const PLANS = [
 
 export default function PricingPage() {
   const router = useRouter();
+  const { data: session } = useSession();
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
+  const [loading, setLoading] = useState<string | null>(null);
 
   const getPrice = (basePrice: number) => {
     if (basePrice === 0) return 0;
     if (billingCycle === 'annual') return Math.round(basePrice * 0.8 * 100) / 100;
     return basePrice;
+  };
+
+  const handleSubscribe = async (planName: string) => {
+    if (!session?.user?.id) {
+      // Not logged in - redirect to signup with plan
+      router.push(`/signup?plan=${planName.toLowerCase()}`);
+      return;
+    }
+
+    // Logged in - create Stripe checkout session
+    setLoading(planName);
+    try {
+      const response = await fetch(`${API_URL}/api/stripe/create-checkout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          planId: planName.toLowerCase(),
+          userId: session.user.id
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create checkout session');
+      }
+
+      const data = await response.json();
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+      alert('Failed to start checkout. Please try again.');
+      setLoading(null);
+    }
+  };
+
+  const handleManageSubscription = async () => {
+    if (!session?.user?.id) return;
+
+    setLoading('portal');
+    try {
+      const response = await fetch(`${API_URL}/api/stripe/portal?userId=${session.user.id}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to create portal session');
+      }
+
+      const data = await response.json();
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      console.error('Portal error:', error);
+      alert('Failed to open billing portal. Please try again.');
+      setLoading(null);
+    }
   };
 
   return (
@@ -157,10 +218,11 @@ export default function PricingPage() {
               </div>
 
               <button
-                onClick={() => router.push(plan.price === 0 ? '/signup' : '/signup?plan=' + plan.name.toLowerCase())}
-                className={`w-full py-3 rounded-lg font-semibold transition-colors mb-6 ${plan.buttonStyle}`}
+                onClick={() => plan.price === 0 ? router.push('/signup') : handleSubscribe(plan.name)}
+                disabled={loading === plan.name}
+                className={`w-full py-3 rounded-lg font-semibold transition-colors mb-6 disabled:opacity-50 ${plan.buttonStyle}`}
               >
-                {plan.buttonText}
+                {loading === plan.name ? 'Loading...' : plan.buttonText}
               </button>
 
               <div className="flex-1">
@@ -182,6 +244,20 @@ export default function PricingPage() {
             </div>
           ))}
         </div>
+
+        {/* Manage Subscription (for paid users) */}
+        {session?.user?.plan && session.user.plan !== 'free' && (
+          <div className="text-center mb-16">
+            <button
+              onClick={handleManageSubscription}
+              disabled={loading === 'portal'}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gray-800 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
+            >
+              {loading === 'portal' ? 'Loading...' : 'Manage Subscription'}
+            </button>
+            <p className="text-gray-500 text-sm mt-2">Update payment method, view invoices, or cancel</p>
+          </div>
+        )}
 
         {/* FAQ */}
         <div className="max-w-2xl mx-auto">

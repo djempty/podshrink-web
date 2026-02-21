@@ -60,12 +60,29 @@ export const authConfig: NextAuthConfig = {
     error: '/login',
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger }) {
       if (user) {
         token.id = user.id;
         token.email = user.email;
         token.name = user.name;
       }
+      
+      // Fetch user plan info from backend on token creation or update
+      if (token.id && (trigger === 'signIn' || trigger === 'signUp' || !token.plan)) {
+        try {
+          const response = await fetch(`${API_URL}/api/auth/me?userId=${token.id}`);
+          if (response.ok) {
+            const userData = await response.json();
+            token.plan = userData.plan;
+            token.shrinkCount = userData.shrinkCount;
+            token.shrinkLimit = userData.shrinkLimit;
+            token.shrinkCountResetAt = userData.shrinkCountResetAt;
+          }
+        } catch (error) {
+          console.error('Error fetching user plan:', error);
+        }
+      }
+      
       return token;
     },
     async session({ session, token }) {
@@ -73,6 +90,10 @@ export const authConfig: NextAuthConfig = {
         session.user.id = token.id as string;
         session.user.email = token.email as string;
         session.user.name = token.name as string;
+        session.user.plan = token.plan as string;
+        session.user.shrinkCount = token.shrinkCount as number;
+        session.user.shrinkLimit = token.shrinkLimit as number | null;
+        session.user.shrinkCountResetAt = token.shrinkCountResetAt as string;
       }
       return session;
     }
