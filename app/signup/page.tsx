@@ -83,8 +83,8 @@ function SignupForm() {
 
   const planNames: Record<string, string> = {
     free: 'Free Plan',
-    basic: 'Basic Plan',
-    pro: 'Pro Plan',
+    standard: 'Standard Plan — $9.99/mo',
+    pro: 'Pro Plan — $19.99/mo',
   };
 
   return (
