@@ -1,67 +1,123 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Play, Clock, Mic, Zap, Headphones, ArrowRight, Sparkles } from 'lucide-react';
+import { Play, Clock, Mic, Zap, Headphones, ArrowRight, Sparkles, Timer, Brain, Coffee } from 'lucide-react';
 import SearchInput from '@/components/SearchInput';
-
-const DEMO_SHOWS = [
-  { name: 'Joe Rogan Experience', img: 'https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/0b/4e/ea/0b4eea35-48e0-5517-839c-15f9c0112423/mza_10446690937468498498.jpg/200x200bb.png' },
-  { name: 'The Daily', img: 'https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/c4/c6/c0/c4c6c028-bd0d-ef20-1eb5-4d24a498f2ff/mza_15498941692482680498.jpg/200x200bb.png' },
-  { name: 'Huberman Lab', img: 'https://is1-ssl.mzstatic.com/image/thumb/Podcasts116/v4/52/4c/4a/524c4ae3-8a46-85d8-0e53-a74040304245/mza_10313153037793771498.jpg/200x200bb.png' },
-  { name: 'Mel Robbins', img: 'https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/2b/9b/fe/2b9bfe3e-43cf-5543-4fa4-a85b3e0b4c3f/mza_10349476953399498498.jpg/200x200bb.png' },
-];
+import { api, DiscoverPodcast } from '@/lib/api';
 
 export default function LandingPage() {
   const router = useRouter();
-  const [hoveredStep, setHoveredStep] = useState<number | null>(null);
+  const [popularShows, setPopularShows] = useState<DiscoverPodcast[]>([]);
+
+  useEffect(() => {
+    api.getDiscoverCategory('popular', 8)
+      .then(data => setPopularShows(data.podcasts.slice(0, 8)))
+      .catch(() => {});
+  }, []);
+
+  const handleShowClick = async (podcast: DiscoverPodcast) => {
+    if (podcast.feedUrl) {
+      try {
+        const show = await api.addShow(podcast.feedUrl);
+        router.push(`/shows/${show.id}`);
+      } catch {
+        const shows = await api.getShows();
+        const match = shows.find(s => s.title === podcast.title);
+        if (match) router.push(`/shows/${match.id}`);
+      }
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
+    <div className="min-h-screen bg-[#121212]">
       {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        {/* Gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-b from-purple-900/20 via-transparent to-transparent" />
-        <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-purple-600/10 rounded-full blur-3xl" />
+      <section className="max-w-4xl mx-auto px-6 pt-16 pb-20 text-center">
+        <div className="inline-flex items-center gap-2 bg-purple-600/20 border border-purple-500/30 rounded-full px-4 py-1.5 mb-8">
+          <Sparkles size={14} className="text-purple-400" />
+          <span className="text-purple-300 text-sm font-medium">AI-Powered Podcast Summaries</span>
+        </div>
 
-        <div className="relative max-w-4xl mx-auto px-6 pt-16 pb-20 text-center">
-          <div className="inline-flex items-center gap-2 bg-purple-600/20 border border-purple-500/30 rounded-full px-4 py-1.5 mb-8">
-            <Sparkles size={14} className="text-purple-400" />
-            <span className="text-purple-300 text-sm font-medium">AI-Powered Podcast Summaries</span>
+        <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight mb-6">
+          Hours of podcasts.
+          <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
+            Minutes to listen.
+          </span>
+        </h1>
+
+        <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10">
+          PodShrink uses AI to transform full-length podcast episodes into
+          concise, narrated audio summaries. Pick your duration. Pick your voice. Hit play.
+        </p>
+
+        {/* CTA Buttons */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+          <button
+            onClick={() => router.push('/shows')}
+            className="flex items-center gap-2 px-8 py-3.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold text-lg transition-colors"
+          >
+            Browse Shows <ArrowRight size={20} />
+          </button>
+          <button
+            onClick={() => router.push('/categories')}
+            className="flex items-center gap-2 px-8 py-3.5 border border-gray-600 hover:border-purple-500 text-gray-300 hover:text-white rounded-lg font-semibold text-lg transition-colors"
+          >
+            Explore Categories
+          </button>
+        </div>
+
+        {/* Search — larger */}
+        <div className="max-w-xl mx-auto">
+          <SearchInput className="[&_input]:py-3.5 [&_input]:text-base [&_input]:pl-11" />
+        </div>
+      </section>
+
+      {/* Time Is Everything Section */}
+      <section className="border-y border-gray-800 bg-[#0f0f0f]">
+        <div className="max-w-5xl mx-auto px-6 py-20">
+          <div className="max-w-3xl mx-auto text-center mb-14">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              Time is your most valuable asset.
+            </h2>
+            <p className="text-gray-400 text-lg leading-relaxed">
+              The average podcast episode is 45 minutes. You subscribe to 10 shows.
+              That&apos;s over 7 hours a week just to stay current. PodShrink gives you
+              the key insights in a fraction of the time — so you can stay informed
+              without sacrificing your day.
+            </p>
           </div>
 
-          <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight mb-6">
-            Hours of podcasts.
-            <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
-              Minutes to listen.
-            </span>
-          </h1>
-
-          <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10">
-            PodShrink uses AI to transform full-length podcast episodes into
-            concise, narrated audio summaries. Pick your duration. Pick your voice. Hit play.
-          </p>
-
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-            <button
-              onClick={() => router.push('/shows')}
-              className="flex items-center gap-2 px-8 py-3.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold text-lg transition-colors"
-            >
-              Browse Shows <ArrowRight size={20} />
-            </button>
-            <button
-              onClick={() => router.push('/categories')}
-              className="flex items-center gap-2 px-8 py-3.5 border border-gray-600 hover:border-purple-500 text-gray-300 hover:text-white rounded-lg font-semibold text-lg transition-colors"
-            >
-              Explore Categories
-            </button>
-          </div>
-
-          {/* Search */}
-          <div className="max-w-md mx-auto">
-            <SearchInput className="text-base" />
+          <div className="grid sm:grid-cols-3 gap-8">
+            {[
+              {
+                icon: Timer,
+                stat: '90%',
+                label: 'Less time listening',
+                desc: 'A 1-hour episode becomes a 5-minute summary. Get the insights without the filler.',
+              },
+              {
+                icon: Coffee,
+                stat: '7+ hrs',
+                label: 'Saved per week',
+                desc: 'For the average podcast listener, that\'s an extra workday back — every single week.',
+              },
+              {
+                icon: Brain,
+                stat: '100%',
+                label: 'Key takeaways retained',
+                desc: 'Our AI doesn\'t just cut — it distills. Every important point, argument, and insight preserved.',
+              },
+            ].map((item, i) => (
+              <div key={i} className="text-center">
+                <div className="w-14 h-14 rounded-full bg-purple-600/20 flex items-center justify-center mx-auto mb-4">
+                  <item.icon size={24} className="text-purple-400" />
+                </div>
+                <div className="text-3xl font-bold text-white mb-1">{item.stat}</div>
+                <div className="text-purple-400 text-sm font-medium mb-2">{item.label}</div>
+                <p className="text-gray-500 text-sm leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -94,9 +150,7 @@ export default function LandingPage() {
           ].map((step, i) => (
             <div
               key={i}
-              className="relative bg-[#141414] border border-gray-800 rounded-xl p-8 hover:border-purple-500/50 transition-all duration-300 group"
-              onMouseEnter={() => setHoveredStep(i)}
-              onMouseLeave={() => setHoveredStep(null)}
+              className="relative bg-[#1a1a1a] border border-gray-800 rounded-xl p-8 hover:border-purple-500/50 transition-all duration-300 group"
             >
               <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${step.color} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform`}>
                 <step.icon size={24} className="text-white" />
@@ -110,7 +164,7 @@ export default function LandingPage() {
       </section>
 
       {/* Features */}
-      <section className="bg-[#0f0f0f] border-y border-gray-800">
+      <section className="border-y border-gray-800 bg-[#0f0f0f]">
         <div className="max-w-5xl mx-auto px-6 py-20">
           <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-14">Why PodShrink?</h2>
 
@@ -133,7 +187,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Popular Shows Teaser */}
+      {/* Popular Shows */}
       <section className="max-w-5xl mx-auto px-6 py-20">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-2xl md:text-3xl font-bold text-white">Popular Shows</h2>
@@ -145,23 +199,31 @@ export default function LandingPage() {
           </button>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-          {DEMO_SHOWS.map((show, i) => (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5">
+          {popularShows.map((show, i) => (
             <div
-              key={i}
-              onClick={() => router.push('/shows')}
+              key={show.id || i}
+              onClick={() => handleShowClick(show)}
               className="cursor-pointer group"
             >
               <div className="aspect-square rounded-xl overflow-hidden mb-3 bg-[#1a1a1a]">
-                <img
-                  src={show.img}
-                  alt={show.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
+                {show.image ? (
+                  <img
+                    src={show.image}
+                    alt={show.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-gray-600">
+                    <Mic size={32} />
+                  </div>
+                )}
               </div>
               <p className="text-white text-sm font-medium group-hover:text-purple-400 transition-colors line-clamp-2">
-                {show.name}
+                {show.title}
               </p>
+              <p className="text-gray-600 text-xs mt-0.5 line-clamp-1">{show.artist}</p>
             </div>
           ))}
         </div>

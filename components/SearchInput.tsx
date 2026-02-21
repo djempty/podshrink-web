@@ -88,7 +88,7 @@ export default function SearchInput({ className = '' }: { className?: string }) 
 
       {/* Results dropdown */}
       {open && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-[#1a1a1a] border border-gray-700 rounded-lg shadow-xl z-[100] max-h-[400px] overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 mt-1 bg-[#1a1a1a] border border-gray-700 rounded-lg shadow-xl z-[100] max-h-[500px] overflow-y-auto">
           {loading && results.length === 0 && (
             <div className="p-4 text-center text-gray-500 text-sm">Searching...</div>
           )}
@@ -104,7 +104,7 @@ export default function SearchInput({ className = '' }: { className?: string }) 
               <img
                 src={podcast.image || '/logo.png'}
                 alt=""
-                className="w-10 h-10 rounded object-cover flex-shrink-0"
+                className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
               />
               <div className="flex-1 min-w-0">
                 <p className="text-white text-sm font-medium truncate">{podcast.title}</p>
