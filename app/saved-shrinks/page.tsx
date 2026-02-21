@@ -5,7 +5,7 @@ import { api, resolveAudioUrl } from '@/lib/api';
 import { Shrink } from '@/lib/types';
 import { Play, Pause, Download, Clock, Calendar } from 'lucide-react';
 import { useAudioPlayer } from '@/lib/audioPlayerStore';
-import Link from 'next/link';
+import PageHeader from '@/components/PageHeader';
 
 export default function SavedShrinksPage() {
   const [shrinks, setShrinks] = useState<Shrink[]>([]);
@@ -39,9 +39,12 @@ export default function SavedShrinksPage() {
 
   const handleDownload = (shrink: Shrink) => {
     if (!shrink.audioUrl) return;
+    const showTitle = (shrink as any).show?.title || '';
+    const episodeTitle = shrink.episode?.title || `Episode-${shrink.episodeId}`;
+    const safeName = `${showTitle ? showTitle + ' - ' : ''}${episodeTitle} (PodShrink)`.replace(/[^a-zA-Z0-9\s\-()]/g, '').trim();
     const a = document.createElement('a');
     a.href = resolveAudioUrl(shrink.audioUrl);
-    a.download = `podshrink-${shrink.episode?.title || shrink.id}.mp3`;
+    a.download = `${safeName}.mp3`;
     a.click();
   };
 
@@ -60,12 +63,7 @@ export default function SavedShrinksPage() {
 
   return (
     <div className="min-h-screen bg-[#121212]">
-      <header className="flex items-center justify-between px-4 md:px-8 py-4 md:py-6">
-        <h1 className="text-2xl md:text-3xl font-bold text-white">Saved Shrinks</h1>
-        <Link href="/signup" className="px-4 md:px-6 py-2 border border-purple-500 text-purple-400 rounded-md hover:bg-purple-500 hover:text-white transition-colors text-sm font-medium">
-          Sign Up
-        </Link>
-      </header>
+      <PageHeader title="Saved Shrinks" />
 
       <div className="px-4 md:px-8">
         {shrinks.length === 0 ? (
@@ -90,10 +88,12 @@ export default function SavedShrinksPage() {
                     {shrink.episode?.title || `Episode #${shrink.episodeId}`}
                   </p>
                   <p className="text-gray-500 text-xs truncate">{(shrink as any).show?.title || ''}</p>
-                  <div className="flex items-center gap-3 text-xs text-gray-500 mt-1">
-                    <span className="flex items-center gap-1"><Clock size={12} />{(shrink as any).targetDurationMinutes || shrink.targetDuration} min</span>
-                    <span className="flex items-center gap-1"><Calendar size={12} />{formatDate(shrink.createdAt)}</span>
-                    <span className={`font-medium ${shrink.status === 'complete' ? 'text-green-500' : shrink.status === 'error' ? 'text-red-400' : 'text-yellow-500'}`}>
+                  <div className="flex items-center gap-2 text-xs text-gray-500 mt-1 flex-wrap">
+                    <span className="flex items-center gap-1 whitespace-nowrap"><Clock size={11} />{(shrink as any).targetDurationMinutes || shrink.targetDuration}m</span>
+                    <span className="text-gray-700">·</span>
+                    <span className="flex items-center gap-1 whitespace-nowrap">{formatDate(shrink.createdAt)}</span>
+                    <span className="text-gray-700">·</span>
+                    <span className={`font-medium whitespace-nowrap ${shrink.status === 'complete' ? 'text-green-500' : shrink.status === 'error' ? 'text-red-400' : 'text-yellow-500'}`}>
                       {shrink.status}
                     </span>
                   </div>

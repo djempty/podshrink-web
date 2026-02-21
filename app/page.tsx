@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Play, Clock, Mic, Zap, Headphones, ArrowRight, Sparkles, Timer, Brain, Coffee } from 'lucide-react';
 import SearchInput from '@/components/SearchInput';
 import { api, DiscoverPodcast } from '@/lib/api';
+import Footer from '@/components/Footer';
 
 export default function LandingPage() {
   const router = useRouter();
@@ -32,7 +33,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#121212]">
       {/* Hero Section */}
-      <section className="max-w-4xl mx-auto px-6 pt-16 pb-20 text-center">
+      <section className="max-w-4xl mx-auto px-6 pt-8 md:pt-16 pb-10 md:pb-20 text-center">
         <div className="inline-flex items-center gap-2 bg-purple-600/20 border border-purple-500/30 rounded-full px-4 py-1.5 mb-8">
           <Sparkles size={14} className="text-purple-400" />
           <span className="text-purple-300 text-sm font-medium">AI-Powered Podcast Summaries</span>
@@ -61,7 +62,7 @@ export default function LandingPage() {
           </button>
           <button
             onClick={() => router.push('/categories')}
-            className="flex items-center gap-2 px-8 py-3.5 border border-gray-600 hover:border-purple-500 text-gray-300 hover:text-white rounded-lg font-semibold text-lg transition-colors"
+            className="flex items-center gap-2 px-8 py-3.5 border border-blue-500 text-blue-400 hover:bg-blue-500 hover:text-white rounded-lg font-semibold text-lg transition-colors"
           >
             Explore Categories
           </button>
@@ -75,8 +76,8 @@ export default function LandingPage() {
 
       {/* Time Is Everything Section */}
       <section className="border-y border-gray-800 bg-[#0f0f0f]">
-        <div className="max-w-5xl mx-auto px-6 py-20">
-          <div className="max-w-3xl mx-auto text-center mb-14">
+        <div className="max-w-5xl mx-auto px-6 py-10 md:py-20">
+          <div className="max-w-3xl mx-auto text-center mb-8 md:mb-14">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               Time is your most valuable asset.
             </h2>
@@ -123,9 +124,9 @@ export default function LandingPage() {
       </section>
 
       {/* How It Works */}
-      <section className="max-w-5xl mx-auto px-6 py-20">
+      <section className="max-w-5xl mx-auto px-6 py-10 md:py-20">
         <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-4">How It Works</h2>
-        <p className="text-gray-500 text-center mb-14 text-lg">Three steps. Under a minute.</p>
+        <p className="text-gray-500 text-center mb-8 md:mb-14 text-lg">Three steps. Under a minute.</p>
 
         <div className="grid md:grid-cols-3 gap-8">
           {[
@@ -165,8 +166,8 @@ export default function LandingPage() {
 
       {/* Features */}
       <section className="border-y border-gray-800 bg-[#0f0f0f]">
-        <div className="max-w-5xl mx-auto px-6 py-20">
-          <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-14">Why PodShrink?</h2>
+        <div className="max-w-5xl mx-auto px-6 py-10 md:py-20">
+          <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-8 md:mb-14">Why PodShrink?</h2>
 
           <div className="grid sm:grid-cols-2 gap-6">
             {[
@@ -188,7 +189,7 @@ export default function LandingPage() {
       </section>
 
       {/* Popular Shows */}
-      <section className="max-w-5xl mx-auto px-6 py-20">
+      <section className="max-w-5xl mx-auto px-6 py-10 md:py-20">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-2xl md:text-3xl font-bold text-white">Popular Shows</h2>
           <button
@@ -231,7 +232,7 @@ export default function LandingPage() {
 
       {/* Final CTA */}
       <section className="border-t border-gray-800">
-        <div className="max-w-3xl mx-auto px-6 py-20 text-center">
+        <div className="max-w-3xl mx-auto px-6 py-10 md:py-20 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Stop skipping episodes.
           </h2>
@@ -246,6 +247,8 @@ export default function LandingPage() {
           </button>
         </div>
       </section>
+
+      <Footer />
     </div>
   );
 }

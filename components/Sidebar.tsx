@@ -4,13 +4,13 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
-import { Home, Heart, Radio, Grid3x3, DollarSign, Menu, X, LogIn, User, Sparkles, LogOut, UserPlus } from 'lucide-react';
+import { Home, Heart, Radio, Grid3x3, DollarSign, Menu, X, LogIn, User, Sparkles, LogOut, UserPlus, Settings } from 'lucide-react';
 import SearchInput from './SearchInput';
 
 const navItems = [
   { href: '/', label: 'Home', icon: Home },
-  { href: '/favorites', label: 'Favorites', icon: Heart },
   { href: '/shows', label: 'Shows', icon: Radio },
+  { href: '/favorites', label: 'Favorites', icon: Heart },
   { href: '/categories', label: 'Categories', icon: Grid3x3 },
   { href: '/saved-shrinks', label: 'Saved Shrinks', icon: Sparkles },
   { href: '/pricing', label: 'Pricing', icon: DollarSign },
@@ -29,7 +29,7 @@ export default function Sidebar() {
   return (
     <>
       {/* MOBILE HEADER */}
-      <div className="md:hidden fixed top-0 left-0 right-0 bg-[#0a0a0a] z-50 flex items-center justify-between px-5 py-4 border-b border-gray-800">
+      <div className="md:hidden fixed top-0 left-0 right-0 w-full bg-[#0a0a0a] z-50 flex items-center justify-between px-4 py-4 border-b border-gray-800 safe-area-inset">
         <Link href="/" className="flex items-center gap-3">
           <img src="/logo.png" alt="PodShrink" className="w-10 h-10" />
           <span className="text-2xl font-bold text-white">PodShrink</span>
@@ -41,36 +41,14 @@ export default function Sidebar() {
 
       {/* MOBILE DRAWER */}
       {mobileOpen && (
-        <div className="md:hidden fixed inset-0 bg-[#0a0a0a] z-40 pt-20 px-6">
-          {/* Auth Section */}
-          {!loading && !session && (
-            <div className="flex gap-3 mb-4">
-              <Link
-                href="/login"
-                className="flex-1 flex items-center justify-center gap-2 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors"
-                onClick={() => setMobileOpen(false)}
-              >
-                <LogIn size={18} />
-                Login
-              </Link>
-              <Link
-                href="/signup"
-                className="flex-1 flex items-center justify-center gap-2 py-3 bg-[#1a1a1a] hover:bg-[#222] text-white rounded-lg font-medium transition-colors border border-gray-700"
-                onClick={() => setMobileOpen(false)}
-              >
-                <UserPlus size={18} />
-                Sign Up
-              </Link>
-            </div>
-          )}
-
+        <div className="md:hidden fixed inset-0 bg-[#0a0a0a] z-40 pt-20 px-6 flex flex-col">
           {/* Search */}
           <div className="my-4">
-            <SearchInput className="py-1" />
+            <SearchInput className="py-1 [&_input]:text-base" onSelect={() => setMobileOpen(false)} />
           </div>
 
           {/* Nav */}
-          <nav className="mt-4">
+          <nav className="mt-4 flex-1">
             <ul className="space-y-1">
               {navItems.map((item) => {
                 const Icon = item.icon;
@@ -93,29 +71,62 @@ export default function Sidebar() {
             </ul>
           </nav>
 
-          {/* User section at bottom */}
-          {!loading && session && (
-            <div className="absolute bottom-8 left-6 right-6 border-t border-gray-800 pt-4">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center">
-                  <User size={20} className="text-white" />
+          {/* Bottom section */}
+          <div className="pb-8 border-t border-gray-800 pt-4">
+            {!loading && !session && (
+              <div className="flex gap-3">
+                <Link
+                  href="/login"
+                  className="flex-1 flex items-center justify-center gap-2 py-3 border border-blue-500 text-blue-400 hover:bg-blue-500 hover:text-white rounded-lg font-medium transition-colors"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  <LogIn size={18} />
+                  Login
+                </Link>
+                <Link
+                  href="/signup"
+                  className="flex-1 flex items-center justify-center gap-2 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  <UserPlus size={18} />
+                  Sign Up
+                </Link>
+              </div>
+            )}
+
+            {!loading && session && (
+              <div>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center">
+                    <User size={20} className="text-white" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white text-sm font-medium truncate">
+                      {session.user?.name || session.user?.email}
+                    </p>
+                    <p className="text-gray-500 text-xs">Free Plan</p>
+                  </div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-white text-sm font-medium truncate">
-                    {session.user?.name || session.user?.email}
-                  </p>
-                  <p className="text-gray-500 text-xs">Free Plan</p>
+                <div className="flex gap-3">
+                  <Link
+                    href="/account"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-[#1a1a1a] hover:bg-[#222] text-gray-300 rounded-lg font-medium transition-colors"
+                  >
+                    <Settings size={18} />
+                    Account
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-[#1a1a1a] hover:bg-[#222] text-gray-300 rounded-lg font-medium transition-colors"
+                  >
+                    <LogOut size={18} />
+                    Logout
+                  </button>
                 </div>
               </div>
-              <button
-                onClick={handleLogout}
-                className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#1a1a1a] hover:bg-[#222] text-gray-300 rounded-lg font-medium transition-colors"
-              >
-                <LogOut size={18} />
-                Logout
-              </button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       )}
 
@@ -162,18 +173,18 @@ export default function Sidebar() {
           {!loading && !session && (
             <div className="space-y-2">
               <Link
-                href="/login"
-                className="flex items-center justify-center gap-2 px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors text-sm"
-              >
-                <LogIn size={16} />
-                Login
-              </Link>
-              <Link
                 href="/signup"
-                className="flex items-center justify-center gap-2 px-4 py-2.5 bg-[#1a1a1a] hover:bg-[#222] text-white rounded-lg font-medium transition-colors text-sm border border-gray-700"
+                className="flex items-center justify-center gap-2 px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors text-sm"
               >
                 <UserPlus size={16} />
                 Sign Up
+              </Link>
+              <Link
+                href="/login"
+                className="flex items-center justify-center gap-2 px-4 py-2.5 border border-blue-500 text-blue-400 hover:bg-blue-500 hover:text-white rounded-lg font-medium transition-colors text-sm"
+              >
+                <LogIn size={16} />
+                Login
               </Link>
             </div>
           )}
@@ -191,13 +202,22 @@ export default function Sidebar() {
                   <p className="text-gray-500 text-xs">Free Plan</p>
                 </div>
               </div>
-              <button
-                onClick={handleLogout}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-[#1a1a1a] hover:bg-[#222] text-gray-300 rounded-lg text-sm font-medium transition-colors"
-              >
-                <LogOut size={16} />
-                Logout
-              </button>
+              <div className="space-y-2">
+                <Link
+                  href="/account"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-[#1a1a1a] hover:bg-[#222] text-gray-300 rounded-lg text-sm font-medium transition-colors"
+                >
+                  <Settings size={16} />
+                  Account
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-[#1a1a1a] hover:bg-[#222] text-gray-300 rounded-lg text-sm font-medium transition-colors"
+                >
+                  <LogOut size={16} />
+                  Logout
+                </button>
+              </div>
             </div>
           )}
         </div>

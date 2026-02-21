@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { Episode } from '@/lib/types';
-import { Play, Pause, Heart, Loader2 } from 'lucide-react';
+import { Play, Pause, Bookmark, Loader2 } from 'lucide-react';
 import { useAudioPlayer } from '@/lib/audioPlayerStore';
 import { resolveAudioUrl } from '@/lib/api';
 import { useFavorites } from '@/lib/favoritesStore';
@@ -140,15 +140,16 @@ export default function EpisodeRow({ episode, showTitle, showImage, showId, shri
         </div>
       </div>
 
-      {/* Favorite heart — always visible, aligned with description top */}
+      {/* Save/bookmark — top right */}
       {effectiveShowId && (
         <button
           onClick={(e) => { e.stopPropagation(); toggle(effectiveShowId); }}
-          className="absolute top-[88px] md:top-[72px] right-4 p-2"
+          className="absolute top-5 md:top-6 right-4 p-2 rounded-full hover:bg-[#252525] transition-colors"
+          title={isFavorite(effectiveShowId) ? 'Remove from favorites' : 'Add to favorites'}
         >
-          <Heart
-            size={20}
-            className={isFavorite(effectiveShowId) ? 'text-blue-500 fill-blue-500' : 'text-blue-500'}
+          <Bookmark
+            size={18}
+            className={isFavorite(effectiveShowId) ? 'text-purple-400 fill-purple-400' : 'text-gray-500 hover:text-gray-300'}
           />
         </button>
       )}

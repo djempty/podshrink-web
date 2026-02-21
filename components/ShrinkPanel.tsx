@@ -50,6 +50,12 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
     api.getVoices()
       .then((data: any) => {
         const voiceList = Array.isArray(data) ? data : data.voices || [];
+        // Sort Brian to the top
+        voiceList.sort((a: VoiceOption, b: VoiceOption) => {
+          if (a.name.toLowerCase() === 'brian') return -1;
+          if (b.name.toLowerCase() === 'brian') return 1;
+          return 0;
+        });
         setVoices(voiceList);
         if (voiceList.length > 0 && !voiceId) {
           setVoiceId(voiceList[0].voiceId);
@@ -179,10 +185,10 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
   return (
     <div className="fixed inset-y-0 right-0 w-[320px] bg-[#1a1a1a] border-l border-gray-800 z-50 flex flex-col shadow-2xl">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-800">
-        <div className="flex items-center gap-2">
-          <img src="/logo.png" alt="PodShrink" className="w-6 h-6" />
-          <h2 className="text-white font-semibold">Shrink Settings</h2>
+      <div className="flex items-center justify-between p-5 border-b border-gray-800">
+        <div className="flex items-center gap-2.5">
+          <img src="/logo.png" alt="PodShrink" className="w-8 h-8" />
+          <h2 className="text-white font-semibold text-lg">Shrink Settings</h2>
         </div>
         <button onClick={onClose} className="text-gray-400 hover:text-white">
           <X size={20} />
@@ -193,7 +199,7 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
       <div className="flex-1 overflow-y-auto p-4 space-y-5">
         {/* Episode info */}
         <div>
-          <p className="text-gray-500 text-xs mb-2">Shrinking:</p>
+          <p className="text-gray-400 text-sm font-medium mb-2">Shrinking:</p>
           <div className="flex items-center gap-3">
             <img
               src={episode.imageUrl || showImage || '/logo.png'}
@@ -206,11 +212,12 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
 
         {/* Duration */}
         <div>
+          <label className="block text-gray-400 text-xs mb-1.5">Choose a duration</label>
           <select
             value={duration}
             onChange={(e) => setDuration(Number(e.target.value))}
             disabled={status === 'processing'}
-            className="w-full bg-[#252525] text-white text-sm rounded-md px-3 py-2.5 border border-gray-700 focus:outline-none focus:border-purple-500"
+            className="w-full bg-[#252525] text-white text-sm rounded-md px-3 py-2.5 border border-gray-700 focus:outline-none focus:border-purple-500 shrink-select"
           >
             <option value={1}>1 min (testing)</option>
             <option value={5}>5 minutes</option>
@@ -220,11 +227,12 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
 
         {/* Voice */}
         <div>
+          <label className="block text-gray-400 text-xs mb-1.5">Choose a voice</label>
           <select
             value={voiceId}
             onChange={(e) => setVoiceId(e.target.value)}
             disabled={status === 'processing'}
-            className="w-full bg-[#252525] text-white text-sm rounded-md px-3 py-2.5 border border-gray-700 focus:outline-none focus:border-purple-500"
+            className="w-full bg-[#252525] text-white text-sm rounded-md px-3 py-2.5 border border-gray-700 focus:outline-none focus:border-purple-500 shrink-select"
           >
             {voices.map((v) => (
               <option key={v.voiceId} value={v.voiceId}>

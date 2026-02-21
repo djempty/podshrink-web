@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Search, X } from 'lucide-react';
 import { api, DiscoverPodcast } from '@/lib/api';
 
-export default function SearchInput({ className = '' }: { className?: string }) {
+export default function SearchInput({ className = '', onSelect }: { className?: string; onSelect?: () => void }) {
   const router = useRouter();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<DiscoverPodcast[]>([]);
@@ -56,6 +56,7 @@ export default function SearchInput({ className = '' }: { className?: string }) 
   const handleSelect = async (podcast: DiscoverPodcast) => {
     setOpen(false);
     setQuery('');
+    onSelect?.();
     if (podcast.feedUrl) {
       try {
         const show = await api.addShow(podcast.feedUrl);
@@ -78,7 +79,7 @@ export default function SearchInput({ className = '' }: { className?: string }) 
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         onFocus={() => results.length > 0 && setOpen(true)}
-        className="w-full bg-[#1a1a1a] text-white text-sm rounded-md pl-9 pr-8 py-2 border border-gray-800 focus:outline-none focus:border-purple-500"
+        className="w-full bg-[#1a1a1a] text-white text-base md:text-sm rounded-md pl-9 pr-8 py-2 border border-gray-800 focus:outline-none focus:border-purple-500"
       />
       {query && (
         <button onClick={() => { setQuery(''); setOpen(false); }} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white">

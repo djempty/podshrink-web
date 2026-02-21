@@ -4,9 +4,9 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { api } from '@/lib/api';
 import { Show, Episode } from '@/lib/types';
-import Link from 'next/link';
 import EpisodeRow from '@/components/EpisodeRow';
 import ShrinkPanel from '@/components/ShrinkPanel';
+import PageHeader from '@/components/PageHeader';
 
 export default function ShowPage() {
   const params = useParams();
@@ -20,7 +20,16 @@ export default function ShowPage() {
 
   useEffect(() => {
     Promise.all([api.getShow(showId), api.getEpisodes(showId)])
-      .then(([s, e]) => { setShow(s); setEpisodes(e); })
+      .then(([s, e]) => {
+        setShow(s);
+        // Sort episodes by release date, newest first
+        const sorted = [...e].sort((a, b) => {
+          const dateA = a.pubDate ? new Date(a.pubDate).getTime() : 0;
+          const dateB = b.pubDate ? new Date(b.pubDate).getTime() : 0;
+          return dateB - dateA;
+        });
+        setEpisodes(sorted);
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [showId]);
@@ -35,16 +44,7 @@ export default function ShowPage() {
 
   return (
     <div className="min-h-screen bg-[#121212]">
-      {/* Header */}
-      <header className="flex items-center justify-between px-4 md:px-8 py-4 md:py-6">
-        <h1 className="text-2xl md:text-3xl font-bold text-white">Episodes</h1>
-        <Link
-          href="/signup"
-          className="px-4 md:px-6 py-2 border border-purple-500 text-purple-400 rounded-md hover:bg-purple-500 hover:text-white transition-colors text-sm font-medium"
-        >
-          Sign Up
-        </Link>
-      </header>
+      <PageHeader title="Episodes" />
 
       {/* Episodes List */}
       <div className="px-2 md:px-4">
