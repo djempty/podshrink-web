@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
-import { Home, Heart, Radio, Grid3x3, DollarSign, Menu, X, LogIn, User, Sparkles, LogOut, UserPlus, Settings } from 'lucide-react';
+import { Home, Heart, Radio, Grid3x3, DollarSign, Menu, X, LogIn, User, Sparkles, LogOut, UserPlus, Settings, HelpCircle } from 'lucide-react';
 import SearchInput from './SearchInput';
 
 const navItems = [
@@ -14,6 +14,7 @@ const navItems = [
   { href: '/categories', label: 'Categories', icon: Grid3x3 },
   { href: '/saved-shrinks', label: 'Saved Shrinks', icon: Sparkles },
   { href: '/pricing', label: 'Pricing', icon: DollarSign },
+  { href: '/support', label: 'Support', icon: HelpCircle },
 ];
 
 export default function Sidebar() {

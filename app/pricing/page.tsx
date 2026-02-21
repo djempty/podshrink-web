@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { Check, Zap, Crown, Sparkles } from 'lucide-react';
+import { Check, Zap, Crown, Sparkles, Tag, ChevronDown } from 'lucide-react';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
@@ -77,6 +77,8 @@ export default function PricingPage() {
   const { data: session } = useSession();
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
   const [loading, setLoading] = useState<string | null>(null);
+  const [showPromo, setShowPromo] = useState(false);
+  const [promoCode, setPromoCode] = useState('');
 
   const getPrice = (basePrice: number) => {
     if (basePrice === 0) return 0;
@@ -99,7 +101,8 @@ export default function PricingPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           planId: planName.toLowerCase(),
-          userId: session.user.id
+          userId: session.user.id,
+          ...(promoCode.trim() && { promoCode: promoCode.trim() })
         })
       });
 
@@ -175,6 +178,32 @@ export default function PricingPage() {
               Annual
               <span className="text-xs bg-green-600 text-white px-2 py-0.5 rounded-full">Save 20%</span>
             </button>
+          </div>
+
+          {/* Promo Code */}
+          <div className="mt-4">
+            {!showPromo ? (
+              <button
+                onClick={() => setShowPromo(true)}
+                className="text-purple-400 hover:text-purple-300 text-sm font-medium flex items-center gap-1 mx-auto"
+              >
+                <Tag size={14} />
+                Have a promo code?
+              </button>
+            ) : (
+              <div className="inline-flex items-center gap-2 bg-[#1a1a1a] border border-gray-800 rounded-lg p-1">
+                <input
+                  type="text"
+                  value={promoCode}
+                  onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                  placeholder="Enter code"
+                  className="bg-transparent text-white text-sm px-3 py-1.5 focus:outline-none placeholder-gray-500 w-36"
+                />
+                {promoCode && (
+                  <span className="text-green-400 text-xs font-medium pr-2">✓ Applied at checkout</span>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
