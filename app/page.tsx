@@ -80,16 +80,16 @@ export default function LandingPage() {
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 w-full max-w-md mx-auto sm:max-w-none">
             <button
               onClick={() => router.push('/shows')}
-              className="flex items-center gap-2 px-8 py-3.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold text-lg transition-colors"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold text-lg transition-colors"
             >
               Browse Shows <ArrowRight size={20} />
             </button>
             <button
               onClick={() => router.push('/categories')}
-              className="flex items-center gap-2 px-8 py-3.5 border border-blue-500 text-blue-400 hover:bg-blue-500 hover:text-white rounded-lg font-semibold text-lg transition-colors"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3.5 border border-blue-500 text-blue-400 hover:bg-blue-500 hover:text-white rounded-lg font-semibold text-lg transition-colors"
             >
               Explore Categories
             </button>
