@@ -11,6 +11,14 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'PodShrink - AI Podcast Summaries',
   description: 'Get bite-sized podcast summaries powered by AI. Transform hours of podcasts into minutes of narrated audio summaries with flexible duration and premium AI voices.',
+  icons: {
+    icon: [
+      { url: '/favicon-32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon-16.png', sizes: '16x16', type: 'image/png' },
+    ],
+    apple: '/apple-touch-icon.png',
+    shortcut: '/favicon.ico',
+  },
   metadataBase: new URL('https://podshrink.com'),
   openGraph: {
     title: 'PodShrink - AI Podcast Summaries',
