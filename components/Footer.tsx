@@ -31,7 +31,7 @@ export default function Footer() {
           <div>
             <h3 className="text-white text-sm font-semibold mb-3">Support</h3>
             <ul className="space-y-2">
-              <li><a href="mailto:support@podshrink.com" className="text-gray-500 hover:text-white text-sm transition-colors">Contact Us</a></li>
+              <li><Link href="/support" className="text-gray-500 hover:text-white text-sm transition-colors">Contact Us</Link></li>
             </ul>
           </div>
 

@@ -2,10 +2,9 @@
 
 import { useRouter } from 'next/navigation';
 import { Episode } from '@/lib/types';
-import { Play, Pause, Bookmark, Loader2 } from 'lucide-react';
+import { Play, Pause, Loader2 } from 'lucide-react';
 import { useAudioPlayer } from '@/lib/audioPlayerStore';
 import { resolveAudioUrl } from '@/lib/api';
-import { useFavorites } from '@/lib/favoritesStore';
 
 interface EpisodeRowProps {
   episode: Episode;
@@ -19,9 +18,7 @@ interface EpisodeRowProps {
 export default function EpisodeRow({ episode, showTitle, showImage, showId, shrinkState, onShrinkClick }: EpisodeRowProps) {
   const router = useRouter();
   const { track, isPlaying, currentTime, setTrack, play, pause } = useAudioPlayer();
-  const { isFavorite, toggle } = useFavorites();
 
-  const effectiveShowId = showId || episode.showId || episode.show?.id;
   const isCurrentTrack = track?.id === episode.id;
   const isShrinkTrack = track?.id === episode.id + 100000;
 
@@ -55,23 +52,33 @@ export default function EpisodeRow({ episode, showTitle, showImage, showId, shri
     }
   };
 
-  const formatDate = (dateString: string) => {
+  const formatRelativeDate = (dateString: string) => {
     if (!dateString) return '';
     const d = new Date(dateString);
-    if (isNaN(d.getTime())) return '';
-    return `${d.getMonth() + 1}/${d.getDate().toString().padStart(2, '0')}/${d.getFullYear().toString().slice(-2)}`;
+    const now = new Date();
+    const diffMs = now.getTime() - d.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    if (diffDays === 0) return 'Today';
+    if (diffDays === 1) return '1d ago';
+    if (diffDays < 7) return `${diffDays}d ago`;
+    if (diffDays < 30) return `${Math.floor(diffDays / 7)}w ago`;
+    if (diffDays < 365) return `${Math.floor(diffDays / 30)}mo ago`;
+    return `${Math.floor(diffDays / 365)}y ago`;
   };
 
   const formatDuration = (seconds: number) => {
     if (!seconds) return '';
-    return `${Math.floor(seconds / 60)} mins`;
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    if (hrs > 0) return `${hrs}h ${mins}m`;
+    return `${mins}m`;
   };
 
   const renderPlayButton = () => {
     if (shrinkState?.status === 'shrinking') {
       return (
-        <button disabled className="flex items-center gap-2 px-5 py-2 bg-purple-600/40 text-purple-300 rounded-md text-sm font-medium cursor-not-allowed">
-          <Loader2 size={14} className="animate-spin" />
+        <button disabled className="flex items-center gap-2 px-4 py-1.5 bg-purple-600/40 text-purple-300 rounded-md text-xs font-medium cursor-not-allowed">
+          <Loader2 size={12} className="animate-spin" />
           Shrinking...
         </button>
       );
@@ -80,78 +87,65 @@ export default function EpisodeRow({ episode, showTitle, showImage, showId, shri
       return (
         <button
           onClick={(e) => { e.stopPropagation(); handlePlayShrink(); }}
-          className="flex items-center gap-2 px-5 py-2 bg-[#2EA84A] hover:bg-[#259A3F] text-white rounded-md text-sm font-medium transition-colors"
+          className="flex items-center gap-1.5 px-4 py-1.5 bg-[#2EA84A] hover:bg-[#259A3F] text-white rounded-md text-xs font-medium transition-colors"
         >
           {isShrinkTrack && isPlaying ? (
-            <><Pause size={14} fill="white" />Pause</>
-          ) : isShrinkTrack ? (
-            <><Play size={14} fill="white" />Resume</>
+            <><Pause size={12} fill="white" />Pause</>
           ) : (
-            <><Play size={14} fill="white" />Play PodShrink</>
+            <><Play size={12} fill="white" />PodShrink</>
           )}
         </button>
       );
     }
-    return (
-      <button
-        onClick={(e) => { e.stopPropagation(); handlePlay(); }}
-        className="flex items-center gap-2 px-5 py-2 border border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white rounded-md text-sm font-medium transition-colors"
-      >
-        {isCurrentTrack && isPlaying ? (
-          <><Pause size={14} fill="currentColor" />Pause</>
-        ) : isCurrentTrack && currentTime > 0 ? (
-          <><Play size={14} fill="currentColor" />Resume</>
-        ) : (
-          <><Play size={14} fill="currentColor" />Play</>
-        )}
-      </button>
-    );
+    return null;
   };
 
   return (
     <div
       onClick={() => router.push(`/episodes/${episode.id}`)}
-      className="group flex items-start gap-3 md:gap-4 py-5 md:py-6 px-3 md:px-4 border-b border-gray-800 hover:bg-[#1a1a1a] transition-colors relative cursor-pointer"
+      className="group flex items-start gap-3 md:gap-4 py-4 px-3 md:px-4 border-b border-gray-800/60 hover:bg-[#1a1a1a] transition-colors cursor-pointer"
     >
       {/* Thumbnail */}
-      <div className="hidden md:block flex-shrink-0">
+      <div className="flex-shrink-0">
         <img
           src={episode.imageUrl || showImage || '/logo.png'}
           alt={episode.title}
-          className="w-[100px] h-[100px] rounded-lg object-cover"
+          className="w-[56px] h-[56px] md:w-[72px] md:h-[72px] rounded-lg object-cover"
         />
       </div>
 
-      {/* Episode Info — 75% width */}
-      <div className="flex-1 min-w-0 max-w-[75%]">
-        <p className="text-xs text-gray-500 mb-1">{formatDate(episode.pubDate)}</p>
-        <h3 className="text-white font-semibold text-base leading-tight mb-1">{episode.title}</h3>
-        <p className="text-gray-500 text-xs mb-2">{formatDuration(episode.duration)}</p>
-        <p className="text-gray-400 text-sm leading-relaxed line-clamp-3">{episode.description || ''}</p>
+      {/* Episode Info */}
+      <div className="flex-1 min-w-0">
+        <p className="text-xs text-gray-500 mb-0.5">{formatRelativeDate(episode.pubDate)}</p>
+        <h3 className="text-white font-semibold text-sm leading-tight mb-1 line-clamp-1">{episode.title}</h3>
+        <p className="text-gray-500 text-xs leading-relaxed line-clamp-2">{episode.description || ''}</p>
 
-        <div className="flex items-center gap-3 mt-4">
-          {renderPlayButton()}
+        <div className="flex items-center gap-2 mt-2.5">
+          <button
+            onClick={(e) => { e.stopPropagation(); handlePlay(); }}
+            className="flex items-center gap-1.5 px-4 py-1.5 border border-purple-500/60 text-purple-400 hover:bg-purple-500 hover:text-white rounded-md text-xs font-medium transition-colors"
+          >
+            {isCurrentTrack && isPlaying ? (
+              <><Pause size={12} fill="currentColor" />Pause</>
+            ) : (
+              <><Play size={12} fill="currentColor" />Play</>
+            )}
+          </button>
           <button
             onClick={(e) => { e.stopPropagation(); onShrinkClick?.(); }}
-            className="px-5 py-2 border border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white rounded-md text-sm font-medium transition-colors"
+            className="px-4 py-1.5 border border-purple-500/60 text-purple-400 hover:bg-purple-500 hover:text-white rounded-md text-xs font-medium transition-colors"
           >
             Shrink It!
           </button>
+          {renderPlayButton()}
         </div>
       </div>
 
-      {/* Save/bookmark — top right */}
-      {effectiveShowId && (
-        <button
-          onClick={(e) => { e.stopPropagation(); toggle(effectiveShowId); }}
-          className="absolute top-5 md:top-6 right-4 p-2 rounded-full hover:bg-[#252525] transition-colors"
-          title={isFavorite(effectiveShowId) ? 'Remove from favorites' : 'Add to favorites'}
-        >
-          <Bookmark
-            size={18}
-            className={isFavorite(effectiveShowId) ? 'text-purple-400 fill-purple-400' : 'text-gray-500 hover:text-gray-300'}
-          />
-        </button>
+      {/* Duration — right side */}
+      {episode.duration > 0 && (
+        <div className="flex-shrink-0 text-right self-center">
+          <span className="text-gray-500 text-sm">{formatDuration(episode.duration)}</span>
+        </div>
       )}
     </div>
   );

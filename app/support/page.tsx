@@ -29,6 +29,10 @@ const FAQ = [
     q: 'What happens when I hit my monthly limit?',
     a: 'You can still browse podcasts and listen to previously saved shrinks. To generate new ones, wait for your monthly reset or upgrade your plan.',
   },
+  {
+    q: 'What if my shrink times out or never finishes?',
+    a: 'Only fully completed shrinks count toward your monthly total. If a shrink times out or fails, it won\'t use up one of your shrinks. Just refresh the page and try again — if the issue persists, try a shorter duration or contact support.',
+  },
 ];
 
 export default function SupportPage() {
