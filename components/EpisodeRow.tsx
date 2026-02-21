@@ -123,17 +123,17 @@ export default function EpisodeRow({ episode, showTitle, showImage, showId, shri
         <div className="flex items-center gap-2 mt-2.5">
           <button
             onClick={(e) => { e.stopPropagation(); handlePlay(); }}
-            className="flex items-center gap-1.5 px-4 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-xs font-medium transition-colors"
+            className="flex items-center gap-2 px-5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-sm font-medium transition-colors"
           >
             {isCurrentTrack && isPlaying ? (
-              <><Pause size={12} fill="white" />Pause</>
+              <><Pause size={14} fill="white" />Pause</>
             ) : (
-              <><Play size={12} fill="white" />Play</>
+              <><Play size={14} fill="white" />Play</>
             )}
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); onShrinkClick?.(); }}
-            className="px-4 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-xs font-medium transition-colors"
+            className="px-5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-sm font-medium transition-colors"
           >
             Shrink It!
           </button>

@@ -292,17 +292,17 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
               </div>
             )}
 
-            {/* Logged in and under limit */}
-            {session && usageInfo && (usageInfo.shrinkLimit === null || usageInfo.shrinkCount < usageInfo.shrinkLimit) && (
+            {/* Logged in and under limit (or usageInfo not loaded yet) */}
+            {session && (!usageInfo || usageInfo.shrinkLimit === null || usageInfo.shrinkLimit === undefined || usageInfo.shrinkCount < usageInfo.shrinkLimit) && (
               <div>
                 <button
                   onClick={handleGenerate}
-                  disabled={!voiceId}
+                  disabled={!voiceId || !duration}
                   className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-md font-medium transition-colors disabled:opacity-50"
                 >
                   Generate Shrink
                 </button>
-                {usageInfo.shrinkLimit !== null && (
+                {usageInfo && usageInfo.shrinkLimit !== null && usageInfo.shrinkLimit !== undefined && (
                   <p className="text-gray-500 text-xs mt-2 text-center">
                     {usageInfo.shrinkLimit - usageInfo.shrinkCount} of {usageInfo.shrinkLimit} shrinks remaining
                   </p>
