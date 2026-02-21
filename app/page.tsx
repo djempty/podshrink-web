@@ -6,6 +6,7 @@ import { Play, Clock, Mic, Zap, Headphones, ArrowRight, Sparkles, Timer, Brain, 
 import SearchInput from '@/components/SearchInput';
 import { api, DiscoverPodcast } from '@/lib/api';
 import Footer from '@/components/Footer';
+import ParticleBackground from '@/components/ParticleBackground';
 
 export default function LandingPage() {
   const router = useRouter();
@@ -33,44 +34,47 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#121212]">
       {/* Hero Section */}
-      <section className="max-w-4xl mx-auto px-6 pt-8 md:pt-16 pb-10 md:pb-20 text-center">
-        <div className="inline-flex items-center gap-2 bg-purple-600/20 border border-purple-500/30 rounded-full px-4 py-1.5 mb-8">
-          <Sparkles size={14} className="text-purple-400" />
-          <span className="text-purple-300 text-sm font-medium">AI-Powered Podcast Summaries</span>
-        </div>
+      <section className="relative max-w-4xl mx-auto px-6 pt-8 md:pt-16 pb-10 md:pb-20 text-center overflow-hidden">
+        <ParticleBackground />
+        <div className="relative z-10">
+          <div className="inline-flex items-center gap-2 bg-purple-600/20 border border-purple-500/30 rounded-full px-4 py-1.5 mb-8">
+            <Sparkles size={14} className="text-purple-400" />
+            <span className="text-purple-300 text-sm font-medium">AI-Powered Podcast Summaries</span>
+          </div>
 
-        <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight mb-6">
-          Hours of podcasts.
-          <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
-            Minutes to listen.
-          </span>
-        </h1>
+          <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight mb-6">
+            Hours of podcasts.
+            <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
+              Minutes to listen.
+            </span>
+          </h1>
 
-        <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10">
-          PodShrink uses AI to transform full-length podcast episodes into
-          concise, narrated audio summaries. Pick your duration. Pick your voice. Hit play.
-        </p>
+          <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10">
+            PodShrink uses AI to transform full-length podcast episodes into
+            concise, narrated audio summaries. Pick your duration. Pick your voice. Hit play.
+          </p>
 
-        {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-          <button
-            onClick={() => router.push('/shows')}
-            className="flex items-center gap-2 px-8 py-3.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold text-lg transition-colors"
-          >
-            Browse Shows <ArrowRight size={20} />
-          </button>
-          <button
-            onClick={() => router.push('/categories')}
-            className="flex items-center gap-2 px-8 py-3.5 border border-blue-500 text-blue-400 hover:bg-blue-500 hover:text-white rounded-lg font-semibold text-lg transition-colors"
-          >
-            Explore Categories
-          </button>
-        </div>
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+            <button
+              onClick={() => router.push('/shows')}
+              className="flex items-center gap-2 px-8 py-3.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold text-lg transition-colors"
+            >
+              Browse Shows <ArrowRight size={20} />
+            </button>
+            <button
+              onClick={() => router.push('/categories')}
+              className="flex items-center gap-2 px-8 py-3.5 border border-blue-500 text-blue-400 hover:bg-blue-500 hover:text-white rounded-lg font-semibold text-lg transition-colors"
+            >
+              Explore Categories
+            </button>
+          </div>
 
-        {/* Search — larger */}
-        <div className="max-w-xl mx-auto">
-          <SearchInput className="[&_input]:py-3.5 [&_input]:text-base [&_input]:pl-11" />
+          {/* Search — larger */}
+          <div className="max-w-xl mx-auto">
+            <SearchInput className="[&_input]:py-3.5 [&_input]:text-base [&_input]:pl-11" />
+          </div>
         </div>
       </section>
 
