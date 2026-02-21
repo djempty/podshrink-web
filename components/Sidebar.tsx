@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Heart, Radio, Grid3x3, DollarSign, Menu, X, LogIn, User, Sparkles } from 'lucide-react';
+import { useSession, signOut } from 'next-auth/react';
+import { Home, Heart, Radio, Grid3x3, DollarSign, Menu, X, LogIn, User, Sparkles, LogOut, UserPlus } from 'lucide-react';
 import SearchInput from './SearchInput';
 
 const navItems = [
@@ -18,6 +19,12 @@ const navItems = [
 export default function Sidebar() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { data: session, status } = useSession();
+  const loading = status === 'loading';
+
+  const handleLogout = async () => {
+    await signOut({ callbackUrl: '/' });
+  };
 
   return (
     <>
@@ -35,15 +42,27 @@ export default function Sidebar() {
       {/* MOBILE DRAWER */}
       {mobileOpen && (
         <div className="md:hidden fixed inset-0 bg-[#0a0a0a] z-40 pt-20 px-6">
-          {/* Login */}
-          <Link
-            href="/login"
-            className="flex items-center gap-3 py-3 text-white text-lg"
-            onClick={() => setMobileOpen(false)}
-          >
-            <LogIn size={20} className="text-blue-500" />
-            Login
-          </Link>
+          {/* Auth Section */}
+          {!loading && !session && (
+            <div className="flex gap-3 mb-4">
+              <Link
+                href="/login"
+                className="flex-1 flex items-center justify-center gap-2 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors"
+                onClick={() => setMobileOpen(false)}
+              >
+                <LogIn size={18} />
+                Login
+              </Link>
+              <Link
+                href="/signup"
+                className="flex-1 flex items-center justify-center gap-2 py-3 bg-[#1a1a1a] hover:bg-[#222] text-white rounded-lg font-medium transition-colors border border-gray-700"
+                onClick={() => setMobileOpen(false)}
+              >
+                <UserPlus size={18} />
+                Sign Up
+              </Link>
+            </div>
+          )}
 
           {/* Search */}
           <div className="my-4">
@@ -75,15 +94,28 @@ export default function Sidebar() {
           </nav>
 
           {/* User section at bottom */}
-          <div className="absolute bottom-8 left-6 right-6 flex items-center gap-3 py-4 border-t border-gray-800">
-            <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center">
-              <User size={20} className="text-white" />
+          {!loading && session && (
+            <div className="absolute bottom-8 left-6 right-6 border-t border-gray-800 pt-4">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center">
+                  <User size={20} className="text-white" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-white text-sm font-medium truncate">
+                    {session.user?.name || session.user?.email}
+                  </p>
+                  <p className="text-gray-500 text-xs">Free Plan</p>
+                </div>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#1a1a1a] hover:bg-[#222] text-gray-300 rounded-lg font-medium transition-colors"
+              >
+                <LogOut size={18} />
+                Logout
+              </button>
             </div>
-            <div>
-              <p className="text-white text-sm font-medium">User Name</p>
-              <p className="text-gray-500 text-xs">Plan</p>
-            </div>
-          </div>
+          )}
         </div>
       )}
 
@@ -124,6 +156,51 @@ export default function Sidebar() {
             })}
           </ul>
         </nav>
+
+        {/* Bottom Auth Section */}
+        <div className="px-4 pb-6 border-t border-gray-800 pt-4">
+          {!loading && !session && (
+            <div className="space-y-2">
+              <Link
+                href="/login"
+                className="flex items-center justify-center gap-2 px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors text-sm"
+              >
+                <LogIn size={16} />
+                Login
+              </Link>
+              <Link
+                href="/signup"
+                className="flex items-center justify-center gap-2 px-4 py-2.5 bg-[#1a1a1a] hover:bg-[#222] text-white rounded-lg font-medium transition-colors text-sm border border-gray-700"
+              >
+                <UserPlus size={16} />
+                Sign Up
+              </Link>
+            </div>
+          )}
+
+          {!loading && session && (
+            <div>
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center flex-shrink-0">
+                  <User size={18} className="text-white" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-white text-sm font-medium truncate">
+                    {session.user?.name || session.user?.email}
+                  </p>
+                  <p className="text-gray-500 text-xs">Free Plan</p>
+                </div>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-[#1a1a1a] hover:bg-[#222] text-gray-300 rounded-lg text-sm font-medium transition-colors"
+              >
+                <LogOut size={16} />
+                Logout
+              </button>
+            </div>
+          )}
+        </div>
       </aside>
     </>
   );
