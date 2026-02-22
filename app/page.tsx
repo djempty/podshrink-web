@@ -56,8 +56,8 @@ export default function LandingPage() {
       />
       
       {/* Hero Section */}
-      <section className="relative px-6 pt-8 md:pt-16 pb-10 md:pb-20 text-center overflow-hidden">
-        <div className="absolute inset-0 w-full h-full">
+      <section className="relative px-6 pt-8 md:pt-16 pb-10 md:pb-20 text-center z-30">
+        <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
           <ParticleBackground />
         </div>
         <div className="relative z-10 max-w-4xl mx-auto">
@@ -103,7 +103,7 @@ export default function LandingPage() {
       </section>
 
       {/* Time Is Everything Section */}
-      <section className="border-y border-gray-800 bg-[#0f0f0f]">
+      <section className="relative z-10 border-y border-gray-800 bg-[#0f0f0f]">
         <div className="max-w-5xl mx-auto px-6 py-10 md:py-20">
           <div className="max-w-3xl mx-auto text-center mb-8 md:mb-14">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
