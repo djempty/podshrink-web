@@ -14,6 +14,7 @@ export default function Footer() {
               <li><Link href="/shows" className="text-gray-500 hover:text-white text-sm transition-colors">Browse Shows</Link></li>
               <li><Link href="/categories" className="text-gray-500 hover:text-white text-sm transition-colors">Categories</Link></li>
               <li><Link href="/pricing" className="text-gray-500 hover:text-white text-sm transition-colors">Pricing</Link></li>
+              <li><Link href="/transcripts" className="text-gray-500 hover:text-white text-sm transition-colors">Transcripts</Link></li>
             </ul>
           </div>
 
