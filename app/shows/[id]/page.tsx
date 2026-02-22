@@ -111,7 +111,7 @@ export default function ShowPage() {
               className="w-[100px] h-[100px] md:w-[220px] md:h-[220px] rounded-xl object-cover shadow-xl"
             />
           </div>
-          <div className="flex-1 flex flex-col justify-start pt-1 md:justify-end min-w-0">
+          <div className="flex-1 flex flex-col justify-start pt-[6px] min-w-0">
             <p className="text-gray-400 text-xs uppercase tracking-wider mb-1 hidden md:block">Podcast</p>
             <h1 className="text-xl md:text-4xl font-bold text-white mb-1 md:mb-2 line-clamp-2">{show?.title}</h1>
             <p className="text-gray-300 text-sm md:text-base mb-1 md:mb-3">{show?.author}</p>
