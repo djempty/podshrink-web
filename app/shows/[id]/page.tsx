@@ -23,8 +23,8 @@ export default function ShowPage() {
   const { track, isPlaying, setTrack, play, pause } = useAudioPlayer();
 
   useEffect(() => {
-    Promise.all([api.getShow(showId), api.getEpisodes(showId)])
-      .then(([s, e]) => {
+    Promise.all([api.getShow(showId), api.getEpisodes(showId), api.getAllShrinks()])
+      .then(([s, e, allShrinks]) => {
         setShow(s);
         const sorted = [...e].sort((a, b) => {
           const dateA = a.pubDate ? new Date(a.pubDate).getTime() : 0;
@@ -32,6 +32,18 @@ export default function ShowPage() {
           return dateB - dateA;
         });
         setEpisodes(sorted);
+
+        // Populate shrinkStates from existing completed shrinks
+        const states: Record<number, { status: 'complete'; audioUrl?: string }> = {};
+        for (const shrink of allShrinks) {
+          if (shrink.status === 'complete' && shrink.audioUrl) {
+            const audioUrl = shrink.audioUrl.startsWith('/api/') 
+              ? shrink.audioUrl 
+              : api.getShrinkAudioUrl(shrink.id);
+            states[shrink.episodeId] = { status: 'complete', audioUrl };
+          }
+        }
+        setShrinkStates(states);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
@@ -99,7 +111,7 @@ export default function ShowPage() {
               className="w-[100px] h-[100px] md:w-[220px] md:h-[220px] rounded-xl object-cover shadow-xl"
             />
           </div>
-          <div className="flex-1 flex flex-col justify-center md:justify-end min-w-0">
+          <div className="flex-1 flex flex-col justify-start pt-1 md:justify-end min-w-0">
             <p className="text-gray-400 text-xs uppercase tracking-wider mb-1 hidden md:block">Podcast</p>
             <h1 className="text-xl md:text-4xl font-bold text-white mb-1 md:mb-2 line-clamp-2">{show?.title}</h1>
             <p className="text-gray-300 text-sm md:text-base mb-1 md:mb-3">{show?.author}</p>

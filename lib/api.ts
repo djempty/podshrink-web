@@ -70,6 +70,9 @@ export const api = {
   getRecentShrinks: () => 
     fetchAPI<Shrink[]>('/api/shrinks?limit=10'),
 
+  deleteShrink: (id: number) =>
+    fetchAPI<{ success: boolean }>(`/api/shrinks/${id}`, { method: 'DELETE' }),
+
   // Voices
   getVoices: () => 
     fetchAPI<Voice[]>('/api/voices'),

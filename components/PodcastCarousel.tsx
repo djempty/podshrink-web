@@ -44,7 +44,7 @@ export default function PodcastCarousel({ label, podcasts, onPodcastClick }: Pod
   };
 
   return (
-    <section className="relative group mb-12">
+    <section className="relative group mb-12 overflow-hidden">
       <h2 className="text-2xl font-bold mb-6 text-white">{label}</h2>
       
       {/* Left arrow — hidden on mobile, hidden when at start */}

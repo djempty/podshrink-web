@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { api, resolveAudioUrl } from '@/lib/api';
 import { Shrink } from '@/lib/types';
-import { Play, Pause, Download, Clock, Calendar } from 'lucide-react';
+import { Play, Pause, Download, Clock, Calendar, Trash2 } from 'lucide-react';
 import { useAudioPlayer } from '@/lib/audioPlayerStore';
 import PageHeader from '@/components/PageHeader';
 
@@ -36,6 +36,16 @@ export default function SavedShrinksPage() {
   };
 
   const isShrinkPlaying = (shrink: Shrink) => track?.id === shrink.id + 200000 && isPlaying;
+
+  const handleDelete = async (shrink: Shrink) => {
+    if (!confirm('Delete this shrink? This cannot be undone.')) return;
+    try {
+      await api.deleteShrink(shrink.id);
+      setShrinks(prev => prev.filter(s => s.id !== shrink.id));
+    } catch {
+      alert('Failed to delete shrink');
+    }
+  };
 
   const handleDownload = (shrink: Shrink) => {
     if (!shrink.audioUrl) return;
@@ -117,6 +127,12 @@ export default function SavedShrinksPage() {
                       className="p-2 bg-gray-700 hover:bg-gray-600 rounded-full transition-colors"
                     >
                       <Download size={16} className="text-white" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(shrink)}
+                      className="p-2 bg-gray-700 hover:bg-red-600 rounded-full transition-colors"
+                    >
+                      <Trash2 size={16} className="text-white" />
                     </button>
                   </div>
                 )}

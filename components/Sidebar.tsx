@@ -98,9 +98,13 @@ export default function Sidebar() {
             {!loading && session && (
               <div>
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center">
-                    <User size={20} className="text-white" />
-                  </div>
+                  {session.user?.image ? (
+                    <img src={session.user.image} alt="" className="w-10 h-10 rounded-full object-cover" />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center">
+                      <User size={20} className="text-white" />
+                    </div>
+                  )}
                   <div className="flex-1 min-w-0">
                     <p className="text-white text-sm font-medium truncate">
                       {session.user?.name || session.user?.email}
@@ -193,9 +197,13 @@ export default function Sidebar() {
           {!loading && session && (
             <div>
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center flex-shrink-0">
-                  <User size={18} className="text-white" />
-                </div>
+                {session.user?.image ? (
+                  <img src={session.user.image} alt="" className="w-10 h-10 rounded-full object-cover flex-shrink-0" />
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center flex-shrink-0">
+                    <User size={18} className="text-white" />
+                  </div>
+                )}
                 <div className="flex-1 min-w-0">
                   <p className="text-white text-sm font-medium truncate">
                     {session.user?.name || session.user?.email}
