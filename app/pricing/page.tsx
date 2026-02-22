@@ -101,7 +101,7 @@ export default function PricingPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           planId: planName.toLowerCase(),
-          userId: session.user.id,
+          userId: session.user.email || session.user.id,
           ...(promoCode.trim() && { promoCode: promoCode.trim() })
         })
       });
