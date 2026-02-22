@@ -75,16 +75,17 @@ export default function AudioPlayer() {
   };
 
   const formatTime = (seconds: number) => {
-    if (!seconds || isNaN(seconds)) return '0:00';
-    const hrs = Math.floor(seconds / 3600);
-    const mins = Math.floor((seconds % 3600) / 60);
-    const secs = Math.floor(seconds % 60);
+    if (!seconds || isNaN(seconds) || seconds < 0) return '0:00';
+    const total = Math.floor(seconds);
+    const hrs = Math.floor(total / 3600);
+    const mins = Math.floor((total % 3600) / 60);
+    const secs = total % 60;
     if (hrs > 0) return `${hrs}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const pct = duration ? (currentTime / duration) * 100 : 0;
-  const remaining = duration - currentTime;
+  const pct = duration ? Math.min((currentTime / duration) * 100, 100) : 0;
+  const remaining = Math.max(0, duration - currentTime);
 
   return (
     <>
