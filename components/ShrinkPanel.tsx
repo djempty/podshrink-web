@@ -47,14 +47,14 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
   const [funMessageIndex, setFunMessageIndex] = useState(0);
 
   const FUN_MESSAGES = [
-    "Good things take time... but not too much time ⏳",
-    "Our AI is listening to the whole episode so you don't have to 🎧",
-    "Condensing hours of brilliance into minutes... 🧠",
-    "Almost like speed-reading, but for your ears 👂",
-    "Fun fact: you're saving mass amounts of time right now ⚡",
-    "The AI is taking notes furiously... 📝",
-    "Shrinking in progress. Grab a coffee? ☕",
-    "Your personalized summary is being crafted... ✨"
+    "Good things take time... but not too much time",
+    "Our AI is listening to the whole episode so you don't have to",
+    "Condensing hours of brilliance into minutes...",
+    "Almost like speed-reading, but for your ears",
+    "Fun fact: you're saving mass amounts of time right now",
+    "The AI is taking notes furiously...",
+    "Shrinking in progress. Grab a coffee?",
+    "Your personalized summary is being crafted..."
   ];
 
   // Load voices
