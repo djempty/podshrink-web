@@ -360,7 +360,9 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
 
         {status === 'error' && (
           <div>
-            <p className="text-red-400 text-sm text-center mb-3">{errorMsg}</p>
+            <p className="text-red-400 text-sm text-center mb-3">
+              Something went wrong while processing your shrink. Please try again — if the issue persists, try a shorter duration or a different episode.
+            </p>
             <button
               onClick={() => { setStatus('idle'); setErrorMsg(''); }}
               className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-md font-medium transition-colors"
