@@ -7,6 +7,32 @@ import { api } from '@/lib/api';
 import { Clock, ArrowRight, Headphones } from 'lucide-react';
 import Footer from '@/components/Footer';
 
+function escapeHtml(text: string) {
+  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function injectSummaryLinks(summary: string, shrinkInfo: any): string {
+  let html = escapeHtml(summary);
+  const episodeId = shrinkInfo?.episode?.id;
+  const showTitle = shrinkInfo?.episode?.show?.title;
+  const showId = shrinkInfo?.episode?.show?.id;
+
+  // Link first occurrence of "this episode" / "This episode" / "the episode" to episode page
+  if (episodeId) {
+    const episodeLink = `<a href="/episodes/${episodeId}" class="text-purple-400 hover:text-purple-300 underline">$&</a>`;
+    html = html.replace(/(this episode|the episode)/i, episodeLink);
+  }
+
+  // Link first occurrence of the show name to the show page
+  if (showTitle && showId) {
+    const escaped = escapeHtml(showTitle);
+    const showLink = `<a href="/shows/${showId}" class="text-purple-400 hover:text-purple-300 underline">${escaped}</a>`;
+    html = html.replace(escaped, showLink);
+  }
+
+  return html;
+}
+
 interface ShrinkData {
   transcript: string | null;
   summary: string | null;
@@ -139,18 +165,12 @@ export default function PublicTranscriptPage() {
           <section className="mb-8">
             <h2 className="text-lg font-semibold text-white mb-4">Summary</h2>
             <div className="bg-[#1a1a1a] border border-gray-800 rounded-xl p-6">
-              <p className="selectable text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">{data.summary}</p>
+              <p className="selectable text-gray-300 text-sm leading-relaxed whitespace-pre-wrap"
+                dangerouslySetInnerHTML={{
+                  __html: injectSummaryLinks(data.summary || '', shrinkInfo)
+                }}
+              />
             </div>
-            {shrinkInfo?.episode?.id && (
-              <div className="mt-4 text-center">
-                <Link
-                  href={`/episodes/${shrinkInfo.episode.id}`}
-                  className="inline-flex items-center gap-1 text-purple-400 hover:text-purple-300 text-sm font-medium"
-                >
-                  Listen to the full episode →
-                </Link>
-              </div>
-            )}
           </section>
         )}
 
