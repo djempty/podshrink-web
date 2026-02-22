@@ -60,7 +60,7 @@ export default function PageHeader({ title, showSignUp = true, showSearch = fals
                 <Search size={20} />
               </button>
             ) : (
-              <div className="w-[280px] md:w-[320px]">
+              <div className="w-[180px] md:w-[240px]">
                 <SearchInput 
                   onSelect={() => setSearchExpanded(false)}
                   className="[&_input]:py-2 [&_input]:text-sm"
