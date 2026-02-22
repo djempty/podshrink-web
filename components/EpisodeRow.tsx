@@ -108,12 +108,12 @@ export default function EpisodeRow({ episode, showTitle, showImage, showId, shri
           {shrinkState?.status === 'complete' && shrinkState?.audioUrl ? (
             <button
               onClick={(e) => { e.stopPropagation(); handlePlayShrink(); }}
-              className="flex items-center gap-2 px-5 py-2 bg-[#2EA84A] hover:bg-[#259A3F] text-white rounded-md text-sm font-medium transition-colors"
+              className="flex items-center gap-2 px-5 py-2 bg-[#2EA84A] hover:bg-[#259A3F] text-white rounded-md text-sm font-medium transition-colors whitespace-nowrap"
             >
               {isShrinkTrack && isPlaying ? (
-                <><Pause size={14} fill="white" />Pause PodShrink</>
+                <><Pause size={14} fill="white" />Pause</>
               ) : (
-                <><Play size={14} fill="white" />Play PodShrink</>
+                <><Play size={14} fill="white" />PodShrink</>
               )}
             </button>
           ) : shrinkState?.status === 'shrinking' ? (
