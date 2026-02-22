@@ -110,6 +110,7 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
   };
 
   const handleGenerate = async () => {
+    if (!duration || !voiceId) return;
     setStatus('processing');
     setProgress(0);
     setProgressLabel('Starting shrink...');
