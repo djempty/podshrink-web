@@ -42,9 +42,9 @@ export default function SavedShrinksPage() {
   const handleViewTranscript = async (shrink: Shrink) => {
     try {
       const data = await api.getShrinkTranscript(shrink.id);
-      if (data.transcript) {
+      if (data.summary || data.transcript) {
         setTranscriptModal({
-          transcript: data.transcript,
+          transcript: data.transcript || '',
           summary: data.summary,
           title: shrink.episode?.title || 'Transcript',
         });
@@ -92,7 +92,7 @@ export default function SavedShrinksPage() {
 
   return (
     <div className="min-h-screen bg-[#121212]">
-      <PageHeader title="Saved Shrinks" />
+      <PageHeader title="Saved Shrinks" showSearch />
 
       <div className="px-4 md:px-8">
         {shrinks.length === 0 ? (
@@ -185,13 +185,15 @@ export default function SavedShrinksPage() {
               {transcriptModal.summary && (
                 <div>
                   <h4 className="text-purple-400 text-sm font-semibold mb-2">Summary</h4>
-                  <p className="text-gray-300 text-sm leading-relaxed">{transcriptModal.summary}</p>
+                  <p className="selectable text-gray-300 text-sm leading-relaxed">{transcriptModal.summary}</p>
                 </div>
               )}
-              <div>
-                <h4 className="text-purple-400 text-sm font-semibold mb-2">Full Transcript</h4>
-                <p className="text-gray-400 text-sm leading-relaxed whitespace-pre-wrap">{transcriptModal.transcript}</p>
-              </div>
+              {transcriptModal.transcript && (
+                <div>
+                  <h4 className="text-purple-400 text-sm font-semibold mb-2">Full Transcript</h4>
+                  <p className="selectable text-gray-400 text-sm leading-relaxed whitespace-pre-wrap">{transcriptModal.transcript}</p>
+                </div>
+              )}
             </div>
           </div>
         </div>

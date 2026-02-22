@@ -29,7 +29,7 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-[#121212]">
-      <PageHeader title="Shows" />
+      <PageHeader title="Shows" showSearch />
 
       {/* Scrollable Content */}
       <div className="px-4 md:px-8 py-4 md:py-8">

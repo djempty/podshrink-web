@@ -89,14 +89,14 @@ export default function LandingPage() {
             </button>
             <button
               onClick={() => router.push('/categories')}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3.5 border border-blue-500 text-blue-400 hover:bg-blue-500 hover:text-white rounded-lg font-semibold text-lg transition-colors"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3.5 border border-blue-500 text-blue-400 hover:border-blue-400 hover:text-blue-300 rounded-lg font-semibold text-lg transition-colors"
             >
               Explore Categories
             </button>
           </div>
 
           {/* Search — larger */}
-          <div className="max-w-xl mx-auto">
+          <div className="max-w-xl mx-auto relative z-20">
             <SearchInput className="[&_input]:py-3.5 [&_input]:text-base [&_input]:pl-11" />
           </div>
         </div>

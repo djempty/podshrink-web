@@ -8,6 +8,13 @@ html {
 
 body {
   @apply bg-[#121212] text-white antialiased;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.selectable {
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 /* Ensure landscape header extends to safe areas */

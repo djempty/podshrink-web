@@ -6,6 +6,7 @@ import { api } from '@/lib/api';
 import { Show } from '@/lib/types';
 import { useFavorites } from '@/lib/favoritesStore';
 import { Heart } from 'lucide-react';
+import PageHeader from '@/components/PageHeader';
 
 export default function FavoritesPage() {
   const router = useRouter();
@@ -32,8 +33,9 @@ export default function FavoritesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#121212] px-4 md:px-8 py-6">
-      <h1 className="text-2xl md:text-3xl font-bold text-white mb-8">Favorites</h1>
+    <div className="min-h-screen bg-[#121212]">
+      <PageHeader title="Favorites" showSearch />
+      <div className="px-4 md:px-8 py-6">
 
       {shows.length === 0 ? (
         <div className="text-center py-16 text-gray-400">
@@ -70,6 +72,7 @@ export default function FavoritesPage() {
           ))}
         </div>
       )}
+      </div>
     </div>
   );
 }

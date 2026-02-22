@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { api } from '@/lib/api';
 import { Clock, ArrowRight, Headphones } from 'lucide-react';
@@ -14,12 +14,19 @@ interface ShrinkData {
 
 export default function PublicTranscriptPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const shrinkId = parseInt(params.id as string, 10);
 
   const [data, setData] = useState<ShrinkData | null>(null);
   const [shrinkInfo, setShrinkInfo] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+
+  // Determine back link based on URL params
+  const from = searchParams.get('from');
+  const q = searchParams.get('q');
+  const backHref = from === 'search' && q ? `/transcripts?q=${encodeURIComponent(q)}` : '/transcripts';
+  const backLabel = from === 'search' && q ? '← Back to Search Results' : '← Back to Transcripts';
 
   useEffect(() => {
     Promise.all([
@@ -86,6 +93,11 @@ export default function PublicTranscriptPage() {
       />
 
       <div className="max-w-3xl mx-auto px-4 md:px-8 py-8 flex-1">
+        {/* Back Link */}
+        <Link href={backHref} className="inline-flex items-center gap-1 text-purple-400 hover:text-purple-300 mb-6 text-sm">
+          {backLabel}
+        </Link>
+
         {/* Header */}
         <div className="flex gap-4 mb-8">
           <img
@@ -127,8 +139,18 @@ export default function PublicTranscriptPage() {
           <section className="mb-8">
             <h2 className="text-lg font-semibold text-white mb-4">Summary</h2>
             <div className="bg-[#1a1a1a] border border-gray-800 rounded-xl p-6">
-              <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">{data.summary}</p>
+              <p className="selectable text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">{data.summary}</p>
             </div>
+            {shrinkInfo?.episode?.id && (
+              <div className="mt-4 text-center">
+                <Link
+                  href={`/episodes/${shrinkInfo.episode.id}`}
+                  className="inline-flex items-center gap-1 text-purple-400 hover:text-purple-300 text-sm font-medium"
+                >
+                  Listen to the full episode →
+                </Link>
+              </div>
+            )}
           </section>
         )}
 

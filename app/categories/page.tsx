@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { api, DiscoverPodcast } from '@/lib/api';
 import { ChevronRight, Flame, Monitor, Newspaper, Users, Laugh, Briefcase, Search, Dumbbell, FlaskConical, Trophy, GraduationCap, LucideIcon } from 'lucide-react';
+import PageHeader from '@/components/PageHeader';
 
 const CATEGORIES: { key: string; label: string; color: string; icon: LucideIcon }[] = [
   { key: 'popular', label: 'Popular', color: 'from-purple-600 to-indigo-700', icon: Flame },
@@ -101,8 +102,9 @@ export default function CategoriesPage() {
 
   // Category grid
   return (
-    <div className="min-h-screen bg-[#121212] px-4 md:px-8 py-6">
-      <h1 className="text-2xl md:text-3xl font-bold text-white mb-8">Categories</h1>
+    <div className="min-h-screen bg-[#121212]">
+      <PageHeader title="Categories" showSearch />
+      <div className="px-4 md:px-8 py-6">
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {CATEGORIES.map((cat) => (
@@ -116,6 +118,7 @@ export default function CategoriesPage() {
             <ChevronRight size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/60 group-hover:text-white transition-colors" />
           </button>
         ))}
+      </div>
       </div>
     </div>
   );

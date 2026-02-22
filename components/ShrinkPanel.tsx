@@ -44,6 +44,18 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
     shrinkLimit: number | null;
     shrinkCountResetAt: string | null;
   } | null>(null);
+  const [funMessageIndex, setFunMessageIndex] = useState(0);
+
+  const FUN_MESSAGES = [
+    "Good things take time... but not too much time ⏳",
+    "Our AI is listening to the whole episode so you don't have to 🎧",
+    "Condensing hours of brilliance into minutes... 🧠",
+    "Almost like speed-reading, but for your ears 👂",
+    "Fun fact: you're saving mass amounts of time right now ⚡",
+    "The AI is taking notes furiously... 📝",
+    "Shrinking in progress. Grab a coffee? ☕",
+    "Your personalized summary is being crafted... ✨"
+  ];
 
   // Load voices
   useEffect(() => {
@@ -89,6 +101,18 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
       setPreviewPlaying(false);
     }
   }, [voiceId]);
+
+  // Rotate fun messages during processing
+  useEffect(() => {
+    if (status === 'processing') {
+      const interval = setInterval(() => {
+        setFunMessageIndex(prev => (prev + 1) % FUN_MESSAGES.length);
+      }, 8000);
+      return () => clearInterval(interval);
+    } else {
+      setFunMessageIndex(0);
+    }
+  }, [status, FUN_MESSAGES.length]);
 
   const selectedVoice = voices.find(v => v.voiceId === voiceId);
 
@@ -344,6 +368,7 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
             </div>
             <p className="text-xs text-gray-500 mt-2 text-center">{Math.round(progress)}%</p>
             <p className="text-xs text-gray-400 text-center">{progressLabel}</p>
+            <p className="text-xs text-purple-400/80 text-center mt-3 italic">{FUN_MESSAGES[funMessageIndex]}</p>
           </div>
         )}
 

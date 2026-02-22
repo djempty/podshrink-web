@@ -43,11 +43,6 @@ export default function Sidebar() {
       {/* MOBILE DRAWER */}
       {mobileOpen && (
         <div className="md:hidden fixed inset-0 bg-[#0a0a0a] z-40 pt-20 px-6 flex flex-col">
-          {/* Search */}
-          <div className="my-4">
-            <SearchInput className="py-1 [&_input]:text-base" onSelect={() => setMobileOpen(false)} />
-          </div>
-
           {/* Nav */}
           <nav className="mt-4 flex-1">
             <ul className="space-y-1">
@@ -160,7 +155,7 @@ export default function Sidebar() {
                     href={item.href}
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-colors ${
                       isActive
-                        ? 'bg-purple-600 text-white'
+                        ? 'bg-blue-600 text-white'
                         : 'text-gray-400 hover:text-white hover:bg-[#1a1a1a]'
                     }`}
                   >
