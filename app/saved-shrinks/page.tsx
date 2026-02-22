@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { api, resolveAudioUrl } from '@/lib/api';
 import { Shrink } from '@/lib/types';
-import { Play, Pause, Download, Clock, Calendar, Trash2 } from 'lucide-react';
+import { Play, Pause, Download, Clock, Calendar, Trash2, FileText, X } from 'lucide-react';
 import { useAudioPlayer } from '@/lib/audioPlayerStore';
 import PageHeader from '@/components/PageHeader';
 
@@ -36,6 +36,25 @@ export default function SavedShrinksPage() {
   };
 
   const isShrinkPlaying = (shrink: Shrink) => track?.id === shrink.id + 200000 && isPlaying;
+
+  const [transcriptModal, setTranscriptModal] = useState<{ transcript: string; summary: string | null; title: string } | null>(null);
+
+  const handleViewTranscript = async (shrink: Shrink) => {
+    try {
+      const data = await api.getShrinkTranscript(shrink.id);
+      if (data.transcript) {
+        setTranscriptModal({
+          transcript: data.transcript,
+          summary: data.summary,
+          title: shrink.episode?.title || 'Transcript',
+        });
+      } else {
+        alert('No transcript available for this shrink.');
+      }
+    } catch {
+      alert('Failed to load transcript');
+    }
+  };
 
   const handleDelete = async (shrink: Shrink) => {
     if (!confirm('Delete this shrink? This cannot be undone.')) return;
@@ -126,8 +145,16 @@ export default function SavedShrinksPage() {
                       <button
                         onClick={() => handleDownload(shrink)}
                         className="p-2 bg-gray-700 hover:bg-gray-600 rounded-full transition-colors"
+                        title="Download"
                       >
                         <Download size={16} className="text-white" />
+                      </button>
+                      <button
+                        onClick={() => handleViewTranscript(shrink)}
+                        className="p-2 bg-gray-700 hover:bg-gray-600 rounded-full transition-colors"
+                        title="View Transcript"
+                      >
+                        <FileText size={16} className="text-white" />
                       </button>
                     </>
                   )}
@@ -143,6 +170,32 @@ export default function SavedShrinksPage() {
           </div>
         )}
       </div>
+
+      {/* Transcript Modal */}
+      {transcriptModal && (
+        <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" onClick={() => setTranscriptModal(null)}>
+          <div className="bg-[#1a1a1a] border border-gray-800 rounded-xl max-w-2xl w-full max-h-[80vh] flex flex-col" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-5 border-b border-gray-800">
+              <h3 className="text-white font-semibold text-lg truncate pr-4">{transcriptModal.title}</h3>
+              <button onClick={() => setTranscriptModal(null)} className="text-gray-400 hover:text-white">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="overflow-y-auto p-5 space-y-4">
+              {transcriptModal.summary && (
+                <div>
+                  <h4 className="text-purple-400 text-sm font-semibold mb-2">Summary</h4>
+                  <p className="text-gray-300 text-sm leading-relaxed">{transcriptModal.summary}</p>
+                </div>
+              )}
+              <div>
+                <h4 className="text-purple-400 text-sm font-semibold mb-2">Full Transcript</h4>
+                <p className="text-gray-400 text-sm leading-relaxed whitespace-pre-wrap">{transcriptModal.transcript}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

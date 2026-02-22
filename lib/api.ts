@@ -73,6 +73,9 @@ export const api = {
   deleteShrink: (id: number) =>
     fetchAPI<{ success: boolean }>(`/api/shrinks/${id}`, { method: 'DELETE' }),
 
+  getShrinkTranscript: (id: number) =>
+    fetchAPI<{ transcript: string | null; summary: string | null }>(`/api/shrinks/${id}/transcript`),
+
   // Voices
   getVoices: () => 
     fetchAPI<Voice[]>('/api/voices'),

@@ -211,18 +211,18 @@ export default function EpisodePage() {
       </Link>
 
       {/* Episode header */}
-      <div className="flex flex-col md:flex-row gap-6 mb-8">
+      <div className="flex gap-4 md:gap-6 mb-8">
         {/* Large thumbnail */}
         <div className="flex-shrink-0">
           <img
             src={episode.imageUrl || episode.show?.imageUrl || '/logo.png'}
             alt={episode.title}
-            className="w-[200px] h-[200px] rounded-lg object-cover"
+            className="w-[120px] h-[120px] md:w-[200px] md:h-[200px] rounded-lg object-cover"
           />
         </div>
 
         {/* Info */}
-        <div className="flex-1">
+        <div className="flex-1 pt-1">
           <p className="text-xs text-gray-500 mb-1">{formatDate(episode.pubDate)}</p>
           <h1 className="text-xl md:text-2xl font-bold text-white mb-2">{episode.title}</h1>
           {episode.show && (
