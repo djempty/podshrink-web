@@ -42,6 +42,7 @@ export interface Shrink {
   status: 'queued' | 'transcribing' | 'scripting' | 'generating_audio' | 'complete' | 'error';
   scriptText?: string;
   audioUrl?: string;
+  audioDurationSeconds?: number;
   errorMessage?: string;
   createdAt: string;
   completedAt?: string;
