@@ -53,7 +53,15 @@ export default function AudioPlayer() {
   };
 
   const handleLoadedMetadata = () => {
-    if (audioRef.current) setDuration(audioRef.current.duration);
+    if (!audioRef.current) return;
+    const browserDuration = audioRef.current.duration;
+    // Only use browser duration if we don't already have a valid stored duration,
+    // or if browser duration is finite and substantially different (for non-shrink tracks)
+    if (!duration || duration === 0 || (!isFinite(duration))) {
+      if (isFinite(browserDuration) && browserDuration > 0) {
+        setDuration(browserDuration);
+      }
+    }
   };
 
   const seekFromEvent = (e: React.MouseEvent | MouseEvent) => {
