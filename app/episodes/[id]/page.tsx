@@ -30,13 +30,14 @@ export default function EpisodePage() {
       if (episodeShrink) {
         setShrinkState({ status: 'complete', audioUrl: episodeShrink.audioUrl });
       }
-      // Check for in-progress shrinks
+      // Check for in-progress shrinks (only if created recently — within last 10 min)
+      const tenMinAgo = Date.now() - 10 * 60 * 1000;
       const activeShrink = allShrinks.find(
         (s: Shrink) => s.episodeId === episodeId && !['complete', 'error'].includes(s.status)
+          && s.createdAt && new Date(s.createdAt).getTime() > tenMinAgo
       );
-      if (activeShrink) {
+      if (activeShrink && !episodeShrink) {
         setShrinkState({ status: 'shrinking' });
-        // Poll until done
         pollShrinkStatus(activeShrink.id);
       }
     } catch {}

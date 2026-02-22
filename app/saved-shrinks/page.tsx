@@ -110,32 +110,34 @@ export default function SavedShrinksPage() {
                 </div>
 
                 {/* Actions */}
-                {shrink.status === 'complete' && shrink.audioUrl && (
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => handlePlay(shrink)}
-                      className="p-2 bg-[#2EA84A] hover:bg-[#259A3F] rounded-full transition-colors"
-                    >
-                      {isShrinkPlaying(shrink) ? (
-                        <Pause size={16} fill="white" className="text-white" />
-                      ) : (
-                        <Play size={16} fill="white" className="text-white ml-0.5" />
-                      )}
-                    </button>
-                    <button
-                      onClick={() => handleDownload(shrink)}
-                      className="p-2 bg-gray-700 hover:bg-gray-600 rounded-full transition-colors"
-                    >
-                      <Download size={16} className="text-white" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(shrink)}
-                      className="p-2 bg-gray-700 hover:bg-red-600 rounded-full transition-colors"
-                    >
-                      <Trash2 size={16} className="text-white" />
-                    </button>
-                  </div>
-                )}
+                <div className="flex items-center gap-2">
+                  {shrink.status === 'complete' && shrink.audioUrl && (
+                    <>
+                      <button
+                        onClick={() => handlePlay(shrink)}
+                        className="p-2 bg-[#2EA84A] hover:bg-[#259A3F] rounded-full transition-colors"
+                      >
+                        {isShrinkPlaying(shrink) ? (
+                          <Pause size={16} fill="white" className="text-white" />
+                        ) : (
+                          <Play size={16} fill="white" className="text-white ml-0.5" />
+                        )}
+                      </button>
+                      <button
+                        onClick={() => handleDownload(shrink)}
+                        className="p-2 bg-gray-700 hover:bg-gray-600 rounded-full transition-colors"
+                      >
+                        <Download size={16} className="text-white" />
+                      </button>
+                    </>
+                  )}
+                  <button
+                    onClick={() => handleDelete(shrink)}
+                    className="p-2 bg-gray-700 hover:bg-red-600 rounded-full transition-colors"
+                  >
+                    <Trash2 size={16} className="text-white" />
+                  </button>
+                </div>
               </div>
             ))}
           </div>
