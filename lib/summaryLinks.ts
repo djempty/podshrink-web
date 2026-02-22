@@ -9,12 +9,35 @@ export function injectSummaryLinks(
   let html = escapeHtml(summary);
   const { episodeId, showTitle, showId } = options || {};
 
-  // Link first occurrence of episode-like phrases to episode page
+  // Link first occurrence of episode/podcast-like phrases to episode page
   if (episodeId) {
-    const matched = html.match(/(this (?:podcast )?episode|the (?:podcast )?episode|this conversation|this interview|this discussion)/i);
-    if (matched) {
-      const link = `<a href="/episodes/${episodeId}" class="text-purple-400 hover:text-purple-300 underline">${matched[0]}</a>`;
-      html = html.replace(matched[0], link);
+    const patterns = [
+      /this (?:podcast )?episode/i,
+      /the (?:podcast )?episode/i,
+      /this podcast/i,
+      /the podcast/i,
+      /this conversation/i,
+      /the conversation/i,
+      /this interview/i,
+      /the interview/i,
+      /this discussion/i,
+      /the discussion/i,
+      /this show/i,
+      /the show/i,
+      /this talk/i,
+      /podcast episode/i,
+      /full episode/i,
+      /the full (?:conversation|interview|discussion|episode)/i,
+      /the original (?:episode|conversation|interview|podcast)/i,
+    ];
+
+    for (const pattern of patterns) {
+      const matched = html.match(pattern);
+      if (matched) {
+        const link = `<a href="/episodes/${episodeId}" class="text-purple-400 hover:text-purple-300 underline">${matched[0]}</a>`;
+        html = html.replace(matched[0], link);
+        break;
+      }
     }
   }
 
@@ -24,15 +47,6 @@ export function injectSummaryLinks(
     if (html.includes(escaped)) {
       const showLink = `<a href="/shows/${showId}" class="text-purple-400 hover:text-purple-300 underline">${escaped}</a>`;
       html = html.replace(escaped, showLink);
-    }
-  }
-
-  // Fallback: link "podcast episode" if no episode link inserted yet
-  if (episodeId && !html.includes(`/episodes/${episodeId}`)) {
-    const fallback = html.match(/(podcast episode)/i);
-    if (fallback) {
-      const link = `<a href="/episodes/${episodeId}" class="text-purple-400 hover:text-purple-300 underline">${fallback[0]}</a>`;
-      html = html.replace(fallback[0], link);
     }
   }
 

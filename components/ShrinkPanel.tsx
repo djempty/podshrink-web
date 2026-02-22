@@ -143,7 +143,16 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
       const shrink = await api.createShrink(episode.id, duration, voiceId, session?.user?.id);
       setShrinkId(shrink.id);
       onShrinkStarted(shrink.id);
-      pollStatus(shrink.id);
+      
+      // If backend returned an already-complete shrink (cache hit), skip polling
+      if (shrink.status === 'complete' && shrink.audioUrl) {
+        setProgress(100);
+        setProgressLabel('Complete!');
+        setStatus('complete');
+        onShrinkComplete(shrink.id, shrink.audioUrl);
+      } else {
+        pollStatus(shrink.id);
+      }
       
       // Refresh usage info after starting shrink
       if (session?.user?.id) {
