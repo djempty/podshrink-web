@@ -17,17 +17,31 @@ function injectSummaryLinks(summary: string, shrinkInfo: any): string {
   const showTitle = shrinkInfo?.episode?.show?.title;
   const showId = shrinkInfo?.episode?.show?.id;
 
-  // Link first occurrence of "this episode" / "This episode" / "the episode" to episode page
+  // Link first occurrence of episode-like phrases to episode page
   if (episodeId) {
     const episodeLink = `<a href="/episodes/${episodeId}" class="text-purple-400 hover:text-purple-300 underline">$&</a>`;
-    html = html.replace(/(this episode|the episode)/i, episodeLink);
+    const matched = html.match(/(this (?:podcast )?episode|the (?:podcast )?episode|this conversation|this interview|this discussion)/i);
+    if (matched) {
+      html = html.replace(matched[0], episodeLink.replace('$&', matched[0]));
+    }
   }
 
   // Link first occurrence of the show name to the show page
   if (showTitle && showId) {
     const escaped = escapeHtml(showTitle);
-    const showLink = `<a href="/shows/${showId}" class="text-purple-400 hover:text-purple-300 underline">${escaped}</a>`;
-    html = html.replace(escaped, showLink);
+    if (html.includes(escaped)) {
+      const showLink = `<a href="/shows/${showId}" class="text-purple-400 hover:text-purple-300 underline">${escaped}</a>`;
+      html = html.replace(escaped, showLink);
+    }
+  }
+
+  // Link first occurrence of "podcast episode" if no other link was inserted yet
+  if (episodeId && !html.includes(`/episodes/${episodeId}`)) {
+    const fallback = html.match(/(podcast episode)/i);
+    if (fallback) {
+      const link = `<a href="/episodes/${episodeId}" class="text-purple-400 hover:text-purple-300 underline">${fallback[0]}</a>`;
+      html = html.replace(fallback[0], link);
+    }
   }
 
   return html;
