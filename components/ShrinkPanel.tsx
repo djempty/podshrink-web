@@ -145,19 +145,19 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
 
         switch (shrink.status) {
           case 'queued':
-            setProgress(prev => Math.min(prev + 1, 18));
+            setProgress(prev => Math.round(Math.min(prev + 1, 18)));
             setProgressLabel('Queued...');
             break;
           case 'transcribing':
-            setProgress(prev => prev < 20 ? 20 : Math.min(prev + 1.5, 48));
+            setProgress(prev => Math.round(prev < 20 ? 20 : Math.min(prev + 1.5, 48)));
             setProgressLabel('Transcribing audio...');
             break;
           case 'scripting':
-            setProgress(prev => prev < 50 ? 50 : Math.min(prev + 1.5, 73));
+            setProgress(prev => Math.round(prev < 50 ? 50 : Math.min(prev + 1.5, 73)));
             setProgressLabel('Building shrink outline...');
             break;
           case 'generating_audio':
-            setProgress(prev => prev < 75 ? 75 : Math.min(prev + 0.8, 95));
+            setProgress(prev => Math.round(prev < 75 ? 75 : Math.min(prev + 0.8, 95)));
             setProgressLabel('Creating audio...');
             break;
           case 'complete':
@@ -342,7 +342,7 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
                 <div className="h-full w-[200%] bg-gradient-to-r from-transparent via-purple-400/30 to-transparent animate-shimmer" />
               </div>
             </div>
-            <p className="text-xs text-gray-500 mt-2 text-center">{progress}%</p>
+            <p className="text-xs text-gray-500 mt-2 text-center">{Math.round(progress)}%</p>
             <p className="text-xs text-gray-400 text-center">{progressLabel}</p>
           </div>
         )}

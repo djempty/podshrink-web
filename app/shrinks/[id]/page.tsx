@@ -132,16 +132,6 @@ export default function PublicTranscriptPage() {
           </section>
         )}
 
-        {/* Full Transcript */}
-        {data.transcript && (
-          <section className="mb-8">
-            <h2 className="text-lg font-semibold text-white mb-4">Original Episode Transcript</h2>
-            <div className="bg-[#1a1a1a] border border-gray-800 rounded-xl p-6">
-              <p className="text-gray-400 text-xs leading-relaxed whitespace-pre-wrap max-h-[400px] overflow-y-auto">{data.transcript}</p>
-            </div>
-          </section>
-        )}
-
         {/* Bottom CTA */}
         <div className="text-center py-8 border-t border-gray-800">
           <h3 className="text-white font-semibold mb-2">Get more PodShrink summaries</h3>
