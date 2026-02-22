@@ -6,6 +6,7 @@ import { Shrink } from '@/lib/types';
 import { Play, Pause, Download, Clock, Calendar, Trash2, FileText, X } from 'lucide-react';
 import { useAudioPlayer } from '@/lib/audioPlayerStore';
 import PageHeader from '@/components/PageHeader';
+import { injectSummaryLinks } from '@/lib/summaryLinks';
 
 export default function SavedShrinksPage() {
   const [shrinks, setShrinks] = useState<Shrink[]>([]);
@@ -37,7 +38,7 @@ export default function SavedShrinksPage() {
 
   const isShrinkPlaying = (shrink: Shrink) => track?.id === shrink.id + 200000 && isPlaying;
 
-  const [transcriptModal, setTranscriptModal] = useState<{ transcript: string; summary: string | null; title: string } | null>(null);
+  const [transcriptModal, setTranscriptModal] = useState<{ transcript: string; summary: string | null; title: string; episodeId?: number; showTitle?: string; showId?: number } | null>(null);
 
   const handleViewTranscript = async (shrink: Shrink) => {
     try {
@@ -47,6 +48,9 @@ export default function SavedShrinksPage() {
           transcript: data.transcript || '',
           summary: data.summary,
           title: shrink.episode?.title || 'Transcript',
+          episodeId: shrink.episode?.id,
+          showTitle: (shrink as any).show?.title,
+          showId: (shrink as any).show?.id,
         });
       } else {
         alert('No transcript available for this shrink.');
@@ -185,7 +189,15 @@ export default function SavedShrinksPage() {
               {transcriptModal.summary && (
                 <div>
                   <h4 className="text-purple-400 text-sm font-semibold mb-2">Summary</h4>
-                  <p className="selectable text-gray-300 text-sm leading-relaxed">{transcriptModal.summary}</p>
+                  <p className="selectable text-gray-300 text-sm leading-relaxed"
+                    dangerouslySetInnerHTML={{
+                      __html: injectSummaryLinks(transcriptModal.summary, {
+                        episodeId: transcriptModal.episodeId,
+                        showTitle: transcriptModal.showTitle,
+                        showId: transcriptModal.showId,
+                      })
+                    }}
+                  />
                 </div>
               )}
               {transcriptModal.transcript && (

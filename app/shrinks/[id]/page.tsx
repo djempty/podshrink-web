@@ -7,45 +7,7 @@ import { api } from '@/lib/api';
 import { Clock, ArrowRight, Headphones } from 'lucide-react';
 import Footer from '@/components/Footer';
 
-function escapeHtml(text: string) {
-  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
-
-function injectSummaryLinks(summary: string, shrinkInfo: any): string {
-  let html = escapeHtml(summary);
-  const episodeId = shrinkInfo?.episode?.id;
-  const showTitle = shrinkInfo?.episode?.show?.title;
-  const showId = shrinkInfo?.episode?.show?.id;
-
-  // Link first occurrence of episode-like phrases to episode page
-  if (episodeId) {
-    const episodeLink = `<a href="/episodes/${episodeId}" class="text-purple-400 hover:text-purple-300 underline">$&</a>`;
-    const matched = html.match(/(this (?:podcast )?episode|the (?:podcast )?episode|this conversation|this interview|this discussion)/i);
-    if (matched) {
-      html = html.replace(matched[0], episodeLink.replace('$&', matched[0]));
-    }
-  }
-
-  // Link first occurrence of the show name to the show page
-  if (showTitle && showId) {
-    const escaped = escapeHtml(showTitle);
-    if (html.includes(escaped)) {
-      const showLink = `<a href="/shows/${showId}" class="text-purple-400 hover:text-purple-300 underline">${escaped}</a>`;
-      html = html.replace(escaped, showLink);
-    }
-  }
-
-  // Link first occurrence of "podcast episode" if no other link was inserted yet
-  if (episodeId && !html.includes(`/episodes/${episodeId}`)) {
-    const fallback = html.match(/(podcast episode)/i);
-    if (fallback) {
-      const link = `<a href="/episodes/${episodeId}" class="text-purple-400 hover:text-purple-300 underline">${fallback[0]}</a>`;
-      html = html.replace(fallback[0], link);
-    }
-  }
-
-  return html;
-}
+import { injectSummaryLinks } from '@/lib/summaryLinks';
 
 interface ShrinkData {
   transcript: string | null;
@@ -181,7 +143,11 @@ export default function PublicTranscriptPage() {
             <div className="bg-[#1a1a1a] border border-gray-800 rounded-xl p-6">
               <p className="selectable text-gray-300 text-sm leading-relaxed whitespace-pre-wrap"
                 dangerouslySetInnerHTML={{
-                  __html: injectSummaryLinks(data.summary || '', shrinkInfo)
+                  __html: injectSummaryLinks(data.summary || '', {
+                    episodeId: shrinkInfo?.episode?.id,
+                    showTitle: shrinkInfo?.episode?.show?.title,
+                    showId: shrinkInfo?.episode?.show?.id,
+                  })
                 }}
               />
             </div>

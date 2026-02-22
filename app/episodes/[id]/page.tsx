@@ -150,10 +150,10 @@ export default function EpisodePage() {
     }
     if (shrinkState?.status === 'complete') {
       return (
-        <div className="flex items-center gap-2 mt-4 flex-wrap">
+        <div className="grid grid-cols-2 gap-2 mt-4 max-w-xs">
           <button
             onClick={handlePlayShrink}
-            className="flex items-center gap-2 px-4 py-2.5 bg-[#2EA84A] hover:bg-[#259A3F] text-white rounded-md text-sm font-medium transition-colors whitespace-nowrap"
+            className="flex items-center justify-center gap-2 py-2.5 bg-[#2EA84A] hover:bg-[#259A3F] text-white rounded-md text-sm font-medium transition-colors whitespace-nowrap"
           >
             {isShrinkTrack && isPlaying ? (
               <><Pause size={16} fill="currentColor" /> Pause</>
@@ -165,7 +165,7 @@ export default function EpisodePage() {
           </button>
           <button
             onClick={handlePlay}
-            className="flex items-center gap-2 px-4 py-2.5 bg-gray-700 hover:bg-gray-600 text-white rounded-md text-sm font-medium transition-colors whitespace-nowrap"
+            className="flex items-center justify-center gap-2 py-2.5 bg-gray-700 hover:bg-gray-600 text-white rounded-md text-sm font-medium transition-colors whitespace-nowrap"
           >
             {isCurrentTrack && isPlaying ? (
               <><Pause size={16} fill="currentColor" /> Pause</>
