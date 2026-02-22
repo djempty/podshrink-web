@@ -16,7 +16,7 @@ export default function EpisodePage() {
   const [episode, setEpisode] = useState<Episode | null>(null);
   const [loading, setLoading] = useState(true);
   const [showShrinkPanel, setShowShrinkPanel] = useState(false);
-  const [shrinkState, setShrinkState] = useState<{ status: 'shrinking' | 'complete'; audioUrl?: string } | null>(null);
+  const [shrinkState, setShrinkState] = useState<{ status: 'shrinking' | 'complete'; audioUrl?: string; audioDurationSeconds?: number } | null>(null);
 
   const { track, isPlaying, setTrack, play, pause } = useAudioPlayer();
 
@@ -28,7 +28,7 @@ export default function EpisodePage() {
         (s: Shrink) => s.episodeId === episodeId && s.status === 'complete' && s.audioUrl
       );
       if (episodeShrink) {
-        setShrinkState({ status: 'complete', audioUrl: episodeShrink.audioUrl });
+        setShrinkState({ status: 'complete', audioUrl: episodeShrink.audioUrl, audioDurationSeconds: episodeShrink.audioDurationSeconds });
       }
       // Check for in-progress shrinks (only if created recently — within last 10 min)
       const tenMinAgo = Date.now() - 10 * 60 * 1000;
@@ -96,7 +96,7 @@ export default function EpisodePage() {
       showTitle: episode.show?.title || '',
       audioUrl: resolveAudioUrl(shrinkState.audioUrl),
       imageUrl: episode.imageUrl || episode.show?.imageUrl || '',
-      duration: 0,
+      duration: shrinkState.audioDurationSeconds || 0,
     });
     play();
   };
@@ -256,8 +256,8 @@ export default function EpisodePage() {
           onShrinkStarted={(shrinkId) => {
             setShrinkState({ status: 'shrinking' });
           }}
-          onShrinkComplete={(_id, audioUrl) => {
-            setShrinkState({ status: 'complete', audioUrl });
+          onShrinkComplete={(_id, audioUrl, audioDurationSeconds) => {
+            setShrinkState({ status: 'complete', audioUrl, audioDurationSeconds });
             setShowShrinkPanel(false);
           }}
         />

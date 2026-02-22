@@ -38,7 +38,7 @@ export const useAudioPlayer = create<AudioPlayerState>((set, get) => ({
   volume: 1,
   playbackRate: 1,
 
-  setTrack: (track) => set({ track, currentTime: 0 }),
+  setTrack: (track) => set({ track, currentTime: 0, duration: track.duration || 0 }),
   
   play: () => set({ isPlaying: true }),
   

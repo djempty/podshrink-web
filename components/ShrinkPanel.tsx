@@ -22,7 +22,7 @@ interface ShrinkPanelProps {
   showImage?: string;
   onClose: () => void;
   onShrinkStarted: (shrinkId: number) => void;
-  onShrinkComplete: (shrinkId: number, audioUrl: string) => void;
+  onShrinkComplete: (shrinkId: number, audioUrl: string, audioDurationSeconds?: number) => void;
 }
 
 export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStarted, onShrinkComplete }: ShrinkPanelProps) {
@@ -168,7 +168,7 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
         setProgress(100);
         setProgressLabel('Complete!');
         setStatus('complete');
-        onShrinkComplete(shrink.id, shrink.audioUrl);
+        onShrinkComplete(shrink.id, shrink.audioUrl, shrink.audioDurationSeconds);
       } else {
         pollStatus(shrink.id);
       }
@@ -217,7 +217,7 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
             setProgressLabel('Complete!');
             setStatus('complete');
             if (shrink.audioUrl) {
-              onShrinkComplete(id, shrink.audioUrl);
+              onShrinkComplete(id, shrink.audioUrl, shrink.audioDurationSeconds);
             }
             clearInterval(interval);
             return;

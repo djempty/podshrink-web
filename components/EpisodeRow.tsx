@@ -11,7 +11,7 @@ interface EpisodeRowProps {
   showTitle?: string;
   showImage?: string;
   showId?: number;
-  shrinkState?: { status: 'shrinking' | 'complete'; audioUrl?: string };
+  shrinkState?: { status: 'shrinking' | 'complete'; audioUrl?: string; audioDurationSeconds?: number };
   onShrinkClick?: () => void;
 }
 
@@ -46,7 +46,7 @@ export default function EpisodeRow({ episode, showTitle, showImage, showId, shri
         showTitle: showTitle || episode.show?.title || '',
         audioUrl: resolveAudioUrl(shrinkState.audioUrl),
         imageUrl: episode.imageUrl || showImage || '',
-        duration: 0,
+        duration: shrinkState.audioDurationSeconds || 0,
       });
       play();
     }
