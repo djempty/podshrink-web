@@ -303,35 +303,31 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
             </div>
 
             {/* Voice */}
-            <div className="relative">
+            <div>
               <label className="block text-gray-400 text-xs mb-1.5">Choose a voice</label>
               <select
                 value={voiceId}
-                onChange={(e) => setVoiceId(e.target.value)}
+                onChange={(e) => {
+                  const v = voices.find(x => x.voiceId === e.target.value);
+                  if (v && userPlan === 'free' && !(v as any).free) return;
+                  setVoiceId(e.target.value);
+                }}
                 disabled={status === 'processing'}
                 className="w-full bg-[#252525] text-white text-sm rounded-md px-3 py-2.5 border border-gray-700 focus:outline-none focus:border-purple-500 shrink-select"
               >
                 <option value="" disabled>Choose voice</option>
-                {voices.filter(v => userPlan !== 'free' || (v as any).free).map((v) => (
-                  <option key={v.voiceId} value={v.voiceId}>
-                    {v.name}
-                  </option>
-                ))}
+                {voices.map((v) => {
+                  const locked = userPlan === 'free' && !(v as any).free;
+                  return (
+                    <option key={v.voiceId} value={v.voiceId} disabled={locked}>
+                      {locked ? `🔒 ${v.name}` : v.name}
+                    </option>
+                  );
+                })}
+                {userPlan === 'free' && (
+                  <option disabled value="__upgrade__">— Upgrade to unlock all voices —</option>
+                )}
               </select>
-              {userPlan === 'free' && (
-                <div className="mt-2 relative rounded-md overflow-hidden">
-                  <div className="text-xs text-gray-600 space-y-0.5 px-3 py-2 bg-[#1a1a1a] border border-gray-800 rounded-md">
-                    {voices.filter(v => !(v as any).free).map((v) => (
-                      <div key={v.voiceId} className="opacity-40">{v.name}</div>
-                    ))}
-                  </div>
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-md">
-                    <a href="/pricing" className="text-purple-400 hover:text-purple-300 text-xs font-medium px-3 py-1.5 bg-[#1a1a1a]/90 border border-purple-500/30 rounded-full transition-colors">
-                      Upgrade to unlock all 12 voices
-                    </a>
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Preview + Notify toggle */}
