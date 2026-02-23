@@ -69,7 +69,8 @@ export const authConfig: NextAuthConfig = {
       // Fetch user plan info from backend on token creation or update
       if (token.id && (trigger === 'signIn' || trigger === 'signUp' || !token.plan)) {
         try {
-          const response = await fetch(`${API_URL}/api/auth/me?userId=${token.id}`);
+          const lookupId = token.email || token.id;
+          const response = await fetch(`${API_URL}/api/auth/me?userId=${encodeURIComponent(lookupId as string)}`);
           if (response.ok) {
             const userData = await response.json();
             token.plan = userData.plan;
