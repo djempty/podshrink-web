@@ -55,12 +55,14 @@ export default function AudioPlayer() {
   const handleLoadedMetadata = () => {
     if (!audioRef.current) return;
     const browserDuration = audioRef.current.duration;
-    // Only use browser duration if we don't already have a valid stored duration,
-    // or if browser duration is finite and substantially different (for non-shrink tracks)
-    if (!duration || duration === 0 || (!isFinite(duration))) {
-      if (isFinite(browserDuration) && browserDuration > 0) {
-        setDuration(browserDuration);
-      }
+    // Use track.duration (from backend) as source of truth if available
+    const storedDuration = track?.duration || 0;
+    if (storedDuration > 0) {
+      // Backend knows the real duration — use it, ignore browser metadata
+      setDuration(storedDuration);
+    } else if (isFinite(browserDuration) && browserDuration > 0) {
+      // No stored duration — fall back to browser metadata
+      setDuration(browserDuration);
     }
   };
 
