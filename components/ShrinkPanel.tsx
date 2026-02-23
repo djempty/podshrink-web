@@ -23,9 +23,10 @@ interface ShrinkPanelProps {
   onClose: () => void;
   onShrinkStarted: (shrinkId: number) => void;
   onShrinkComplete: (shrinkId: number, audioUrl: string, audioDurationSeconds?: number) => void;
+  onShrinkError?: () => void;
 }
 
-export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStarted, onShrinkComplete }: ShrinkPanelProps) {
+export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStarted, onShrinkComplete, onShrinkError }: ShrinkPanelProps) {
   const { data: session, status: sessionStatus } = useSession();
   const router = useRouter();
   const [duration, setDuration] = useState(0);
@@ -187,6 +188,7 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
     } catch (err: any) {
       setStatus('error');
       setErrorMsg(err.message || 'Failed to start shrink');
+      onShrinkError?.();
     }
   };
 
@@ -224,12 +226,14 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
           case 'error':
             setStatus('error');
             setErrorMsg(shrink.errorMessage || 'Processing failed');
+            onShrinkError?.();
             clearInterval(interval);
             return;
         }
       } catch {
         setStatus('error');
         setErrorMsg('Lost connection to server');
+        onShrinkError?.();
         clearInterval(interval);
       }
     }, 3000);

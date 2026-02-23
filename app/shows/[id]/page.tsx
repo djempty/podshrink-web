@@ -198,6 +198,13 @@ export default function ShowPage() {
           onShrinkComplete={(_id, audioUrl) => {
             setShrinkStates(prev => ({ ...prev, [shrinkEpisode.id]: { status: 'complete', audioUrl } }));
           }}
+          onShrinkError={() => {
+            setShrinkStates(prev => {
+              const next = { ...prev };
+              delete next[shrinkEpisode.id];
+              return next;
+            });
+          }}
         />
       )}
     </div>
