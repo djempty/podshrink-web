@@ -1,25 +1,6 @@
 import { Metadata } from 'next';
-
 export const metadata: Metadata = {
-  title: 'Pricing Plans | PodShrink',
-  description: 'Choose the perfect plan for your podcast listening. Free, Plus, and Pro options with flexible AI summary credits.',
-  openGraph: {
-    title: 'Pricing Plans | PodShrink',
-    description: 'Choose the perfect plan for your podcast listening. Free, Plus, and Pro options with flexible AI summary credits.',
-  },
-  twitter: {
-    title: 'Pricing Plans | PodShrink',
-    description: 'Choose the perfect plan for your podcast listening. Free, Plus, and Pro options with flexible AI summary credits.',
-  },
-  alternates: {
-    canonical: '/pricing',
-  },
+  title: 'Pricing — PodShrink | AI Podcast Summaries',
+  description: 'Choose your PodShrink plan. Free, Standard ($9.99/mo), or Pro ($19.99/mo). Get AI-powered podcast summaries with premium voices and flexible durations.',
 };
-
-export default function PricingLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return <>{children}</>;
-}
+export default function Layout({ children }: { children: React.ReactNode }) { return children; }

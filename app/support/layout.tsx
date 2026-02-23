@@ -1,25 +1,6 @@
 import { Metadata } from 'next';
-
 export const metadata: Metadata = {
-  title: 'Support & FAQ | PodShrink',
-  description: 'Get help with PodShrink. Find answers to common questions about AI podcast summaries, billing, and features.',
-  openGraph: {
-    title: 'Support & FAQ | PodShrink',
-    description: 'Get help with PodShrink. Find answers to common questions about AI podcast summaries, billing, and features.',
-  },
-  twitter: {
-    title: 'Support & FAQ | PodShrink',
-    description: 'Get help with PodShrink. Find answers to common questions about AI podcast summaries, billing, and features.',
-  },
-  alternates: {
-    canonical: '/support',
-  },
+  title: 'Support — PodShrink | Help & FAQ',
+  description: 'Get help with PodShrink. Browse frequently asked questions about podcast summaries, subscriptions, voices, and more. Contact our support team.',
 };
-
-export default function SupportLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return <>{children}</>;
-}
+export default function Layout({ children }: { children: React.ReactNode }) { return children; }

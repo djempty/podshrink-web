@@ -1,5 +1,9 @@
 User-agent: *
 Allow: /
+Disallow: /admin
 Disallow: /api/
 Disallow: /account
+Disallow: /forgot-password
+Disallow: /reset-password
+
 Sitemap: https://podshrink.com/sitemap.xml
