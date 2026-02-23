@@ -48,18 +48,20 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#121212]">
+    <div className="min-h-screen bg-[#121212] relative">
       {/* Structured Data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
       
+      {/* Particle Background — spans hero + stats */}
+      <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0">
+        <ParticleBackground />
+      </div>
+
       {/* Hero Section */}
       <section className="relative px-6 pt-8 md:pt-16 pb-10 md:pb-20 text-center z-30">
-        <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
-          <ParticleBackground />
-        </div>
         <div className="relative z-10 max-w-4xl mx-auto">
           <div className="inline-flex items-center gap-2 bg-purple-600/20 border border-purple-500/30 rounded-full px-4 py-1.5 mb-8">
             <Sparkles size={14} className="text-purple-400" />
@@ -103,7 +105,7 @@ export default function LandingPage() {
       </section>
 
       {/* Time Is Everything Section */}
-      <section className="relative z-10 border-y border-gray-800 bg-[#0f0f0f]">
+      <section className="relative z-10 border-y border-gray-800 bg-[#0f0f0f]/80">
         <div className="max-w-5xl mx-auto px-6 py-10 md:py-20">
           <div className="max-w-3xl mx-auto text-center mb-8 md:mb-14">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">

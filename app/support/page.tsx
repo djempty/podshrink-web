@@ -37,6 +37,7 @@ const FAQ = [
 
 export default function SupportPage() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [contactOpen, setContactOpen] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [issueType, setIssueType] = useState('');
@@ -51,7 +52,7 @@ export default function SupportPage() {
     setError('');
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://podshrink-production.up.railway.app';
       const res = await fetch(`${apiUrl}/api/support/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -82,110 +83,8 @@ export default function SupportPage() {
       <PageHeader title="Support" showSignUp={false} />
 
       <div className="max-w-2xl mx-auto px-4 md:px-8 py-6">
-        {/* Contact Form */}
-        <section className="bg-[#1a1a1a] border border-gray-800 rounded-xl p-6 mb-8">
-          <div className="flex items-center gap-3 mb-5">
-            <div className="w-10 h-10 rounded-full bg-purple-600/20 flex items-center justify-center">
-              <Mail size={20} className="text-purple-400" />
-            </div>
-            <div>
-              <h2 className="text-white font-semibold">Contact Us</h2>
-              <p className="text-gray-500 text-sm">We typically respond within 24 hours</p>
-            </div>
-          </div>
-
-          {submitted ? (
-            <div className="bg-green-600/10 border border-green-600/30 rounded-lg p-4 mb-4">
-              <p className="text-green-400 text-sm">✓ Message sent! We'll get back to you soon.</p>
-            </div>
-          ) : null}
-
-          {error ? (
-            <div className="bg-red-600/10 border border-red-600/30 rounded-lg p-4 mb-4">
-              <p className="text-red-400 text-sm">{error}</p>
-            </div>
-          ) : null}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1.5">
-                Name
-              </label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full px-4 py-2.5 bg-[#0f0f0f] border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-purple-500"
-                placeholder="Your name"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1.5">
-                Email <span className="text-red-400">*</span>
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full px-4 py-2.5 bg-[#0f0f0f] border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-purple-500"
-                placeholder="your@email.com"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1.5">
-                Issue Type
-              </label>
-              <select
-                value={issueType}
-                onChange={(e) => setIssueType(e.target.value)}
-                className="w-full px-4 py-2.5 bg-[#0f0f0f] border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-purple-500"
-              >
-                <option value="">Select an issue type</option>
-                <option value="Bug Report">Bug Report</option>
-                <option value="Billing Question">Billing Question</option>
-                <option value="Feature Request">Feature Request</option>
-                <option value="Shrink Issue">Shrink Issue</option>
-                <option value="Account Help">Account Help</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1.5">
-                Message <span className="text-red-400">*</span>
-              </label>
-              <textarea
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                required
-                rows={5}
-                className="w-full px-4 py-2.5 bg-[#0f0f0f] border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-purple-500 resize-none"
-                placeholder="Tell us how we can help..."
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={submitting}
-              className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-600/50 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors"
-            >
-              {submitting ? (
-                <>Sending...</>
-              ) : (
-                <>
-                  <Send size={16} />
-                  Send Message
-                </>
-              )}
-            </button>
-          </form>
-        </section>
-
         {/* FAQ */}
-        <section>
+        <section className="mb-8">
           <h2 className="text-xl font-bold text-white mb-4">Frequently Asked Questions</h2>
           <div className="space-y-2">
             {FAQ.map((item, i) => (
@@ -212,6 +111,120 @@ export default function SupportPage() {
                 )}
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* Contact Us — collapsible */}
+        <section>
+          <h2 className="text-xl font-bold text-white mb-4">Contact Us</h2>
+          <div className="bg-[#1a1a1a] border border-gray-800 rounded-lg overflow-hidden">
+            <button
+              onClick={() => setContactOpen(!contactOpen)}
+              className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-[#222] transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <Mail size={18} className="text-purple-400" />
+                <div>
+                  <span className="text-white text-sm font-medium">Send us a message</span>
+                  <p className="text-gray-500 text-xs">We typically respond within 24 hours</p>
+                </div>
+              </div>
+              <ChevronDown
+                size={18}
+                className={`text-gray-500 flex-shrink-0 transition-transform duration-200 ${
+                  contactOpen ? 'rotate-180' : ''
+                }`}
+              />
+            </button>
+
+            {contactOpen && (
+              <div className="px-5 pb-5 pt-2">
+                {submitted && (
+                  <div className="bg-green-600/10 border border-green-600/30 rounded-lg p-4 mb-4">
+                    <p className="text-green-400 text-sm">✓ Message sent! We'll get back to you soon.</p>
+                  </div>
+                )}
+
+                {error && (
+                  <div className="bg-red-600/10 border border-red-600/30 rounded-lg p-4 mb-4">
+                    <p className="text-red-400 text-sm">{error}</p>
+                  </div>
+                )}
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-1.5">Name</label>
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full px-4 py-2.5 bg-[#0f0f0f] border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-purple-500"
+                      placeholder="Your name"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                      Email <span className="text-red-400">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      className="w-full px-4 py-2.5 bg-[#0f0f0f] border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-purple-500"
+                      placeholder="your@email.com"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-1.5">Issue Type</label>
+                    <select
+                      value={issueType}
+                      onChange={(e) => setIssueType(e.target.value)}
+                      className="w-full px-4 py-2.5 bg-[#0f0f0f] border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-purple-500"
+                    >
+                      <option value="">Select an issue type</option>
+                      <option value="Bug Report">Bug Report</option>
+                      <option value="Billing Question">Billing Question</option>
+                      <option value="Feature Request">Feature Request</option>
+                      <option value="Shrink Issue">Shrink Issue</option>
+                      <option value="Account Help">Account Help</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                      Message <span className="text-red-400">*</span>
+                    </label>
+                    <textarea
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      required
+                      rows={5}
+                      className="w-full px-4 py-2.5 bg-[#0f0f0f] border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-purple-500 resize-none"
+                      placeholder="Tell us how we can help..."
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-600/50 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors"
+                  >
+                    {submitting ? (
+                      <>Sending...</>
+                    ) : (
+                      <>
+                        <Send size={16} />
+                        Send Message
+                      </>
+                    )}
+                  </button>
+                </form>
+              </div>
+            )}
           </div>
         </section>
       </div>

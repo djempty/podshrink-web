@@ -67,7 +67,7 @@ const PLANS = [
       'Priority processing',
       'Download MP3s',
       'Early access to new features',
-      'Custom voice requests',
+      'Early access to new voices',
     ],
   },
 ];

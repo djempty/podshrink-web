@@ -29,7 +29,7 @@ export default function TranscriptsPage() {
     const q = search.toLowerCase();
     return shrinks.filter((s: any) =>
       (s.episode?.title || '').toLowerCase().includes(q) ||
-      (s.episode?.show?.title || '').toLowerCase().includes(q)
+      (s.show?.title || '').toLowerCase().includes(q)
     );
   }, [shrinks, search]);
 
@@ -68,9 +68,11 @@ export default function TranscriptsPage() {
           />
         </div>
 
-        {/* Results count */}
-        {search.trim() && (
+        {/* Results heading */}
+        {search.trim() ? (
           <p className="text-gray-500 text-xs mb-4">{filtered.length} result{filtered.length !== 1 ? 's' : ''} found</p>
+        ) : (
+          <h2 className="text-white text-lg font-semibold mb-4">Recent Transcripts</h2>
         )}
 
         {paginated.length === 0 ? (
@@ -87,13 +89,13 @@ export default function TranscriptsPage() {
                 className="flex items-center gap-4 p-4 bg-[#1a1a1a] border border-gray-800 rounded-lg hover:border-gray-700 transition-colors"
               >
                 <img
-                  src={shrink.episode?.imageUrl || shrink.episode?.show?.imageUrl || '/logo.png'}
+                  src={shrink.episode?.imageUrl || shrink.show?.imageUrl || '/logo.png'}
                   alt=""
                   className="w-12 h-12 rounded object-cover flex-shrink-0"
                 />
                 <div className="flex-1 min-w-0">
                   <p className="text-white text-sm font-medium truncate">{shrink.episode?.title || 'Episode'}</p>
-                  <p className="text-gray-500 text-xs truncate">{shrink.episode?.show?.title || ''}</p>
+                  <p className="text-gray-500 text-xs truncate">{shrink.show?.title || ''}</p>
                 </div>
                 <div className="flex items-center gap-1 text-gray-500 text-xs flex-shrink-0">
                   <Clock size={12} />

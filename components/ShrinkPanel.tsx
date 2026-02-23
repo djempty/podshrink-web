@@ -320,7 +320,7 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
                   const locked = userPlan === 'free' && !(v as any).free;
                   return (
                     <option key={v.voiceId} value={v.voiceId} disabled={locked}>
-                      {locked ? `🔒 ${v.name}` : v.name}
+                      {locked ? `⊘ ${v.name}` : v.name}
                     </option>
                   );
                 })}
