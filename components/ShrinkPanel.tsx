@@ -438,7 +438,7 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
               Completed!
             </button>
             <p className="text-xs text-gray-400 text-center mt-2">
-              Your PodShrink is ready! Close this panel and click "Play PodShrink" to listen.
+              Your shrink is ready! Close this panel and click "Play Shrink" to listen.
             </p>
           </div>
         )}

@@ -113,7 +113,7 @@ export default function EpisodeRow({ episode, showTitle, showImage, showId, shri
               {isShrinkTrack && isPlaying ? (
                 <><Pause size={14} fill="white" /><span className="hidden md:inline">Pause PodShrink</span><span className="md:hidden">Pause</span></>
               ) : (
-                <><Play size={14} fill="white" /><span className="hidden md:inline">Play PodShrink</span><span className="md:hidden">Play Shrink</span></>
+                <><Play size={14} fill="white" /> Play Shrink</>
               )}
             </button>
           ) : shrinkState?.status === 'shrinking' ? (
