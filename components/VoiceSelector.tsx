@@ -1,10 +1,19 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Voice } from '@/lib/types';
 import { api } from '@/lib/api';
-import { Volume2, Lock } from 'lucide-react';
+import { Volume2 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
+
+interface VoiceData {
+  id: string;
+  voiceId: string;
+  name: string;
+  gender: string;
+  description?: string;
+  previewUrl: string;
+  free: boolean;
+}
 
 interface VoiceSelectorProps {
   value: string;
@@ -12,7 +21,7 @@ interface VoiceSelectorProps {
 }
 
 export default function VoiceSelector({ value, onChange }: VoiceSelectorProps) {
-  const [voices, setVoices] = useState<(Voice & { free?: boolean })[]>([]);
+  const [voices, setVoices] = useState<VoiceData[]>([]);
   const [loading, setLoading] = useState(true);
   const { data: session } = useSession();
   
@@ -23,9 +32,10 @@ export default function VoiceSelector({ value, onChange }: VoiceSelectorProps) {
     const fetchVoices = async () => {
       try {
         const data = await api.getVoices();
-        setVoices(data);
+        setVoices(data as any);
+        // Set initial value to first free voice if nothing selected
         if (data.length > 0 && !value) {
-          onChange(data[0].voice_id);
+          onChange((data[0] as any).voiceId || (data[0] as any).id);
         }
       } catch (err) {
         console.error('Failed to fetch voices:', err);
@@ -33,21 +43,20 @@ export default function VoiceSelector({ value, onChange }: VoiceSelectorProps) {
         setLoading(false);
       }
     };
-
     fetchVoices();
   }, [value, onChange]);
 
-  const selectedVoice = voices.find((v) => v.voice_id === value);
+  const getVoiceId = (v: VoiceData) => v.voiceId || v.id;
+  const selectedVoice = voices.find((v) => getVoiceId(v) === value);
+  const isVoiceLocked = (voice: VoiceData) => !hasPremiumVoices && !voice.free;
 
   const handlePreview = () => {
-    if (selectedVoice?.preview_url) {
-      const audio = new Audio(selectedVoice.preview_url);
+    if (selectedVoice?.previewUrl) {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+      const url = selectedVoice.previewUrl.startsWith('http') ? selectedVoice.previewUrl : `${API_URL}${selectedVoice.previewUrl}`;
+      const audio = new Audio(url);
       audio.play();
     }
-  };
-
-  const isVoiceLocked = (voice: Voice & { free?: boolean }) => {
-    return !hasPremiumVoices && voice.free === false;
   };
 
   if (loading) {
@@ -70,7 +79,7 @@ export default function VoiceSelector({ value, onChange }: VoiceSelectorProps) {
         <select
           value={value}
           onChange={(e) => {
-            const voice = voices.find(v => v.voice_id === e.target.value);
+            const voice = voices.find(v => getVoiceId(v) === e.target.value);
             if (voice && !isVoiceLocked(voice)) {
               onChange(e.target.value);
             }
@@ -79,10 +88,11 @@ export default function VoiceSelector({ value, onChange }: VoiceSelectorProps) {
         >
           {voices.map((voice) => {
             const locked = isVoiceLocked(voice);
+            const vid = getVoiceId(voice);
             return (
               <option
-                key={voice.voice_id}
-                value={voice.voice_id}
+                key={vid}
+                value={vid}
                 disabled={locked}
               >
                 {voice.name}{locked ? ' 🔒' : ''}
@@ -90,7 +100,7 @@ export default function VoiceSelector({ value, onChange }: VoiceSelectorProps) {
             );
           })}
         </select>
-        {selectedVoice?.preview_url && (
+        {selectedVoice?.previewUrl && (
           <button
             type="button"
             onClick={handlePreview}
