@@ -104,7 +104,7 @@ export default function Sidebar() {
                     <p className="text-white text-sm font-medium truncate">
                       {session.user?.name || session.user?.email}
                     </p>
-                    <p className="text-gray-500 text-xs">Free Plan</p>
+                    <p className="text-gray-500 text-xs">{(session.user as any)?.plan === 'pro' ? 'Pro Plan' : (session.user as any)?.plan === 'standard' ? 'Standard Plan' : 'Free Plan'}</p>
                   </div>
                 </div>
                 <div className="flex gap-3">
@@ -203,7 +203,7 @@ export default function Sidebar() {
                   <p className="text-white text-sm font-medium truncate">
                     {session.user?.name || session.user?.email}
                   </p>
-                  <p className="text-gray-500 text-xs">Free Plan</p>
+                  <p className="text-gray-500 text-xs">{(session.user as any)?.plan === 'pro' ? 'Pro Plan' : (session.user as any)?.plan === 'standard' ? 'Standard Plan' : 'Free Plan'}</p>
                 </div>
               </div>
               <div className="space-y-2">
