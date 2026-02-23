@@ -33,7 +33,7 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
   const [voiceId, setVoiceId] = useState('');
   const [voices, setVoices] = useState<VoiceOption[]>([]);
   const [status, setStatus] = useState<'idle' | 'processing' | 'complete' | 'error'>('idle');
-  const [notifyWhenReady, setNotifyWhenReady] = useState(true);
+  const [notifyWhenReady, setNotifyWhenReady] = useState(false);
   const chimeRef = useRef<HTMLAudioElement | null>(null);
   const [progress, setProgress] = useState(0);
   const [progressLabel, setProgressLabel] = useState('');
@@ -223,7 +223,7 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
             if (shrink.audioUrl) {
               onShrinkComplete(id, shrink.audioUrl, shrink.audioDurationSeconds);
             }
-            // Notify user
+            // Notify user with chime sound
             if (notifyWhenReady) {
               try {
                 if (!chimeRef.current) {
@@ -233,12 +233,6 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
                 chimeRef.current.currentTime = 0;
                 chimeRef.current.play().catch(() => {});
               } catch {}
-              if (Notification.permission === 'granted') {
-                new Notification('PodShrink', {
-                  body: `Your shrink of "${episode.title}" is ready!`,
-                  icon: '/logo.png'
-                });
-              }
             }
             clearInterval(interval);
             return;
@@ -338,13 +332,7 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
             </button>
           ) : <div />}
           <button
-            onClick={() => {
-              const next = !notifyWhenReady;
-              setNotifyWhenReady(next);
-              if (next && typeof Notification !== 'undefined' && Notification.permission === 'default') {
-                Notification.requestPermission();
-              }
-            }}
+            onClick={() => setNotifyWhenReady(!notifyWhenReady)}
             className={`flex items-center gap-1.5 text-xs transition-colors ${
               notifyWhenReady ? 'text-purple-400 hover:text-purple-300' : 'text-gray-500 hover:text-gray-400'
             }`}
