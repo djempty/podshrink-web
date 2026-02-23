@@ -15,6 +15,7 @@ interface VoiceOption {
   gender: string;
   description: string;
   previewUrl: string;
+  free?: boolean;
 }
 
 interface ShrinkPanelProps {
@@ -29,6 +30,7 @@ interface ShrinkPanelProps {
 export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStarted, onShrinkComplete, onShrinkError }: ShrinkPanelProps) {
   const { data: session, status: sessionStatus } = useSession();
   const router = useRouter();
+  const userPlan = (session?.user as any)?.plan || 'free';
   const [duration, setDuration] = useState(0);
   const [voiceId, setVoiceId] = useState('');
   const [voices, setVoices] = useState<VoiceOption[]>([]);
@@ -280,68 +282,83 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
           </div>
         </div>
 
-        {/* Duration */}
-        <div>
-          <label className="block text-gray-400 text-xs mb-1.5">Choose a duration</label>
-          <select
-            value={duration}
-            onChange={(e) => setDuration(Number(e.target.value))}
-            disabled={status === 'processing'}
-            className="w-full bg-[#252525] text-white text-sm rounded-md px-3 py-2.5 border border-gray-700 focus:outline-none focus:border-purple-500 shrink-select"
-          >
-            <option value={0} disabled>Choose duration</option>
-            <option value={1}>1 minute</option>
-            <option value={5}>5 minutes</option>
-            <option value={10}>10 minutes</option>
-          </select>
-          {duration >= 10 && (
-            <p className="text-gray-500 text-xs mt-1">Longer shrinks can take up to 2–3 minutes to generate</p>
-          )}
-        </div>
-
-        {/* Voice */}
-        <div>
-          <label className="block text-gray-400 text-xs mb-1.5">Choose a voice</label>
-          <select
-            value={voiceId}
-            onChange={(e) => setVoiceId(e.target.value)}
-            disabled={status === 'processing'}
-            className="w-full bg-[#252525] text-white text-sm rounded-md px-3 py-2.5 border border-gray-700 focus:outline-none focus:border-purple-500 shrink-select"
-          >
-            <option value="" disabled>Choose voice</option>
-            {voices.map((v) => (
-              <option key={v.voiceId} value={v.voiceId}>
-                {v.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Preview + Notify toggle */}
-        <div className="flex items-center justify-between">
-          {selectedVoice && status !== 'processing' ? (
-            <button
-              onClick={handlePreview}
-              className="flex items-center gap-2 text-sm text-purple-400 hover:text-purple-300 transition-colors"
-            >
-              {previewPlaying ? (
-                <><Pause size={14} fill="currentColor" /> Pause Preview</>
-              ) : (
-                <><Play size={14} fill="currentColor" /> Preview: {selectedVoice.name}</>
+        {/* Duration & Voice — only show when logged in */}
+        {session && (
+          <>
+            {/* Duration */}
+            <div>
+              <label className="block text-gray-400 text-xs mb-1.5">Choose a duration</label>
+              <select
+                value={duration}
+                onChange={(e) => setDuration(Number(e.target.value))}
+                disabled={status === 'processing'}
+                className="w-full bg-[#252525] text-white text-sm rounded-md px-3 py-2.5 border border-gray-700 focus:outline-none focus:border-purple-500 shrink-select"
+              >
+                <option value={0} disabled>Choose duration</option>
+                <option value={1}>1 minute</option>
+                <option value={5}>5 minutes</option>
+                <option value={10}>10 minutes</option>
+              </select>
+              {duration >= 10 && (
+                <p className="text-gray-500 text-xs mt-1">Longer shrinks can take up to 2–3 minutes to generate</p>
               )}
-            </button>
-          ) : <div />}
-          <button
-            onClick={() => setNotifyWhenReady(!notifyWhenReady)}
-            className={`flex items-center gap-1.5 text-xs transition-colors ${
-              notifyWhenReady ? 'text-purple-400 hover:text-purple-300' : 'text-gray-500 hover:text-gray-400'
-            }`}
-            title={notifyWhenReady ? 'Notifications on' : 'Notifications off'}
-          >
-            {notifyWhenReady ? <Bell size={14} /> : <BellOff size={14} />}
-            {notifyWhenReady ? 'Notify me' : 'Notify off'}
-          </button>
-        </div>
+            </div>
+
+            {/* Voice */}
+            <div>
+              <label className="block text-gray-400 text-xs mb-1.5">
+                Choose a voice
+                {userPlan === 'free' && <span className="text-gray-600 ml-1">· 3 free voices</span>}
+              </label>
+              <select
+                value={voiceId}
+                onChange={(e) => {
+                  const v = voices.find(x => x.voiceId === e.target.value);
+                  if (v && userPlan === 'free' && !(v as any).free) return;
+                  setVoiceId(e.target.value);
+                }}
+                disabled={status === 'processing'}
+                className="w-full bg-[#252525] text-white text-sm rounded-md px-3 py-2.5 border border-gray-700 focus:outline-none focus:border-purple-500 shrink-select"
+              >
+                <option value="" disabled>Choose voice</option>
+                {voices.map((v) => {
+                  const locked = userPlan === 'free' && !(v as any).free;
+                  return (
+                    <option key={v.voiceId} value={v.voiceId} disabled={locked}>
+                      {v.name}{locked ? ' 🔒' : ''}
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
+
+            {/* Preview + Notify toggle */}
+            <div className="flex items-center justify-between">
+              {selectedVoice && status !== 'processing' ? (
+                <button
+                  onClick={handlePreview}
+                  className="flex items-center gap-2 text-sm text-purple-400 hover:text-purple-300 transition-colors"
+                >
+                  {previewPlaying ? (
+                    <><Pause size={14} fill="currentColor" /> Pause Preview</>
+                  ) : (
+                    <><Play size={14} fill="currentColor" /> Preview: {selectedVoice.name}</>
+                  )}
+                </button>
+              ) : <div />}
+              <button
+                onClick={() => setNotifyWhenReady(!notifyWhenReady)}
+                className={`flex items-center gap-1.5 text-xs transition-colors ${
+                  notifyWhenReady ? 'text-purple-400 hover:text-purple-300' : 'text-gray-500 hover:text-gray-400'
+                }`}
+                title={notifyWhenReady ? 'Notifications on' : 'Notifications off'}
+              >
+                {notifyWhenReady ? <Bell size={14} /> : <BellOff size={14} />}
+                {notifyWhenReady ? 'Notify me' : 'Notify off'}
+              </button>
+            </div>
+          </>
+        )}
 
         {/* Action button */}
         {status === 'idle' && (
