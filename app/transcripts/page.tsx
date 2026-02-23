@@ -90,7 +90,7 @@ export default function TranscriptsPage() {
               >
                 <img
                   src={shrink.episode?.imageUrl || shrink.show?.imageUrl || '/logo.png'}
-                  alt=""
+                  alt={shrink.episode?.title || "Episode"}
                   className="w-12 h-12 rounded object-cover flex-shrink-0"
                 />
                 <div className="flex-1 min-w-0">

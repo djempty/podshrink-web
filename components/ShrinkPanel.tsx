@@ -275,7 +275,7 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
           <div className="flex items-center gap-3">
             <img
               src={episode.imageUrl || showImage || '/logo.png'}
-              alt=""
+              alt={episode?.title || "Episode artwork"}
               className="w-12 h-12 rounded object-cover"
             />
             <p className="text-white text-sm font-medium line-clamp-2">{episode.title}</p>

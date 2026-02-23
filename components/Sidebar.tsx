@@ -94,7 +94,7 @@ export default function Sidebar() {
               <div>
                 <div className="flex items-center gap-3 mb-3">
                   {session.user?.image ? (
-                    <img src={session.user.image} alt="" className="w-10 h-10 rounded-full object-cover" />
+                    <img src={session.user.image} alt="Profile" className="w-10 h-10 rounded-full object-cover" />
                   ) : (
                     <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center">
                       <User size={20} className="text-white" />
@@ -193,7 +193,7 @@ export default function Sidebar() {
             <div>
               <div className="flex items-center gap-3 mb-3">
                 {session.user?.image ? (
-                  <img src={session.user.image} alt="" className="w-10 h-10 rounded-full object-cover flex-shrink-0" />
+                  <img src={session.user.image} alt="Profile" className="w-10 h-10 rounded-full object-cover flex-shrink-0" />
                 ) : (
                   <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center flex-shrink-0">
                     <User size={18} className="text-white" />

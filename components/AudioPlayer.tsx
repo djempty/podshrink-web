@@ -124,7 +124,7 @@ export default function AudioPlayer() {
 
           {/* Thumbnail */}
           {track ? (
-            <img src={track.imageUrl || '/logo.png'} alt="" className="w-10 h-10 rounded object-cover flex-shrink-0 self-center" />
+            <img src={track.imageUrl || '/logo.png'} alt={track.title || "Now playing"} className="w-10 h-10 rounded object-cover flex-shrink-0 self-center" />
           ) : (
             <div className="w-10 h-10 flex-shrink-0" />
           )}
@@ -197,7 +197,7 @@ export default function AudioPlayer() {
       {track && (
         <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#1a1a1a] border-t border-gray-800 z-50 px-4 py-3">
           <div className="flex items-center gap-3">
-            <img src={track.imageUrl || '/logo.png'} alt="" className="w-12 h-12 rounded object-cover flex-shrink-0" />
+            <img src={track.imageUrl || '/logo.png'} alt={track.title || "Now playing"} className="w-12 h-12 rounded object-cover flex-shrink-0" />
             <div className="flex-1 min-w-0">
               <p className="text-white text-sm font-medium truncate">{track.title}</p>
               <p className="text-gray-500 text-xs truncate">{track.showTitle}</p>

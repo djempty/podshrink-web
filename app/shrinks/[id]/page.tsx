@@ -70,8 +70,8 @@ export default function PublicTranscriptPage() {
   }
 
   const episodeTitle = shrinkInfo?.episode?.title || 'Episode Summary';
-  const showTitle = shrinkInfo?.episode?.show?.title || '';
-  const showImage = shrinkInfo?.episode?.imageUrl || shrinkInfo?.episode?.show?.imageUrl || '/logo.png';
+  const showTitle = shrinkInfo?.show?.title || shrinkInfo?.episode?.show?.title || '';
+  const showImage = shrinkInfo?.episode?.imageUrl || shrinkInfo?.show?.imageUrl || shrinkInfo?.episode?.show?.imageUrl || '/logo.png';
   const duration = shrinkInfo?.targetDurationMinutes || shrinkInfo?.targetDuration;
 
   return (
@@ -145,8 +145,8 @@ export default function PublicTranscriptPage() {
                 dangerouslySetInnerHTML={{
                   __html: injectSummaryLinks(data.summary || '', {
                     episodeId: shrinkInfo?.episode?.id,
-                    showTitle: shrinkInfo?.episode?.show?.title,
-                    showId: shrinkInfo?.episode?.show?.id,
+                    showTitle: shrinkInfo?.show?.title || shrinkInfo?.episode?.show?.title,
+                    showId: shrinkInfo?.show?.id || shrinkInfo?.episode?.show?.id,
                   })
                 }}
               />

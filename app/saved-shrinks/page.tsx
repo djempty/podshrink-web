@@ -137,7 +137,7 @@ export default function SavedShrinksPage() {
                 {/* Thumbnail */}
                 <img
                   src={shrink.episode?.imageUrl || (shrink as any).show?.imageUrl || '/logo.png'}
-                  alt=""
+                  alt={shrink.episode?.title || "Episode"}
                   className="w-14 h-14 rounded object-cover flex-shrink-0"
                 />
 
