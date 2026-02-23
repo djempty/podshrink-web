@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { X, Play, Pause } from 'lucide-react';
+import { X, Play, Pause, Bell, BellOff } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
@@ -33,6 +33,8 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
   const [voiceId, setVoiceId] = useState('');
   const [voices, setVoices] = useState<VoiceOption[]>([]);
   const [status, setStatus] = useState<'idle' | 'processing' | 'complete' | 'error'>('idle');
+  const [notifyWhenReady, setNotifyWhenReady] = useState(true);
+  const chimeRef = useRef<HTMLAudioElement | null>(null);
   const [progress, setProgress] = useState(0);
   const [progressLabel, setProgressLabel] = useState('');
   const [shrinkId, setShrinkId] = useState<number | null>(null);
@@ -221,6 +223,23 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
             if (shrink.audioUrl) {
               onShrinkComplete(id, shrink.audioUrl, shrink.audioDurationSeconds);
             }
+            // Notify user
+            if (notifyWhenReady) {
+              try {
+                if (!chimeRef.current) {
+                  chimeRef.current = new Audio('/chime.wav');
+                  chimeRef.current.volume = 0.5;
+                }
+                chimeRef.current.currentTime = 0;
+                chimeRef.current.play().catch(() => {});
+              } catch {}
+              if (Notification.permission === 'granted') {
+                new Notification('PodShrink', {
+                  body: `Your shrink of "${episode.title}" is ready!`,
+                  icon: '/logo.png'
+                });
+              }
+            }
             clearInterval(interval);
             return;
           case 'error':
@@ -304,19 +323,37 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
           </select>
         </div>
 
-        {/* Preview button */}
-        {selectedVoice && status !== 'processing' && (
+        {/* Preview + Notify toggle */}
+        <div className="flex items-center justify-between">
+          {selectedVoice && status !== 'processing' ? (
+            <button
+              onClick={handlePreview}
+              className="flex items-center gap-2 text-sm text-purple-400 hover:text-purple-300 transition-colors"
+            >
+              {previewPlaying ? (
+                <><Pause size={14} fill="currentColor" /> Pause Preview</>
+              ) : (
+                <><Play size={14} fill="currentColor" /> Preview: {selectedVoice.name}</>
+              )}
+            </button>
+          ) : <div />}
           <button
-            onClick={handlePreview}
-            className="flex items-center gap-2 text-sm text-purple-400 hover:text-purple-300 transition-colors"
+            onClick={() => {
+              const next = !notifyWhenReady;
+              setNotifyWhenReady(next);
+              if (next && typeof Notification !== 'undefined' && Notification.permission === 'default') {
+                Notification.requestPermission();
+              }
+            }}
+            className={`flex items-center gap-1.5 text-xs transition-colors ${
+              notifyWhenReady ? 'text-purple-400 hover:text-purple-300' : 'text-gray-500 hover:text-gray-400'
+            }`}
+            title={notifyWhenReady ? 'Notifications on' : 'Notifications off'}
           >
-            {previewPlaying ? (
-              <><Pause size={14} fill="currentColor" /> Pause Preview</>
-            ) : (
-              <><Play size={14} fill="currentColor" /> Preview: {selectedVoice.name}</>
-            )}
+            {notifyWhenReady ? <Bell size={14} /> : <BellOff size={14} />}
+            {notifyWhenReady ? 'Notify me' : 'Notify off'}
           </button>
-        )}
+        </div>
 
         {/* Action button */}
         {status === 'idle' && (
