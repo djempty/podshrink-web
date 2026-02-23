@@ -282,9 +282,7 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
           </div>
         </div>
 
-        {/* Duration & Voice — only show when logged in */}
-        {session && (
-          <>
+        {/* Duration & Voice — visible to all, Generate button gated */}
             {/* Duration */}
             <div>
               <label className="block text-gray-400 text-xs mb-1.5">Choose a duration</label>
@@ -357,8 +355,6 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
                 {notifyWhenReady ? 'Notify me' : 'Notify off'}
               </button>
             </div>
-          </>
-        )}
 
         {/* Action button */}
         {status === 'idle' && (
