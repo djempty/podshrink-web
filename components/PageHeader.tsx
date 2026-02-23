@@ -34,7 +34,7 @@ export default function PageHeader({ title, showSignUp = true, showSearch = fals
   }, [searchExpanded]);
 
   return (
-    <header className="sticky top-0 z-30 bg-[#121212] flex items-center justify-between px-4 md:px-8 py-4 md:py-6">
+    <header className="sticky top-0 md:top-[55px] z-30 bg-[#121212] flex items-center justify-between px-4 md:px-8 py-4 md:py-6">
       <h1 className="text-2xl md:text-3xl font-bold text-white">{title}</h1>
       
       <div className="flex items-center gap-3">
