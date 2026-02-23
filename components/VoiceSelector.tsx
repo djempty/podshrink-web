@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import { Voice } from '@/lib/types';
 import { api } from '@/lib/api';
-import { Volume2 } from 'lucide-react';
+import { Volume2, Lock } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 
 interface VoiceSelectorProps {
   value: string;
@@ -11,8 +12,12 @@ interface VoiceSelectorProps {
 }
 
 export default function VoiceSelector({ value, onChange }: VoiceSelectorProps) {
-  const [voices, setVoices] = useState<Voice[]>([]);
+  const [voices, setVoices] = useState<(Voice & { free?: boolean })[]>([]);
   const [loading, setLoading] = useState(true);
+  const { data: session } = useSession();
+  
+  const userPlan = (session?.user as any)?.plan || 'free';
+  const hasPremiumVoices = userPlan === 'standard' || userPlan === 'pro';
 
   useEffect(() => {
     const fetchVoices = async () => {
@@ -41,6 +46,10 @@ export default function VoiceSelector({ value, onChange }: VoiceSelectorProps) {
     }
   };
 
+  const isVoiceLocked = (voice: Voice & { free?: boolean }) => {
+    return !hasPremiumVoices && voice.free === false;
+  };
+
   if (loading) {
     return (
       <div className="animate-pulse">
@@ -51,18 +60,35 @@ export default function VoiceSelector({ value, onChange }: VoiceSelectorProps) {
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-300">Voice</label>
+      <label className="block text-sm font-medium text-gray-300">
+        Voice
+        {!hasPremiumVoices && (
+          <span className="text-gray-500 text-xs ml-2">3 free voices · <a href="/pricing" className="text-purple-400 hover:text-purple-300">Upgrade for all 12</a></span>
+        )}
+      </label>
       <div className="flex gap-2">
         <select
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) => {
+            const voice = voices.find(v => v.voice_id === e.target.value);
+            if (voice && !isVoiceLocked(voice)) {
+              onChange(e.target.value);
+            }
+          }}
           className="flex-1 bg-dark-hover border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
         >
-          {voices.map((voice) => (
-            <option key={voice.voice_id} value={voice.voice_id}>
-              {voice.name}
-            </option>
-          ))}
+          {voices.map((voice) => {
+            const locked = isVoiceLocked(voice);
+            return (
+              <option
+                key={voice.voice_id}
+                value={voice.voice_id}
+                disabled={locked}
+              >
+                {voice.name}{locked ? ' 🔒' : ''}
+              </option>
+            );
+          })}
         </select>
         {selectedVoice?.preview_url && (
           <button

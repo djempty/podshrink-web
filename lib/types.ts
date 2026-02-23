@@ -31,6 +31,7 @@ export interface Voice {
   name: string;
   preview_url: string;
   description?: string;
+  free?: boolean;
 }
 
 export interface Shrink {

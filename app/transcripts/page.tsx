@@ -16,10 +16,9 @@ export default function TranscriptsPage() {
   const [page, setPage] = useState(1);
 
   useEffect(() => {
-    api.getAllShrinks()
+    api.getPublicShrinks()
       .then(all => {
-        const completed = all.filter((s: any) => s.status === 'complete');
-        setShrinks(completed);
+        setShrinks(all);
       })
       .catch(console.error)
       .finally(() => setLoading(false));

@@ -33,7 +33,7 @@ export default function PublicTranscriptPage() {
   useEffect(() => {
     Promise.all([
       api.getShrinkTranscript(shrinkId),
-      api.getAllShrinks().then(all => all.find((s: any) => s.id === shrinkId)),
+      api.getPublicShrinks().then(all => all.find((s: any) => s.id === shrinkId)),
     ])
       .then(([transcriptData, shrink]) => {
         if (!transcriptData.summary && !transcriptData.transcript) {

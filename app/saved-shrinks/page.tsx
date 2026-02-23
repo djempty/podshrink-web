@@ -1,24 +1,37 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import { api, resolveAudioUrl } from '@/lib/api';
 import { Shrink } from '@/lib/types';
-import { Play, Pause, Download, Clock, Calendar, Trash2, FileText, X } from 'lucide-react';
+import { Play, Pause, Download, Clock, Calendar, Trash2, FileText, X, Lock } from 'lucide-react';
 import { useAudioPlayer } from '@/lib/audioPlayerStore';
 import PageHeader from '@/components/PageHeader';
 import { injectSummaryLinks } from '@/lib/summaryLinks';
+import Link from 'next/link';
 
 export default function SavedShrinksPage() {
+  const { data: session } = useSession();
   const [shrinks, setShrinks] = useState<Shrink[]>([]);
   const [loading, setLoading] = useState(true);
   const { track, isPlaying, setTrack, play, pause } = useAudioPlayer();
 
+  const userPlan = (session?.user as any)?.plan || 'free';
+  const canSave = userPlan === 'standard' || userPlan === 'pro';
+  const canDownload = userPlan === 'standard' || userPlan === 'pro';
+
   useEffect(() => {
-    api.getAllShrinks()
+    if (!session?.user?.id) {
+      setShrinks([]);
+      setLoading(false);
+      return;
+    }
+    const userId = session.user.email || session.user.id;
+    api.getAllShrinks(userId)
       .then(setShrinks)
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, []);
+  }, [session]);
 
   const handlePlay = (shrink: Shrink) => {
     if (!shrink.audioUrl) return;
@@ -63,7 +76,8 @@ export default function SavedShrinksPage() {
   const handleDelete = async (shrink: Shrink) => {
     if (!confirm('Delete this shrink? This cannot be undone.')) return;
     try {
-      await api.deleteShrink(shrink.id);
+      const userId = session?.user?.email || session?.user?.id;
+      await api.deleteShrink(shrink.id, userId);
       setShrinks(prev => prev.filter(s => s.id !== shrink.id));
     } catch {
       alert('Failed to delete shrink');
@@ -99,7 +113,19 @@ export default function SavedShrinksPage() {
       <PageHeader title="Saved Shrinks" showSearch />
 
       <div className="px-4 md:px-8">
-        {shrinks.length === 0 ? (
+        {!session?.user?.id ? (
+          <div className="text-center py-16 text-gray-400">
+            <p className="text-lg mb-2">Sign in to see your saved shrinks</p>
+            <Link href="/login" className="text-purple-400 hover:text-purple-300 text-sm font-medium">Sign in →</Link>
+          </div>
+        ) : !canSave ? (
+          <div className="text-center py-16 text-gray-400">
+            <Lock size={32} className="mx-auto mb-4 text-gray-600" />
+            <p className="text-lg mb-2">Saved Shrinks Library</p>
+            <p className="text-sm mb-4">Upgrade to Standard or Pro to save and access your shrink library.</p>
+            <Link href="/pricing" className="inline-block px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors">Upgrade</Link>
+          </div>
+        ) : shrinks.length === 0 ? (
           <div className="text-center py-16 text-gray-400">
             <p className="text-lg mb-2">No shrinks yet</p>
             <p className="text-sm">Go to a show and click &quot;Shrink It!&quot; to create your first PodShrink.</p>
@@ -146,13 +172,15 @@ export default function SavedShrinksPage() {
                           <Play size={16} fill="white" className="text-white ml-0.5" />
                         )}
                       </button>
-                      <button
-                        onClick={() => handleDownload(shrink)}
-                        className="p-2 bg-gray-700 hover:bg-gray-600 rounded-full transition-colors"
-                        title="Download"
-                      >
-                        <Download size={16} className="text-white" />
-                      </button>
+                      {canDownload && (
+                        <button
+                          onClick={() => handleDownload(shrink)}
+                          className="p-2 bg-gray-700 hover:bg-gray-600 rounded-full transition-colors"
+                          title="Download"
+                        >
+                          <Download size={16} className="text-white" />
+                        </button>
+                      )}
                       <button
                         onClick={() => handleViewTranscript(shrink)}
                         className="p-2 bg-gray-700 hover:bg-gray-600 rounded-full transition-colors"

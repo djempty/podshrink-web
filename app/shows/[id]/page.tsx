@@ -9,6 +9,7 @@ import EpisodeRow from '@/components/EpisodeRow';
 import ShrinkPanel from '@/components/ShrinkPanel';
 import { useFavorites } from '@/lib/favoritesStore';
 import { useAudioPlayer } from '@/lib/audioPlayerStore';
+import { useSession } from 'next-auth/react';
 
 export default function ShowPage() {
   const params = useParams();
@@ -21,9 +22,11 @@ export default function ShowPage() {
   const [shrinkStates, setShrinkStates] = useState<Record<number, { status: 'shrinking' | 'complete'; audioUrl?: string }>>({});
   const { isFavorite, toggle } = useFavorites();
   const { track, isPlaying, setTrack, play, pause } = useAudioPlayer();
+  const { data: session } = useSession();
 
   useEffect(() => {
-    Promise.all([api.getShow(showId), api.getEpisodes(showId), api.getAllShrinks()])
+    const userId = session?.user?.email || session?.user?.id;
+    Promise.all([api.getShow(showId), api.getEpisodes(showId), api.getAllShrinks(userId || undefined)])
       .then(([s, e, allShrinks]) => {
         setShow(s);
         const sorted = [...e].sort((a, b) => {

@@ -1,13 +1,12 @@
 import { api, DiscoverSection } from '@/lib/api';
 import DiscoverHome from '@/components/DiscoverHome';
-import RecentShrinks from '@/components/RecentShrinks';
+import RecentShrinksLoader from '@/components/RecentShrinksLoader';
 import PageHeader from '@/components/PageHeader';
 
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
   let sections: DiscoverSection[] = [];
-  let recentShrinks: Awaited<ReturnType<typeof api.getRecentShrinks>> = [];
 
   // Fetch all categories
   const categories = ['popular', 'technology', 'news', 'society-culture', 'comedy', 'business', 'true-crime', 'health'];
@@ -21,12 +20,6 @@ export default async function HomePage() {
     console.error('Failed to fetch discover data:', error);
   }
 
-  try {
-    recentShrinks = await api.getRecentShrinks();
-  } catch (error) {
-    console.error('Failed to fetch recent shrinks:', error);
-  }
-
   return (
     <div className="min-h-screen bg-[#121212]">
       <PageHeader title="Shows" showSearch />
@@ -36,19 +29,8 @@ export default async function HomePage() {
         {/* Discover Sections */}
         <DiscoverHome sections={sections} />
 
-        {/* Recently Shrunk */}
-        <RecentShrinks
-          shrinks={recentShrinks
-            .filter((shrink) => shrink.status === 'complete' && shrink.episode)
-            .slice(0, 15)
-            .map((shrink) => ({
-              id: shrink.id,
-              episode: shrink.episode!,
-              audioUrl: api.getShrinkAudioUrl(shrink.id),
-              targetDurationMinutes: (shrink as any).targetDurationMinutes || (shrink as any).targetDuration,
-              createdAt: shrink.createdAt,
-            }))}
-        />
+        {/* Recently Shrunk — client-side, user-scoped */}
+        <RecentShrinksLoader />
       </div>
     </div>
   );

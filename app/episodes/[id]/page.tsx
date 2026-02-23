@@ -7,6 +7,7 @@ import { Episode, Shrink } from '@/lib/types';
 import Link from 'next/link';
 import { Play, Pause, Loader2 } from 'lucide-react';
 import { useAudioPlayer } from '@/lib/audioPlayerStore';
+import { useSession } from 'next-auth/react';
 import ShrinkPanel from '@/components/ShrinkPanel';
 
 export default function EpisodePage() {
@@ -18,12 +19,14 @@ export default function EpisodePage() {
   const [showShrinkPanel, setShowShrinkPanel] = useState(false);
   const [shrinkState, setShrinkState] = useState<{ status: 'shrinking' | 'complete'; audioUrl?: string; audioDurationSeconds?: number } | null>(null);
 
+  const { data: session } = useSession();
   const { track, isPlaying, setTrack, play, pause } = useAudioPlayer();
 
-  // Check for existing shrinks on this episode
+  // Check for existing shrinks on this episode (user-scoped)
   const checkExistingShrinks = useCallback(async () => {
     try {
-      const allShrinks = await api.getAllShrinks();
+      const userId = session?.user?.email || session?.user?.id;
+      const allShrinks = await api.getAllShrinks(userId || undefined);
       const episodeShrink = allShrinks.find(
         (s: Shrink) => s.episodeId === episodeId && s.status === 'complete' && s.audioUrl
       );
@@ -41,7 +44,7 @@ export default function EpisodePage() {
         pollShrinkStatus(activeShrink.id);
       }
     } catch {}
-  }, [episodeId]);
+  }, [episodeId, checkExistingShrinks]);
 
   const pollShrinkStatus = (shrinkId: number) => {
     const interval = setInterval(async () => {

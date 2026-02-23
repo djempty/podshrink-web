@@ -64,14 +64,17 @@ export const api = {
   getShrinkAudioUrl: (id: number) => 
     `${API_URL}/api/shrinks/${id}/audio`,
   
-  getAllShrinks: () =>
-    fetchAPI<Shrink[]>('/api/shrinks'),
+  getAllShrinks: (userId?: string) =>
+    fetchAPI<Shrink[]>(`/api/shrinks${userId ? `?userId=${encodeURIComponent(userId)}` : ''}`),
   
-  getRecentShrinks: () => 
-    fetchAPI<Shrink[]>('/api/shrinks?limit=10'),
+  getPublicShrinks: () =>
+    fetchAPI<Shrink[]>('/api/shrinks?public=true'),
+  
+  getRecentShrinks: (userId?: string) => 
+    fetchAPI<Shrink[]>(`/api/shrinks?limit=10${userId ? `&userId=${encodeURIComponent(userId)}` : ''}`),
 
-  deleteShrink: (id: number) =>
-    fetchAPI<{ success: boolean }>(`/api/shrinks/${id}`, { method: 'DELETE' }),
+  deleteShrink: (id: number, userId?: string) =>
+    fetchAPI<{ success: boolean }>(`/api/shrinks/${id}${userId ? `?userId=${encodeURIComponent(userId)}` : ''}`, { method: 'DELETE' }),
 
   getShrinkTranscript: (id: number) =>
     fetchAPI<{ transcript: string | null; summary: string | null }>(`/api/shrinks/${id}/transcript`),

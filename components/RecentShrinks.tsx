@@ -4,6 +4,7 @@ import { Sparkles, Play, Pause, Download, Clock } from 'lucide-react';
 import Link from 'next/link';
 import { Episode } from '@/lib/types';
 import { useAudioPlayer } from '@/lib/audioPlayerStore';
+import { useSession } from 'next-auth/react';
 import { resolveAudioUrl } from '@/lib/api';
 
 interface RecentShrinksProps {
@@ -18,6 +19,9 @@ interface RecentShrinksProps {
 
 export default function RecentShrinks({ shrinks }: RecentShrinksProps) {
   const { track, isPlaying, setTrack, play, pause } = useAudioPlayer();
+  const { data: session } = useSession();
+  const userPlan = (session?.user as any)?.plan || 'free';
+  const canDownload = userPlan === 'standard' || userPlan === 'pro';
 
   if (shrinks.length === 0) return null;
 
@@ -108,12 +112,14 @@ export default function RecentShrinks({ shrinks }: RecentShrinksProps) {
                   <Play size={16} fill="white" className="text-white ml-0.5" />
                 )}
               </button>
-              <button
-                onClick={() => handleDownload(shrink)}
-                className="p-2 bg-gray-700 hover:bg-gray-600 rounded-full transition-colors"
-              >
-                <Download size={16} className="text-white" />
-              </button>
+              {canDownload && (
+                <button
+                  onClick={() => handleDownload(shrink)}
+                  className="p-2 bg-gray-700 hover:bg-gray-600 rounded-full transition-colors"
+                >
+                  <Download size={16} className="text-white" />
+                </button>
+              )}
             </div>
           </div>
         ))}
