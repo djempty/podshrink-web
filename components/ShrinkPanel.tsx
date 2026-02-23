@@ -277,6 +277,9 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
             <option value={5}>5 minutes</option>
             <option value={10}>10 minutes</option>
           </select>
+          {duration >= 10 && (
+            <p className="text-gray-500 text-xs mt-1">Longer shrinks can take up to 2–3 minutes to generate</p>
+          )}
         </div>
 
         {/* Voice */}
