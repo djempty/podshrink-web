@@ -23,7 +23,7 @@ export default function EpisodePage() {
   const { track, isPlaying, setTrack, play, pause } = useAudioPlayer();
 
   // Check for existing shrinks on this episode (user-scoped)
-  const checkExistingShrinks = useCallback(async () => {
+  const checkExistingShrinks = useCallback(async (): Promise<void> => {
     try {
       const userId = session?.user?.email || session?.user?.id;
       const allShrinks = await api.getAllShrinks(userId || undefined);
@@ -44,7 +44,7 @@ export default function EpisodePage() {
         pollShrinkStatus(activeShrink.id);
       }
     } catch {}
-  }, [episodeId, checkExistingShrinks]);
+  }, [episodeId, session]);
 
   const pollShrinkStatus = (shrinkId: number) => {
     const interval = setInterval(async () => {
@@ -69,7 +69,7 @@ export default function EpisodePage() {
       .catch(console.error)
       .finally(() => setLoading(false));
     checkExistingShrinks();
-  }, [episodeId, checkExistingShrinks]);
+  }, [episodeId, session]);
 
   const isCurrentTrack = track?.id === episode?.id;
 
