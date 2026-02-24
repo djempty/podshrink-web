@@ -164,7 +164,7 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
     setProgressLabel('Starting shrink...');
 
     try {
-      const shrink = await api.createShrink(episode.id, duration, voiceId, session?.user?.id);
+      const shrink = await api.createShrink(episode.id, duration, voiceId, session?.user?.email || session?.user?.id);
       setShrinkId(shrink.id);
       onShrinkStarted(shrink.id);
       
