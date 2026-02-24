@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, Montserrat } from 'next/font/google';
 import './globals.css';
 import Sidebar from '@/components/Sidebar';
 import AudioPlayer from '@/components/AudioPlayer';
@@ -7,6 +7,7 @@ import AuthProvider from '@/components/AuthProvider';
 import ScrollToTop from '@/components/ScrollToTop';
 
 const inter = Inter({ subsets: ['latin'] });
+const montserrat = Montserrat({ subsets: ['latin'], weight: ['700'], variable: '--font-montserrat' });
 
 export const metadata: Metadata = {
   title: 'PodShrink - AI Podcast Summaries',
@@ -27,9 +28,9 @@ export const metadata: Metadata = {
     siteName: 'PodShrink',
     images: [
       {
-        url: '/logo.png',
-        width: 1200,
-        height: 630,
+        url: '/logo-full-white.png',
+        width: 1202,
+        height: 337,
         alt: 'PodShrink - AI Podcast Summaries',
       },
     ],
@@ -63,7 +64,7 @@ export default function RootLayout({
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-K0Q8WMZZJB"></script>
         <script dangerouslySetInnerHTML={{ __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-K0Q8WMZZJB');` }} />
       </head>
-      <body className={inter.className}>
+      <body className={`${inter.className} ${montserrat.variable}`}>
         <AuthProvider>
           <ScrollToTop />
           <div className="flex min-h-screen bg-[#121212]">
