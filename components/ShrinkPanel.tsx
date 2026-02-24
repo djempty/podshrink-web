@@ -197,9 +197,11 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
   };
 
   const pollStatus = (id: number) => {
+    let failCount = 0;
     const interval = setInterval(async () => {
       try {
         const shrink = await api.getShrinkStatus(episode.id, id);
+        failCount = 0; // reset on success
 
         switch (shrink.status) {
           case 'queued':
@@ -246,10 +248,14 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
             return;
         }
       } catch {
-        setStatus('error');
-        setErrorMsg('Lost connection to server');
-        onShrinkError?.();
-        clearInterval(interval);
+        failCount++;
+        if (failCount >= 5) {
+          setStatus('error');
+          setErrorMsg('Lost connection to server');
+          onShrinkError?.();
+          clearInterval(interval);
+        }
+        // Otherwise silently retry next poll
       }
     }, 3000);
   };
