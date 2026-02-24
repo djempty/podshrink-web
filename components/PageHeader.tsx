@@ -46,7 +46,7 @@ export default function PageHeader({ title, showSearch = false }: PageHeaderProp
                 <Search size={20} />
               </button>
             ) : (
-              <div className="w-[180px] md:w-[240px]">
+              <div className="w-[240px] md:w-[360px]">
                 <SearchInput 
                   onSelect={() => setSearchExpanded(false)}
                   className="[&_input]:py-2 [&_input]:text-sm"
