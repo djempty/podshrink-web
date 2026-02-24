@@ -33,7 +33,7 @@ export default function Sidebar() {
       <div className="md:hidden fixed top-0 left-0 right-0 w-full bg-[#0a0a0a] z-50 flex items-center justify-between px-4 py-4 border-b border-gray-800 safe-area-inset">
         <Link href="/" className="flex items-center gap-3">
           <img src="/logo.png" alt="PodShrink" className="w-10 h-10" />
-          <span className="text-2xl font-bold text-white font-[var(--font-montserrat)]">PodShrink</span>
+          <span className="text-2xl font-bold text-white">PodShrink</span>
         </Link>
         <button onClick={() => setMobileOpen(!mobileOpen)} className="text-blue-500 p-2">
           {mobileOpen ? <X size={28} /> : <Menu size={28} />}
@@ -135,7 +135,7 @@ export default function Sidebar() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 p-6 pb-8">
           <img src="/logo.png" alt="PodShrink" className="w-11 h-11" />
-          <span className="text-2xl font-bold text-white font-[var(--font-montserrat)]">PodShrink</span>
+          <span className="text-2xl font-bold text-white">PodShrink</span>
         </Link>
 
         {/* Search */}
