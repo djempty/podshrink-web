@@ -34,7 +34,7 @@ export default function FavoritesPage() {
 
   return (
     <div className="min-h-screen bg-[#121212]">
-      <PageHeader title="Favorites" showSearch />
+      <PageHeader title="Favorites" />
       <div className="px-4 md:px-8 py-6">
 
       {shows.length === 0 ? (

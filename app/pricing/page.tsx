@@ -20,11 +20,12 @@ const PLANS = [
     features: [
       '3 shrinks per month',
       'All podcast shows',
-      '1, 5, or 10 minute summaries',
+      '1 minute summaries',
       '3 voice options',
       'Stream in browser',
     ],
     limits: [
+      'No 5 or 10 min summaries',
       'No saved library',
       'No priority processing',
     ],

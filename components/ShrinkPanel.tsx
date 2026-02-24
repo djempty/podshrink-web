@@ -307,14 +307,21 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
               <label className="block text-gray-400 text-xs mb-1.5">Choose a duration</label>
               <select
                 value={duration}
-                onChange={(e) => setDuration(Number(e.target.value))}
+                onChange={(e) => {
+                  const val = Number(e.target.value);
+                  if (userPlan === 'free' && val > 1) return;
+                  setDuration(val);
+                }}
                 disabled={status === 'processing'}
                 className="w-full bg-[#252525] text-white text-sm rounded-md px-3 py-2.5 border border-gray-700 focus:outline-none focus:border-purple-500 shrink-select"
               >
                 <option value={0} disabled>Choose duration</option>
                 <option value={1}>1 minute</option>
-                <option value={5}>5 minutes</option>
-                <option value={10}>10 minutes</option>
+                <option value={5} disabled={userPlan === 'free'}>{userPlan === 'free' ? '⊘ 5 minutes' : '5 minutes'}</option>
+                <option value={10} disabled={userPlan === 'free'}>{userPlan === 'free' ? '⊘ 10 minutes' : '10 minutes'}</option>
+                {userPlan === 'free' && (
+                  <option disabled value={0}>— Upgrade to unlock longer durations —</option>
+                )}
               </select>
               {duration >= 10 && (
                 <p className="text-gray-500 text-xs mt-1">Longer shrinks can take up to 2–3 minutes to generate</p>

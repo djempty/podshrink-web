@@ -49,7 +49,7 @@ export default function TranscriptsPage() {
 
   return (
     <div className="min-h-screen bg-[#121212] flex flex-col">
-      <PageHeader title="Transcripts" showSignUp={true} />
+      <PageHeader title="Transcripts" />
 
       <div className="max-w-3xl mx-auto px-4 md:px-8 py-6 flex-1 w-full">
         <p className="text-gray-400 text-sm mb-6">

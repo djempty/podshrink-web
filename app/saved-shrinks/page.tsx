@@ -110,7 +110,7 @@ export default function SavedShrinksPage() {
 
   return (
     <div className="min-h-screen bg-[#121212]">
-      <PageHeader title="Saved Shrinks" showSearch />
+      <PageHeader title="Saved Shrinks" />
 
       <div className="px-4 md:px-8">
         {!session?.user?.id ? (

@@ -80,7 +80,7 @@ export default function SupportPage() {
 
   return (
     <div className="min-h-screen bg-[#121212]">
-      <PageHeader title="Support" showSignUp={false} />
+      <PageHeader title="Support" />
 
       <div className="max-w-2xl mx-auto px-4 md:px-8 py-6">
         {/* FAQ */}

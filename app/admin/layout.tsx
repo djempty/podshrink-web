@@ -3,21 +3,30 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Users, Headphones, LogOut, Shield, Megaphone, Network } from 'lucide-react';
+import { LayoutDashboard, Users, Headphones, LogOut, Shield, Megaphone, Network, Menu, X } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [authed, setAuthed] = useState(false);
   const [key, setKey] = useState('');
   const [checking, setChecking] = useState(true);
   const [error, setError] = useState('');
+  const [mobileNav, setMobileNav] = useState(false);
   const pathname = usePathname();
 
+  // Close mobile nav on route change
+  useEffect(() => { setMobileNav(false); }, [pathname]);
+
   useEffect(() => {
+    // noindex for admin pages
+    let meta = document.querySelector('meta[name="robots"]') as HTMLMetaElement;
+    if (!meta) { meta = document.createElement('meta'); meta.name = 'robots'; document.head.appendChild(meta); }
+    meta.content = 'noindex, nofollow';
+
     const stored = sessionStorage.getItem('adminKey');
-    if (stored) {
-      setAuthed(true);
-    }
+    if (stored) setAuthed(true);
     setChecking(false);
+
+    return () => { if (meta.parentNode) meta.parentNode.removeChild(meta); };
   }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -28,14 +37,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       const res = await fetch(`${API_URL}/api/admin/stats`, {
         headers: { 'X-Admin-Key': key },
       });
-      if (res.status === 403) {
-        setError('Invalid admin key');
-        return;
-      }
-      if (!res.ok) {
-        setError('Connection failed');
-        return;
-      }
+      if (res.status === 403) { setError('Invalid admin key'); return; }
+      if (!res.ok) { setError('Connection failed'); return; }
       sessionStorage.setItem('adminKey', key);
       setAuthed(true);
     } catch {
@@ -53,7 +56,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (!authed) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-4">
         <div className="w-full max-w-sm">
           <div className="text-center mb-8">
             <div className="w-16 h-16 rounded-full bg-purple-600/20 flex items-center justify-center mx-auto mb-4">
@@ -93,9 +96,47 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   ];
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex">
-      {/* Sidebar */}
-      <aside className="w-56 bg-[#0f0f0f] border-r border-gray-800 flex flex-col">
+    <div className="min-h-screen bg-[#0a0a0a] flex flex-col md:flex-row">
+      {/* Mobile header */}
+      <div className="md:hidden flex items-center justify-between p-3 bg-[#0f0f0f] border-b border-gray-800">
+        <div className="flex items-center gap-2">
+          <Shield size={16} className="text-purple-400" />
+          <span className="text-white font-bold text-sm">Admin</span>
+        </div>
+        <button onClick={() => setMobileNav(!mobileNav)} className="text-gray-400 p-1">
+          {mobileNav ? <X size={20} /> : <Menu size={20} />}
+        </button>
+      </div>
+
+      {/* Mobile nav dropdown */}
+      {mobileNav && (
+        <div className="md:hidden bg-[#0f0f0f] border-b border-gray-800 px-3 pb-3 space-y-1">
+          {nav.map(item => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm transition-colors ${
+                pathname === item.href
+                  ? 'bg-purple-600/20 text-purple-400 font-medium'
+                  : 'text-gray-400 hover:text-white hover:bg-[#1a1a1a]'
+              }`}
+            >
+              <item.icon size={16} />
+              {item.label}
+            </Link>
+          ))}
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 px-3 py-2.5 text-gray-500 hover:text-red-400 text-sm transition-colors w-full"
+          >
+            <LogOut size={16} />
+            Logout
+          </button>
+        </div>
+      )}
+
+      {/* Desktop sidebar */}
+      <aside className="hidden md:flex w-56 bg-[#0f0f0f] border-r border-gray-800 flex-col flex-shrink-0">
         <div className="p-4 border-b border-gray-800">
           <div className="flex items-center gap-2">
             <Shield size={18} className="text-purple-400" />

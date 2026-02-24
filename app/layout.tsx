@@ -5,6 +5,7 @@ import Sidebar from '@/components/Sidebar';
 import AudioPlayer from '@/components/AudioPlayer';
 import AuthProvider from '@/components/AuthProvider';
 import ScrollToTop from '@/components/ScrollToTop';
+import MainContent from '@/components/MainContent';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -69,9 +70,9 @@ export default function RootLayout({
           <div className="flex min-h-screen bg-[#121212]">
             <Sidebar />
             <AudioPlayer />
-            <main id="main-content" className="flex-1 md:ml-[260px] md:pt-[56px] pt-[68px] overflow-x-hidden overflow-y-auto pb-0 h-screen">
+            <MainContent>
               {children}
-            </main>
+            </MainContent>
           </div>
         </AuthProvider>
       </body>

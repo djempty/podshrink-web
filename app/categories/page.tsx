@@ -103,7 +103,7 @@ export default function CategoriesPage() {
   // Category grid
   return (
     <div className="min-h-screen bg-[#121212]">
-      <PageHeader title="Categories" showSearch />
+      <PageHeader title="Categories" />
       <div className="px-4 md:px-8 py-6">
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

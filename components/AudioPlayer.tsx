@@ -188,11 +188,6 @@ export default function AudioPlayer() {
         </div>
       </div>
 
-      {/* MOBILE SPACER — prevents content from hiding behind the fixed player */}
-      {track && (
-        <div className="md:hidden h-[76px]" />
-      )}
-
       {/* MOBILE PLAYER */}
       {track && (
         <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#1a1a1a] border-t border-gray-800 z-50 px-4 py-3">
