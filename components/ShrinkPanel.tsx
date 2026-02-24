@@ -37,6 +37,19 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
   const [status, setStatus] = useState<'idle' | 'processing' | 'complete' | 'error'>('idle');
   const [notifyWhenReady, setNotifyWhenReady] = useState(false);
   const chimeRef = useRef<HTMLAudioElement | null>(null);
+
+  // Pre-load chime on user interaction so autoplay policy allows it later
+  useEffect(() => {
+    if (notifyWhenReady && !chimeRef.current) {
+      chimeRef.current = new Audio('/chime.wav');
+      chimeRef.current.volume = 0.5;
+      // Silent play+pause to "unlock" audio context
+      chimeRef.current.play().then(() => {
+        chimeRef.current!.pause();
+        chimeRef.current!.currentTime = 0;
+      }).catch(() => {});
+    }
+  }, [notifyWhenReady]);
   const [progress, setProgress] = useState(0);
   const [progressLabel, setProgressLabel] = useState('');
   const [shrinkId, setShrinkId] = useState<number | null>(null);
