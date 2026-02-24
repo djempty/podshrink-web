@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     siteName: 'PodShrink',
     images: [
       {
-        url: '/logo.png',
+        url: '/og-image.png',
         width: 1200,
         height: 630,
         alt: 'PodShrink - AI Podcast Summaries',
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'PodShrink - AI Podcast Summaries',
     description: 'Get bite-sized podcast summaries powered by AI. Transform hours of podcasts into minutes of narrated audio summaries.',
-    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'PodShrink — AI Podcast Summaries' }],
+    images: [{ url: '/og-image.png?v=2', width: 1200, height: 630, alt: 'PodShrink — AI Podcast Summaries' }],
   },
   alternates: {
     canonical: '/',
