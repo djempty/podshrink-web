@@ -104,7 +104,7 @@ export default function SearchInput({ className = '', onSelect }: { className?: 
             >
               <img
                 src={podcast.image || '/logo.png'}
-                alt={result.collectionName || result.trackName || "Podcast"}
+                alt={podcast.title || "Podcast"}
                 className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
               />
               <div className="flex-1 min-w-0">
