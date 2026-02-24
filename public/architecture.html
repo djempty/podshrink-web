@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PodShrink — Architecture</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0a0a0a;
+    color: #e5e5e5;
+    overflow-x: hidden;
+  }
+
+  /* Animated gradient background */
+  .bg-glow {
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 30% 40%, rgba(147, 51, 234, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 70% 60%, rgba(59, 130, 246, 0.06) 0%, transparent 50%);
+    animation: glowMove 20s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+  @keyframes glowMove {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-3%, 2%); }
+  }
+
+  .container { max-width: 1400px; margin: 0 auto; padding: 2rem; position: relative; z-index: 1; }
+
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 3rem 0 2rem;
+  }
+  .header h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #a855f7, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+  }
+  .header .subtitle {
+    color: #6b7280;
+    font-size: 1.1rem;
+    font-weight: 300;
+  }
+  .header .date {
+    color: #4b5563;
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+  }
+
+  /* Section titles */
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #a855f7;
+    margin: 3rem 0 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .section-title::before {
+    content: '';
+    width: 4px;
+    height: 1.5rem;
+    background: linear-gradient(180deg, #a855f7, #3b82f6);
+    border-radius: 2px;
+  }
+
+  /* Cards */
+  .card {
+    background: #141414;
+    border: 1px solid #1f1f1f;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    transition: border-color 0.3s, transform 0.2s;
+  }
+  .card:hover {
+    border-color: #a855f733;
+    transform: translateY(-1px);
+  }
+  .card-title {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #f3f4f6;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .card-title .icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  /* Grid layouts */
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1rem; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+  .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+
+  /* Flow diagram */
+  .flow-container {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    overflow-x: auto;
+    padding: 1rem 0;
+  }
+  .flow-step {
+    flex: 1;
+    min-width: 180px;
+    background: #141414;
+    border: 1px solid #1f1f1f;
+    border-radius: 12px;
+    padding: 1.25rem;
+    text-align: center;
+    position: relative;
+    transition: all 0.3s;
+  }
+  .flow-step:hover {
+    border-color: #a855f766;
+    background: #1a1a1a;
+  }
+  .flow-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    flex-shrink: 0;
+    color: #a855f7;
+    font-size: 1.5rem;
+    animation: arrowPulse 2s ease-in-out infinite;
+  }
+  @keyframes arrowPulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+  .flow-step .step-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #a855f7, #7c3aed);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 0.75rem;
+  }
+  .flow-step .step-title {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #f3f4f6;
+    margin-bottom: 0.5rem;
+  }
+  .flow-step .step-detail {
+    font-size: 0.7rem;
+    color: #6b7280;
+    line-height: 1.5;
+  }
+  .flow-step .step-service {
+    display: inline-block;
+    background: #a855f720;
+    color: #a855f7;
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 0.15rem 0.5rem;
+    border-radius: 99px;
+    margin-top: 0.5rem;
+  }
+
+  /* Tags */
+  .tag {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin: 0.15rem;
+  }
+  .tag-purple { background: #a855f720; color: #a855f7; }
+  .tag-blue { background: #3b82f620; color: #3b82f6; }
+  .tag-green { background: #22c55e20; color: #22c55e; }
+  .tag-amber { background: #f59e0b20; color: #f59e0b; }
+  .tag-red { background: #ef444420; color: #ef4444; }
+  .tag-gray { background: #6b728020; color: #9ca3af; }
+
+  /* Tables */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+  }
+  .data-table th {
+    text-align: left;
+    padding: 0.6rem 0.75rem;
+    color: #a855f7;
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid #1f1f1f;
+  }
+  .data-table td {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid #111;
+    color: #d1d5db;
+  }
+  .data-table tr:hover td { background: #1a1a1a; }
+  .data-table code {
+    background: #1f1f1f;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    color: #c084fc;
+  }
+
+  /* API Endpoint list */
+  .endpoint {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0;
+    font-size: 0.78rem;
+    border-bottom: 1px solid #111;
+  }
+  .endpoint:last-child { border: none; }
+  .method {
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    min-width: 42px;
+    text-align: center;
+  }
+  .method-get { background: #22c55e20; color: #22c55e; }
+  .method-post { background: #3b82f620; color: #3b82f6; }
+  .method-delete { background: #ef444420; color: #ef4444; }
+  .method-patch { background: #f59e0b20; color: #f59e0b; }
+  .endpoint-path { color: #e5e7eb; font-family: monospace; font-size: 0.75rem; }
+  .endpoint-desc { color: #6b7280; margin-left: auto; font-size: 0.7rem; }
+
+  /* Pricing comparison */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+  .pricing-card {
+    background: #141414;
+    border: 1px solid #1f1f1f;
+    border-radius: 16px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s;
+  }
+  .pricing-card.popular { border-color: #a855f766; }
+  .pricing-card.pro { border-color: #f59e0b44; }
+  .pricing-card:hover { transform: translateY(-2px); }
+  .pricing-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.25rem; }
+  .pricing-price { font-size: 2rem; font-weight: 800; color: white; }
+  .pricing-price span { font-size: 0.85rem; color: #6b7280; font-weight: 400; }
+  .pricing-features { text-align: left; margin-top: 1rem; }
+  .pricing-features li {
+    list-style: none;
+    padding: 0.3rem 0;
+    font-size: 0.8rem;
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .pricing-features .check { color: #22c55e; }
+  .pricing-features .cross { color: #4b5563; }
+
+  /* Infra diagram */
+  .infra-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin: 1rem 0;
+  }
+  .infra-box {
+    background: #141414;
+    border: 1px solid #1f1f1f;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    text-align: center;
+    min-width: 140px;
+    transition: all 0.3s;
+  }
+  .infra-box:hover { border-color: #a855f744; }
+  .infra-box .infra-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+  .infra-box .infra-name { font-weight: 600; font-size: 0.85rem; color: #f3f4f6; }
+  .infra-box .infra-detail { font-size: 0.7rem; color: #6b7280; margin-top: 0.25rem; }
+  .infra-connector {
+    color: #a855f7;
+    font-size: 1.2rem;
+    animation: arrowPulse 2s ease-in-out infinite;
+  }
+
+  /* Collapsible sections */
+  .collapsible { cursor: pointer; user-select: none; }
+  .collapsible .chevron {
+    transition: transform 0.3s;
+    display: inline-block;
+    font-size: 0.8rem;
+  }
+  .collapsible.open .chevron { transform: rotate(90deg); }
+  .collapsible-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+  .collapsible-content.open {
+    max-height: 5000px;
+  }
+
+  /* Animations */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.6s ease forwards;
+  }
+  @keyframes fadeIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Mobile */
+  @media (max-width: 768px) {
+    .header h1 { font-size: 2rem; }
+    .flow-container { flex-direction: column; }
+    .flow-arrow { transform: rotate(90deg); width: auto; height: 30px; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .infra-row { flex-direction: column; }
+    .infra-connector { transform: rotate(90deg); }
+  }
+
+  .separator {
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #a855f733, transparent);
+    margin: 3rem 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="header fade-in">
+    <h1>PodShrink Architecture</h1>
+    <div class="subtitle">AI-Powered Podcast Summaries — System Overview</div>
+    <div class="date">Last Updated: February 23, 2026 · podshrink.com</div>
+  </div>
+
+  <hr class="separator">
+
+  <!-- HIGH-LEVEL FLOW -->
+  <div class="section-title fade-in">System Overview</div>
+  
+  <div class="infra-row fade-in">
+    <div class="infra-box">
+      <div class="infra-icon">👤</div>
+      <div class="infra-name">User</div>
+      <div class="infra-detail">Browser / Mobile</div>
+    </div>
+    <div class="infra-connector">→</div>
+    <div class="infra-box" style="border-color: #3b82f633;">
+      <div class="infra-icon">🌐</div>
+      <div class="infra-name">Cloudflare</div>
+      <div class="infra-detail">DNS + CDN</div>
+    </div>
+    <div class="infra-connector">→</div>
+    <div class="infra-box" style="border-color: #a855f733;">
+      <div class="infra-icon">⚡</div>
+      <div class="infra-name">Next.js Frontend</div>
+      <div class="infra-detail">Railway · podshrink-web</div>
+    </div>
+    <div class="infra-connector">⇄</div>
+    <div class="infra-box" style="border-color: #22c55e33;">
+      <div class="infra-icon">🖥️</div>
+      <div class="infra-name">Express Backend</div>
+      <div class="infra-detail">Railway · podshrink</div>
+    </div>
+  </div>
+  
+  <div class="infra-row fade-in" style="margin-top: 0.5rem;">
+    <div class="infra-box">
+      <div class="infra-icon">🐘</div>
+      <div class="infra-name">PostgreSQL</div>
+      <div class="infra-detail">Drizzle ORM</div>
+    </div>
+    <div class="infra-box">
+      <div class="infra-icon">🔴</div>
+      <div class="infra-name">Redis</div>
+      <div class="infra-detail">BullMQ Queues</div>
+    </div>
+    <div class="infra-box">
+      <div class="infra-icon">☁️</div>
+      <div class="infra-name">Cloudflare R2</div>
+      <div class="infra-detail">Audio Storage</div>
+    </div>
+    <div class="infra-box">
+      <div class="infra-icon">💳</div>
+      <div class="infra-name">Stripe</div>
+      <div class="infra-detail">Live Mode</div>
+    </div>
+  </div>
+
+  <hr class="separator">
+
+  <!-- SHRINK PIPELINE -->
+  <div class="section-title fade-in">Shrink Pipeline</div>
+  <p style="color: #6b7280; font-size: 0.85rem; margin-bottom: 1.5rem;">The 3-stage AI pipeline that transforms a full podcast episode into a narrated audio summary.</p>
+
+  <div class="flow-container fade-in">
+    <div class="flow-step">
+      <div class="step-num">1</div>
+      <div class="step-title">User Request</div>
+      <div class="step-detail">Picks episode, duration (1/5/10 min), and voice</div>
+      <div class="step-service">POST /api/episodes/:id/shrink</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="step-num">2</div>
+      <div class="step-title">Transcription</div>
+      <div class="step-detail">Full episode audio sent to AssemblyAI. Returns complete text transcript.</div>
+      <div class="step-service">AssemblyAI</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="step-num">3</div>
+      <div class="step-title">Script Generation</div>
+      <div class="step-detail">Transcript → AI summary script. Full coverage, no cutoffs, ad removal.</div>
+      <div class="step-service">Gemini 2.5 Flash</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="step-num">4</div>
+      <div class="step-title">Audio Generation</div>
+      <div class="step-detail">Script → narrated MP3 in selected voice. MP3 headers auto-fixed.</div>
+      <div class="step-service">ElevenLabs TTS</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="step-num">5</div>
+      <div class="step-title">Delivery</div>
+      <div class="step-detail">MP3 uploaded to R2. User notified. Stream or download.</div>
+      <div class="step-service">Cloudflare R2</div>
+    </div>
+  </div>
+
+  <div class="card fade-in" style="margin-top: 1rem;">
+    <div class="card-title">⚙️ Pipeline Config</div>
+    <div style="font-size: 0.8rem; color: #9ca3af; line-height: 1.8;">
+      <span class="tag tag-purple">BullMQ</span> 3 queues (transcription → script-generation → audio-generation) · 
+      <span class="tag tag-blue">Retries</span> 3 attempts, exponential backoff (2s base) · 
+      <span class="tag tag-green">Cleanup</span> Jobs kept 24h complete, 7d failed · 
+      <span class="tag tag-amber">Workers</span> Run in-process (single Railway container) · 
+      <span class="tag tag-gray">Gemini thinking mode</span> Disabled (caused tiny outputs)
+    </div>
+  </div>
+
+  <hr class="separator">
+
+  <!-- AI & EXTERNAL SERVICES -->
+  <div class="section-title fade-in">AI Models & External Services</div>
+
+  <div class="grid-3 fade-in">
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:#a855f720;">🧠</div> Gemini 2.5 Flash</div>
+      <div style="font-size:0.8rem;color:#9ca3af;">
+        <strong style="color:#e5e5e5;">Primary LLM</strong> — Script generation<br>
+        Converts full transcript → narrated summary script<br><br>
+        <strong style="color:#e5e5e5;">Prompt rules:</strong><br>
+        • Cover entire episode, never cut off<br>
+        • End with conclusion<br>
+        • Remove all advertisements<br>
+        • Match target duration
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:#3b82f620;">🤖</div> OpenAI GPT</div>
+      <div style="font-size:0.8rem;color:#9ca3af;">
+        <strong style="color:#e5e5e5;">Fallback LLM</strong> — Script generation<br>
+        Used if Gemini fails or is unavailable<br><br>
+        <span class="tag tag-gray">Backup only</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:#22c55e20;">🎙️</div> AssemblyAI</div>
+      <div style="font-size:0.8rem;color:#9ca3af;">
+        <strong style="color:#e5e5e5;">Transcription</strong><br>
+        Full episode audio → text transcript<br>
+        Webhook callback to <code>/api/webhooks/assemblyai</code>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:#f59e0b20;">🔊</div> ElevenLabs</div>
+      <div style="font-size:0.8rem;color:#9ca3af;">
+        <strong style="color:#e5e5e5;">Text-to-Speech</strong><br>
+        12 curated voices (3 free, 9 premium)<br>
+        Outputs MP3 chunks → concatenated + header-fixed
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:#3b82f620;">💳</div> Stripe</div>
+      <div style="font-size:0.8rem;color:#9ca3af;">
+        <strong style="color:#e5e5e5;">Payments (LIVE)</strong><br>
+        Standard: $9.99/mo · Pro: $19.99/mo<br>
+        Webhooks handle subscription changes<br>
+        Customer portal for self-service
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="icon" style="background:#22c55e20;">✉️</div> Resend</div>
+      <div style="font-size:0.8rem;color:#9ca3af;">
+        <strong style="color:#e5e5e5;">Transactional Email</strong><br>
+        Welcome emails, password reset, usage limit warnings, account deletion confirmation
+      </div>
+    </div>
+  </div>
+
+  <hr class="separator">
+
+  <!-- EMAIL FLOW -->
+  <div class="section-title fade-in">Email Flow (Resend)</div>
+  <div class="flow-container fade-in">
+    <div class="flow-step">
+      <div class="step-title">📧 Welcome</div>
+      <div class="step-detail">On signup / register</div>
+    </div>
+    <div class="flow-step">
+      <div class="step-title">🔑 Password Reset</div>
+      <div class="step-detail">Forgot password → token email</div>
+    </div>
+    <div class="flow-step">
+      <div class="step-title">⚠️ Usage Warning</div>
+      <div class="step-detail">1 shrink remaining</div>
+    </div>
+    <div class="flow-step">
+      <div class="step-title">🗑️ Account Deleted</div>
+      <div class="step-detail">Confirmation on delete</div>
+    </div>
+    <div class="flow-step">
+      <div class="step-title">📨 Support</div>
+      <div class="step-detail">Contact form → email</div>
+    </div>
+  </div>
+
+  <hr class="separator">
+
+  <!-- AUTH FLOW -->
+  <div class="section-title fade-in">Authentication Flow</div>
+  <div class="flow-container fade-in">
+    <div class="flow-step">
+      <div class="step-title">🔐 Login</div>
+      <div class="step-detail">Email/password<br>or Google OAuth</div>
+      <div class="step-service">NextAuth</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="step-title">🎫 JWT Created</div>
+      <div class="step-detail">Token includes id, email, name</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="step-title">📋 Plan Lookup</div>
+      <div class="step-detail">Fetches plan from<br>GET /api/auth/me</div>
+      <div class="step-service">Backend API</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="step-title">✅ Session</div>
+      <div class="step-detail">plan, shrinkCount,<br>shrinkLimit in session</div>
+    </div>
+  </div>
+  <div class="card fade-in" style="margin-top:1rem;">
+    <div style="font-size:0.8rem;color:#9ca3af;">
+      <strong style="color:#e5e5e5;">Note:</strong> Google OAuth users get UUID IDs from NextAuth. Backend uses <code>findOrCreateUser(email)</code> to resolve to integer DB IDs. OAuth users have empty passwordHash.
+    </div>
+  </div>
+
+  <hr class="separator">
+
+  <!-- DATABASE -->
+  <div class="section-title fade-in">Database Schema</div>
+
+  <div class="grid-2 fade-in">
+    <div class="card">
+      <div class="card-title">👤 users</div>
+      <table class="data-table">
+        <tr><th>Column</th><th>Type</th><th>Notes</th></tr>
+        <tr><td><code>id</code></td><td>serial PK</td><td></td></tr>
+        <tr><td><code>email</code></td><td>varchar(255)</td><td>UNIQUE</td></tr>
+        <tr><td><code>passwordHash</code></td><td>text</td><td>Empty for OAuth</td></tr>
+        <tr><td><code>plan</code></td><td>varchar(20)</td><td>free/standard/pro</td></tr>
+        <tr><td><code>stripeCustomerId</code></td><td>text</td><td></td></tr>
+        <tr><td><code>stripeSubscriptionId</code></td><td>text</td><td></td></tr>
+        <tr><td><code>shrinkCount</code></td><td>integer</td><td>Monthly counter</td></tr>
+        <tr><td><code>shrinkCountResetAt</code></td><td>timestamp</td><td>1st of next month</td></tr>
+        <tr><td><code>createdAt</code></td><td>timestamp</td><td></td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">🎙️ shrinks</div>
+      <table class="data-table">
+        <tr><th>Column</th><th>Type</th><th>Notes</th></tr>
+        <tr><td><code>id</code></td><td>serial PK</td><td></td></tr>
+        <tr><td><code>episodeId</code></td><td>FK → episodes</td><td>CASCADE</td></tr>
+        <tr><td><code>userId</code></td><td>FK → users</td><td>SET NULL</td></tr>
+        <tr><td><code>status</code></td><td>enum</td><td>queued → complete</td></tr>
+        <tr><td><code>targetDurationMinutes</code></td><td>integer</td><td>1, 5, or 10</td></tr>
+        <tr><td><code>voiceId</code></td><td>text</td><td>ElevenLabs ID</td></tr>
+        <tr><td><code>scriptText</code></td><td>text</td><td>AI summary</td></tr>
+        <tr><td><code>audioUrl</code></td><td>text</td><td>r2://key</td></tr>
+        <tr><td><code>audioDurationSeconds</code></td><td>integer</td><td>Actual duration</td></tr>
+        <tr><td><code>createdAt</code></td><td>timestamp</td><td></td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">📺 shows</div>
+      <table class="data-table">
+        <tr><th>Column</th><th>Type</th><th>Notes</th></tr>
+        <tr><td><code>id</code></td><td>serial PK</td><td></td></tr>
+        <tr><td><code>title</code></td><td>text</td><td></td></tr>
+        <tr><td><code>author</code></td><td>text</td><td></td></tr>
+        <tr><td><code>rssUrl</code></td><td>text UNIQUE</td><td></td></tr>
+        <tr><td><code>imageUrl</code></td><td>text</td><td></td></tr>
+        <tr><td><code>description</code></td><td>text</td><td></td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">🎧 episodes</div>
+      <table class="data-table">
+        <tr><th>Column</th><th>Type</th><th>Notes</th></tr>
+        <tr><td><code>id</code></td><td>serial PK</td><td></td></tr>
+        <tr><td><code>showId</code></td><td>FK → shows</td><td>CASCADE</td></tr>
+        <tr><td><code>title</code></td><td>text</td><td></td></tr>
+        <tr><td><code>audioUrl</code></td><td>text</td><td>Original audio</td></tr>
+        <tr><td><code>duration</code></td><td>integer</td><td>Seconds</td></tr>
+        <tr><td><code>guid</code></td><td>text</td><td>Unique per show</td></tr>
+        <tr><td><code>pubDate</code></td><td>timestamp</td><td></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid-2 fade-in">
+    <div class="card">
+      <div class="card-title">❤️ favorites</div>
+      <div style="font-size:0.8rem;color:#9ca3af;">userId FK → users · showId FK → shows<br>Unique: (userId, showId)</div>
+    </div>
+    <div class="card">
+      <div class="card-title">📝 shrink_chunks</div>
+      <div style="font-size:0.8rem;color:#9ca3af;">shrinkId FK → shrinks · chunkIndex · chunkText · scriptSegment</div>
+    </div>
+  </div>
+
+  <hr class="separator">
+
+  <!-- API ENDPOINTS -->
+  <div class="section-title fade-in">API Endpoints</div>
+
+  <div class="grid-2 fade-in">
+    <div class="card">
+      <div class="card-title">📺 Shows & Episodes</div>
+      <div class="endpoint"><span class="method method-get">GET</span><span class="endpoint-path">/api/shows</span><span class="endpoint-desc">List / search shows</span></div>
+      <div class="endpoint"><span class="method method-post">POST</span><span class="endpoint-path">/api/shows</span><span class="endpoint-desc">Add by RSS URL</span></div>
+      <div class="endpoint"><span class="method method-get">GET</span><span class="endpoint-path">/api/shows/:id</span><span class="endpoint-desc">Show details</span></div>
+      <div class="endpoint"><span class="method method-get">GET</span><span class="endpoint-path">/api/shows/:id/episodes</span><span class="endpoint-desc">List episodes</span></div>
+      <div class="endpoint"><span class="method method-get">GET</span><span class="endpoint-path">/api/episodes/:id</span><span class="endpoint-desc">Episode detail</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🎙️ Shrinks</div>
+      <div class="endpoint"><span class="method method-post">POST</span><span class="endpoint-path">/api/episodes/:id/shrink</span><span class="endpoint-desc">Generate shrink</span></div>
+      <div class="endpoint"><span class="method method-get">GET</span><span class="endpoint-path">/api/episodes/:id/shrink/:sid</span><span class="endpoint-desc">Poll status</span></div>
+      <div class="endpoint"><span class="method method-get">GET</span><span class="endpoint-path">/api/shrinks?userId=X</span><span class="endpoint-desc">User's shrinks</span></div>
+      <div class="endpoint"><span class="method method-get">GET</span><span class="endpoint-path">/api/shrinks?public=true</span><span class="endpoint-desc">All (transcripts)</span></div>
+      <div class="endpoint"><span class="method method-get">GET</span><span class="endpoint-path">/api/shrinks/:id/audio</span><span class="endpoint-desc">Stream MP3</span></div>
+      <div class="endpoint"><span class="method method-get">GET</span><span class="endpoint-path">/api/shrinks/:id/transcript</span><span class="endpoint-desc">Get transcript</span></div>
+      <div class="endpoint"><span class="method method-delete">DEL</span><span class="endpoint-path">/api/shrinks/:id</span><span class="endpoint-desc">Delete (owned)</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🔐 Auth</div>
+      <div class="endpoint"><span class="method method-post">POST</span><span class="endpoint-path">/api/auth/register</span><span class="endpoint-desc">Signup</span></div>
+      <div class="endpoint"><span class="method method-post">POST</span><span class="endpoint-path">/api/auth/verify</span><span class="endpoint-desc">Login</span></div>
+      <div class="endpoint"><span class="method method-get">GET</span><span class="endpoint-path">/api/auth/me?userId=X</span><span class="endpoint-desc">User info + plan</span></div>
+      <div class="endpoint"><span class="method method-post">POST</span><span class="endpoint-path">/api/auth/forgot-password</span><span class="endpoint-desc">Reset request</span></div>
+      <div class="endpoint"><span class="method method-post">POST</span><span class="endpoint-path">/api/auth/reset-password</span><span class="endpoint-desc">Reset with token</span></div>
+      <div class="endpoint"><span class="method method-post">POST</span><span class="endpoint-path">/api/auth/change-password</span><span class="endpoint-desc">Change password</span></div>
+      <div class="endpoint"><span class="method method-delete">DEL</span><span class="endpoint-path">/api/auth/delete-account</span><span class="endpoint-desc">Delete account</span></div>
+      <div class="endpoint"><span class="method method-patch">PTCH</span><span class="endpoint-path">/api/auth/admin/user</span><span class="endpoint-desc">Admin: update user</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">💳 Stripe & More</div>
+      <div class="endpoint"><span class="method method-post">POST</span><span class="endpoint-path">/api/stripe/create-checkout</span><span class="endpoint-desc">Checkout session</span></div>
+      <div class="endpoint"><span class="method method-get">GET</span><span class="endpoint-path">/api/stripe/portal</span><span class="endpoint-desc">Customer portal</span></div>
+      <div class="endpoint"><span class="method method-post">POST</span><span class="endpoint-path">/api/stripe/webhook</span><span class="endpoint-desc">Stripe webhooks</span></div>
+      <div class="endpoint"><span class="method method-get">GET</span><span class="endpoint-path">/api/voices</span><span class="endpoint-desc">12 voices + free flag</span></div>
+      <div class="endpoint"><span class="method method-get">GET</span><span class="endpoint-path">/api/voices/:name/preview</span><span class="endpoint-desc">Voice preview MP3</span></div>
+      <div class="endpoint"><span class="method method-get">GET</span><span class="endpoint-path">/api/discover</span><span class="endpoint-desc">Apple Podcasts</span></div>
+      <div class="endpoint"><span class="method method-get">GET</span><span class="endpoint-path">/api/discover/search/:term</span><span class="endpoint-desc">Search podcasts</span></div>
+      <div class="endpoint"><span class="method method-post">POST</span><span class="endpoint-path">/api/support/contact</span><span class="endpoint-desc">Contact form</span></div>
+    </div>
+  </div>
+
+  <hr class="separator">
+
+  <!-- PRICING -->
+  <div class="section-title fade-in">Pricing Tiers</div>
+  <div class="pricing-grid fade-in">
+    <div class="pricing-card">
+      <div class="pricing-name" style="color:#9ca3af;">Free</div>
+      <div class="pricing-price">$0</div>
+      <ul class="pricing-features">
+        <li><span class="check">✓</span> 3 shrinks / month</li>
+        <li><span class="check">✓</span> All podcast shows</li>
+        <li><span class="check">✓</span> 1, 5, 10 min summaries</li>
+        <li><span class="check">✓</span> 3 voices</li>
+        <li><span class="check">✓</span> Stream in browser</li>
+        <li><span class="cross">—</span> No saved library</li>
+        <li><span class="cross">—</span> No downloads</li>
+      </ul>
+    </div>
+    <div class="pricing-card popular">
+      <div class="pricing-name" style="color:#a855f7;">Standard</div>
+      <div class="pricing-price">$9.99<span>/mo</span></div>
+      <ul class="pricing-features">
+        <li><span class="check">✓</span> 30 shrinks / month</li>
+        <li><span class="check">✓</span> All podcast shows</li>
+        <li><span class="check">✓</span> 1, 5, 10 min summaries</li>
+        <li><span class="check">✓</span> All 12 premium voices</li>
+        <li><span class="check">✓</span> Saved Shrinks library</li>
+        <li><span class="check">✓</span> Download MP3s</li>
+        <li><span class="check">✓</span> Priority processing</li>
+      </ul>
+    </div>
+    <div class="pricing-card pro">
+      <div class="pricing-name" style="color:#f59e0b;">Pro</div>
+      <div class="pricing-price">$19.99<span>/mo</span></div>
+      <ul class="pricing-features">
+        <li><span class="check">✓</span> Unlimited shrinks</li>
+        <li><span class="check">✓</span> All podcast shows</li>
+        <li><span class="check">✓</span> 1, 5, 10 min summaries</li>
+        <li><span class="check">✓</span> All 12 premium voices</li>
+        <li><span class="check">✓</span> Saved Shrinks library</li>
+        <li><span class="check">✓</span> Download MP3s</li>
+        <li><span class="check">✓</span> Priority processing</li>
+        <li><span class="check">✓</span> Early access to new voices</li>
+      </ul>
+    </div>
+  </div>
+
+  <hr class="separator">
+
+  <!-- FRONTEND PAGES -->
+  <div class="section-title fade-in">Frontend Pages</div>
+  <div class="grid-4 fade-in">
+    <div class="card" style="padding:1rem;">
+      <div style="font-size:0.8rem;font-weight:600;color:#a855f7;">/ </div>
+      <div style="font-size:0.7rem;color:#6b7280;">Home — hero, search, stats</div>
+    </div>
+    <div class="card" style="padding:1rem;">
+      <div style="font-size:0.8rem;font-weight:600;color:#a855f7;">/shows</div>
+      <div style="font-size:0.7rem;color:#6b7280;">Browse + carousels</div>
+    </div>
+    <div class="card" style="padding:1rem;">
+      <div style="font-size:0.8rem;font-weight:600;color:#a855f7;">/shows/[id]</div>
+      <div style="font-size:0.7rem;color:#6b7280;">Show detail + episodes</div>
+    </div>
+    <div class="card" style="padding:1rem;">
+      <div style="font-size:0.8rem;font-weight:600;color:#a855f7;">/episodes/[id]</div>
+      <div style="font-size:0.7rem;color:#6b7280;">Episode + shrink player</div>
+    </div>
+    <div class="card" style="padding:1rem;">
+      <div style="font-size:0.8rem;font-weight:600;color:#a855f7;">/categories</div>
+      <div style="font-size:0.7rem;color:#6b7280;">Browse by category</div>
+    </div>
+    <div class="card" style="padding:1rem;">
+      <div style="font-size:0.8rem;font-weight:600;color:#a855f7;">/saved-shrinks</div>
+      <div style="font-size:0.7rem;color:#6b7280;">Library (paid only)</div>
+    </div>
+    <div class="card" style="padding:1rem;">
+      <div style="font-size:0.8rem;font-weight:600;color:#a855f7;">/transcripts</div>
+      <div style="font-size:0.7rem;color:#6b7280;">Public transcripts</div>
+    </div>
+    <div class="card" style="padding:1rem;">
+      <div style="font-size:0.8rem;font-weight:600;color:#a855f7;">/pricing</div>
+      <div style="font-size:0.7rem;color:#6b7280;">Plans + checkout</div>
+    </div>
+    <div class="card" style="padding:1rem;">
+      <div style="font-size:0.8rem;font-weight:600;color:#a855f7;">/account</div>
+      <div style="font-size:0.7rem;color:#6b7280;">User settings</div>
+    </div>
+    <div class="card" style="padding:1rem;">
+      <div style="font-size:0.8rem;font-weight:600;color:#a855f7;">/favorites</div>
+      <div style="font-size:0.7rem;color:#6b7280;">Saved shows</div>
+    </div>
+    <div class="card" style="padding:1rem;">
+      <div style="font-size:0.8rem;font-weight:600;color:#a855f7;">/support</div>
+      <div style="font-size:0.7rem;color:#6b7280;">FAQs + contact</div>
+    </div>
+    <div class="card" style="padding:1rem;">
+      <div style="font-size:0.8rem;font-weight:600;color:#a855f7;">/login</div>
+      <div style="font-size:0.7rem;color:#6b7280;">Auth (Google + email)</div>
+    </div>
+  </div>
+
+  <hr class="separator">
+
+  <!-- REPOS -->
+  <div class="section-title fade-in">Repositories & Deploy</div>
+  <div class="grid-2 fade-in">
+    <div class="card">
+      <div class="card-title">🖥️ Frontend</div>
+      <div style="font-size:0.8rem;color:#9ca3af;">
+        <code>github.com/djempty/podshrink-web</code> (public)<br>
+        Next.js 16 + TypeScript + Tailwind<br>
+        Railway: generous-light / podshrink-web<br><br>
+        <span class="tag tag-green">Push to main → auto-deploy</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">⚙️ Backend</div>
+      <div style="font-size:0.8rem;color:#9ca3af;">
+        <code>github.com/djempty/podshrink</code> (private)<br>
+        Express + TypeScript + Drizzle + BullMQ<br>
+        Railway: courteous-education / podshrink<br><br>
+        <span class="tag tag-green">Push to main → auto-deploy</span>
+      </div>
+    </div>
+  </div>
+
+  <hr class="separator">
+
+  <div style="text-align:center;padding:2rem;color:#4b5563;font-size:0.8rem;">
+    PodShrink Architecture · Generated by Isaac · February 2026
+  </div>
+
+</div>
+
+<script>
+// Intersection Observer for fade-in animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.animationDelay = '0.1s';
+      entry.target.classList.add('fade-in');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.fade-in').forEach(el => {
+  el.style.opacity = '0';
+  observer.observe(el);
+});
+
+// Re-trigger animations
+setTimeout(() => {
+  document.querySelectorAll('.fade-in').forEach(el => {
+    el.style.opacity = '';
+  });
+}, 100);
+</script>
+
+</body>
+</html>

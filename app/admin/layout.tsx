@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Users, Headphones, LogOut, Shield } from 'lucide-react';
+import { LayoutDashboard, Users, Headphones, LogOut, Shield, Megaphone, Network } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [authed, setAuthed] = useState(false);
@@ -88,6 +88,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/admin/users', label: 'Users', icon: Users },
     { href: '/admin/shrinks', label: 'Shrinks', icon: Headphones },
+    { href: '/admin/marketing', label: 'Marketing', icon: Megaphone },
+    { href: '/admin/architecture', label: 'Architecture', icon: Network },
   ];
 
   return (
