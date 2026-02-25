@@ -84,15 +84,66 @@ export default function MarketingPage() {
         </div>
         <div className="text-right">
           <Pill color="green">Phase: Launch (Days 1-14)</Pill>
-          <p className="text-gray-600 text-xs mt-1">Last updated: Feb 24, 2026</p>
+          <p className="text-gray-600 text-xs mt-1">Last updated: Feb 25, 2026</p>
         </div>
       </div>
 
       {/* Status banner */}
       <div className="bg-purple-600/10 border border-purple-500/20 rounded-xl p-4 mb-6">
-        <p className="text-purple-300 text-sm font-medium">📢 Current Status</p>
-        <p className="text-gray-400 text-xs mt-1">Strategy doc complete. Waiting for Mike to set up social media accounts (Twitter/X, Instagram, TikTok, LinkedIn, Facebook). Colin@teasdale.ca is first paying subscriber. 7 users total.</p>
+        <p className="text-purple-300 text-sm font-medium">📢 Current Status — Feb 25, 2026</p>
+        <p className="text-gray-400 text-xs mt-1">Social accounts created (X, Instagram, TikTok, YouTube, Reddit). No posts yet — need posting solution (browser control crashed OpenClaw, exploring alternatives: Buffer API, scheduling tools, or manual draft→post workflow). SEO: Dynamic sitemap expansion in progress (89 → 50K+ pages). Google Search Console sitemap fetch failing — investigating. 7 users, 1 paying (colin@teasdale.ca).</p>
       </div>
+
+      {/* ── SEO Strategy ── */}
+      <Section title="🔍 SEO Strategy & Technical Status" defaultOpen>
+        <div className="mb-4 p-3 bg-green-600/10 rounded-lg border border-green-500/20">
+          <p className="text-green-300 text-xs font-medium mb-1">🚀 In Progress: Dynamic Sitemap Expansion</p>
+          <p className="text-gray-400 text-xs">Expanding sitemap from 89 URLs to 50,000+ by including all episode pages across 41 shows. Each episode page is a long-tail keyword entry point (e.g. &ldquo;Joe Rogan episode 2045 summary&rdquo;).</p>
+        </div>
+
+        <p className="text-white text-xs font-medium mb-2">SEO Impact Projection</p>
+        <MiniTable
+          headers={['Metric', 'Before', 'After (Projected)', 'Timeline']}
+          rows={[
+            ['Indexed pages', '89', '50,000+', 'Indexing over 2-4 weeks'],
+            ['Long-tail keyword targets', '~10', '50,000+', 'Ongoing as episodes are added'],
+            ['Organic search traffic', '~0/week', '500-2,000/week (month 2-3)', 'Gradual ramp'],
+            ['Episode-specific queries', 'Not ranking', 'Low-competition rankings', '4-8 weeks'],
+            ['Transcript page traffic', 'Minimal', '1,000+/week (month 3-6)', 'As Google indexes'],
+          ]}
+        />
+
+        <p className="text-white text-xs font-medium mt-4 mb-2">Technical SEO Checklist</p>
+        <CheckItem id="seo1" label="Google Search Console — verified ✓" sub="Verified via Cloudflare DNS. Sitemap submitted but showing 'Couldn't fetch' for 2+ days." />
+        <CheckItem id="seo2" label="Dynamic sitemap with all episodes" sub="IN PROGRESS — building sitemap index with sub-sitemaps for shows, episodes, and transcripts." />
+        <CheckItem id="seo3" label="robots.txt — sitemap reference present ✓" sub="Cloudflare injects managed robots.txt. Our sitemap directive is included." />
+        <CheckItem id="seo4" label="OG social image — updated ✓" sub="1200×630 branded image with logo + device mockups." />
+        <CheckItem id="seo5" label="Unique meta descriptions per page" sub="TODO — show pages, episode pages, category pages need unique descriptions." />
+        <CheckItem id="seo6" label="Structured data (JSON-LD) on episode/transcript pages" sub="TODO — PodcastEpisode + Article schema for rich results." />
+        <CheckItem id="seo7" label="Alt text on podcast artwork" sub="TODO — all show/episode artwork images need descriptive alt text." />
+        <CheckItem id="seo8" label="Google Analytics 4" sub="TODO — need Measurement ID from Mike." />
+        <CheckItem id="seo9" label="Launch /blog with SEO-optimized posts" sub="TODO — planned 20 posts targeting transactional + informational keywords." />
+        <CheckItem id="seo10" label="Internal linking: transcripts → shows → categories" sub="TODO — strengthen page authority flow." />
+
+        <p className="text-white text-xs font-medium mt-4 mb-2">Keyword Targets</p>
+        <MiniTable
+          headers={['Priority', 'Keyword', 'Est. Monthly Volume', 'Difficulty', 'Strategy']}
+          rows={[
+            ['P1', 'podcast summary', '14,800', 'Medium', 'Homepage + blog'],
+            ['P1', 'AI podcast summary', '5,400', 'Low-Med', 'Homepage + features'],
+            ['P1', 'podcast summarizer', '3,600', 'Medium', 'Homepage SEO'],
+            ['P2', 'shorten podcasts', '1,200', 'Low', 'Blog + landing'],
+            ['P2', 'best podcast summary app', '1,900', 'Medium', 'Comparison blog post'],
+            ['P3', '[show name] summary', '50,000+', 'Low', 'Episode pages (sitemap)'],
+            ['P3', '[episode] recap', '10,000+', 'Very Low', 'Episode + transcript pages'],
+          ]}
+        />
+
+        <div className="mt-4 p-3 bg-[#141414] rounded-lg border border-gray-800">
+          <p className="text-purple-400 text-xs font-medium mb-2">💡 The SEO Gold Mine</p>
+          <p className="text-gray-400 text-xs">Every episode page is a unique, keyword-rich landing page. With 50K+ episodes across 41 shows, we&rsquo;re targeting the massive long-tail of &ldquo;[show name] [episode title] summary&rdquo; queries. Competitors like Snipd don&rsquo;t publish public episode pages at this scale. This is PodShrink&rsquo;s competitive moat for organic search.</p>
+        </div>
+      </Section>
 
       {/* ── Brand Voice ── */}
       <Section title="🎙️ Brand Voice" defaultOpen>
