@@ -25,9 +25,17 @@ export default function ShowPage() {
   const { data: session } = useSession();
 
   useEffect(() => {
+    if (!showId || isNaN(showId)) return;
+    
+    setLoading(true);
+    setEpisodes([]);
+    setShow(null);
+    
     const userId = session?.user?.email || session?.user?.id;
-    Promise.all([api.getShow(showId), api.getEpisodes(showId), api.getAllShrinks(userId || undefined)])
-      .then(([s, e, allShrinks]) => {
+    
+    // Load show and episodes first (critical), shrinks separately (non-blocking)
+    Promise.all([api.getShow(showId), api.getEpisodes(showId)])
+      .then(([s, e]) => {
         setShow(s);
         const sorted = [...e].sort((a, b) => {
           const dateA = a.pubDate ? new Date(a.pubDate).getTime() : 0;
@@ -35,22 +43,28 @@ export default function ShowPage() {
           return dateB - dateA;
         });
         setEpisodes(sorted);
-
-        // Populate shrinkStates from existing completed shrinks
-        const states: Record<number, { status: 'complete'; audioUrl?: string }> = {};
-        for (const shrink of allShrinks) {
-          if (shrink.status === 'complete' && shrink.audioUrl) {
-            const audioUrl = shrink.audioUrl.startsWith('/api/') 
-              ? shrink.audioUrl 
-              : api.getShrinkAudioUrl(shrink.id);
-            states[shrink.episodeId] = { status: 'complete', audioUrl };
-          }
-        }
-        setShrinkStates(states);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [showId]);
+
+    // Load shrink states separately so it doesn't block episode rendering
+    if (userId) {
+      api.getAllShrinks(userId)
+        .then((allShrinks) => {
+          const states: Record<number, { status: 'complete'; audioUrl?: string }> = {};
+          for (const shrink of allShrinks) {
+            if (shrink.status === 'complete' && shrink.audioUrl) {
+              const audioUrl = shrink.audioUrl.startsWith('/api/') 
+                ? shrink.audioUrl 
+                : api.getShrinkAudioUrl(shrink.id);
+              states[shrink.episodeId] = { status: 'complete', audioUrl };
+            }
+          }
+          setShrinkStates(states);
+        })
+        .catch(console.error);
+    }
+  }, [showId, session?.user?.email, session?.user?.id]);
 
   const latestEpisode = episodes.length > 0 ? episodes[0] : null;
   const isLatestPlaying = latestEpisode && track?.id === latestEpisode.id && isPlaying;
