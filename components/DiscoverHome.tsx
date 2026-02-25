@@ -20,8 +20,6 @@ export default function DiscoverHome({ sections }: DiscoverHomeProps) {
         router.push(`/shows/${show.id}`);
       } catch (error) {
         console.error('Failed to add show:', error);
-        // Fallback to add page
-        router.push(`/add?url=${encodeURIComponent(podcast.feedUrl)}&title=${encodeURIComponent(podcast.title)}`);
       }
     }
   };
