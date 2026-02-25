@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
 import { Episode } from '@/lib/types';
+import { isLanguagesEnabled } from '@/lib/featureFlags';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
@@ -17,6 +18,24 @@ interface VoiceOption {
   previewUrl: string;
   free?: boolean;
 }
+
+interface LanguageOption {
+  code: string;
+  name: string;
+  plans: ('free' | 'standard' | 'pro')[];
+}
+
+const LANGUAGES: LanguageOption[] = [
+  { code: 'en', name: 'English', plans: ['free', 'standard', 'pro'] },
+  { code: 'es', name: 'Spanish', plans: ['standard', 'pro'] },
+  { code: 'pt', name: 'Portuguese', plans: ['standard', 'pro'] },
+  { code: 'fr', name: 'French', plans: ['standard', 'pro'] },
+  { code: 'de', name: 'German', plans: ['standard', 'pro'] },
+  { code: 'ja', name: 'Japanese', plans: ['pro'] },
+  { code: 'ko', name: 'Korean', plans: ['pro'] },
+  { code: 'hi', name: 'Hindi', plans: ['pro'] },
+  { code: 'zh', name: 'Mandarin Chinese', plans: ['pro'] },
+];
 
 interface ShrinkPanelProps {
   episode: Episode;
@@ -34,6 +53,7 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
   const [duration, setDuration] = useState(0);
   const [voiceId, setVoiceId] = useState('');
   const [voices, setVoices] = useState<VoiceOption[]>([]);
+  const [language, setLanguage] = useState('en');
   const [status, setStatus] = useState<'idle' | 'processing' | 'complete' | 'error'>('idle');
   const [notifyWhenReady, setNotifyWhenReady] = useState(false);
   const chimeRef = useRef<HTMLAudioElement | null>(null);
@@ -177,7 +197,13 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
     setProgressLabel('Starting shrink...');
 
     try {
-      const shrink = await api.createShrink(episode.id, duration, voiceId, session?.user?.email || session?.user?.id);
+      const shrink = await api.createShrink(
+        episode.id, 
+        duration, 
+        voiceId, 
+        session?.user?.email || session?.user?.id,
+        language
+      );
       setShrinkId(shrink.id);
       onShrinkStarted(shrink.id);
       
@@ -355,6 +381,38 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
                 )}
               </select>
             </div>
+
+            {/* Language (only show if feature flag enabled) */}
+            {isLanguagesEnabled() && (
+              <div>
+                <label className="block text-gray-400 text-xs mb-1.5">Choose a language</label>
+                <select
+                  value={language}
+                  onChange={(e) => {
+                    const lang = LANGUAGES.find(l => l.code === e.target.value);
+                    if (lang && !lang.plans.includes(userPlan)) return;
+                    setLanguage(e.target.value);
+                  }}
+                  disabled={status === 'processing'}
+                  className="w-full bg-[#252525] text-white text-sm rounded-md px-3 py-2.5 border border-gray-700 focus:outline-none focus:border-purple-500 shrink-select"
+                >
+                  {LANGUAGES.map((lang) => {
+                    const locked = !lang.plans.includes(userPlan);
+                    return (
+                      <option key={lang.code} value={lang.code} disabled={locked}>
+                        {locked ? `⊘ ${lang.name}` : lang.name}
+                      </option>
+                    );
+                  })}
+                  {userPlan === 'free' && (
+                    <option disabled value="__upgrade__">— Upgrade to unlock more languages —</option>
+                  )}
+                  {userPlan === 'standard' && (
+                    <option disabled value="__upgrade__">— Pro plan: 4 more languages —</option>
+                  )}
+                </select>
+              </div>
+            )}
 
             {/* Preview + Notify toggle */}
             <div className="flex items-center justify-between">

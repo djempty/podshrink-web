@@ -1,13 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { Check, Zap, Crown, Sparkles, Tag, ChevronDown } from 'lucide-react';
+import { isLanguagesEnabled } from '@/lib/featureFlags';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://podshrink-production.up.railway.app';
 
-const PLANS = [
+// Helper to build plan features based on feature flags
+function buildPlans(languagesEnabled: boolean) {
+  return [
   {
     name: 'Free',
     price: 0,
@@ -24,7 +27,12 @@ const PLANS = [
       '3 voice options',
       'Stream in browser',
     ],
-    limits: [
+    limits: languagesEnabled ? [
+      'English summaries only',
+      'No 5 or 10 min summaries',
+      'No saved library',
+      'No priority processing',
+    ] : [
       'No 5 or 10 min summaries',
       'No saved library',
       'No priority processing',
@@ -45,6 +53,7 @@ const PLANS = [
       'All podcast shows',
       '1, 5, or 10 minute summaries',
       'All 12 premium voices',
+      ...(languagesEnabled ? ['5 output languages (EN, ES, PT, FR, DE)'] : []),
       'Saved Shrinks library',
       'Priority processing',
       'Download MP3s',
@@ -64,6 +73,7 @@ const PLANS = [
       'All podcast shows',
       '1, 5, or 10 minute summaries',
       'All 12 premium voices',
+      ...(languagesEnabled ? ['9 output languages including Japanese, Korean, Hindi, Mandarin'] : []),
       'Saved Shrinks library',
       'Priority processing',
       'Download MP3s',
@@ -71,7 +81,8 @@ const PLANS = [
       'Early access to new voices',
     ],
   },
-];
+  ];
+}
 
 export default function PricingPage() {
   const router = useRouter();
@@ -80,6 +91,14 @@ export default function PricingPage() {
   const [loading, setLoading] = useState<string | null>(null);
   const [showPromo, setShowPromo] = useState(false);
   const [promoCode, setPromoCode] = useState('');
+  const [languagesEnabled, setLanguagesEnabled] = useState(false);
+
+  // Check feature flag on mount and when location changes
+  useEffect(() => {
+    setLanguagesEnabled(isLanguagesEnabled());
+  }, []);
+
+  const PLANS = buildPlans(languagesEnabled);
 
   const getPrice = (basePrice: number) => {
     if (basePrice === 0) return 0;

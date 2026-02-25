@@ -40,6 +40,7 @@ export interface Shrink {
   targetDuration: number; // maps to targetDurationMinutes from API
   targetDurationMinutes?: number;
   voiceId: string;
+  language?: string;
   status: 'queued' | 'transcribing' | 'scripting' | 'generating_audio' | 'complete' | 'error';
   scriptText?: string;
   audioUrl?: string;

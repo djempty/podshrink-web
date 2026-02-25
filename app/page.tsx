@@ -7,10 +7,17 @@ import SearchInput from '@/components/SearchInput';
 import { api, DiscoverPodcast } from '@/lib/api';
 import Footer from '@/components/Footer';
 import ParticleBackground from '@/components/ParticleBackground';
+import { isLanguagesEnabled } from '@/lib/featureFlags';
 
 export default function LandingPage() {
   const router = useRouter();
   const [popularShows, setPopularShows] = useState<DiscoverPodcast[]>([]);
+  const [languagesEnabled, setLanguagesEnabled] = useState(false);
+
+  // Check feature flag on mount
+  useEffect(() => {
+    setLanguagesEnabled(isLanguagesEnabled());
+  }, []);
 
   const structuredData = {
     '@context': 'https://schema.org',
@@ -78,7 +85,7 @@ export default function LandingPage() {
 
           <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10">
             PodShrink uses AI to transform full-length podcast episodes into
-            concise, narrated audio summaries. Pick your duration. Pick your voice. Hit play.
+            concise, narrated audio summaries. Pick your duration. Pick your voice.{languagesEnabled && ' Choose your language.'} Hit play.
           </p>
 
           {/* CTA Buttons */}
