@@ -76,7 +76,7 @@ export default function EpisodeRow({ episode, showTitle, showImage, showId, shri
 
   return (
     <div
-      onClick={() => router.push(`/episodes/${episode.id}`)}
+      onClick={() => showId ? router.push(`/shows/${showId}/episodes/${episode.id}`) : null}
       className="group flex items-start gap-3 md:gap-4 py-4 px-3 md:px-4 border-b border-gray-800/60 hover:bg-[#1a1a1a] transition-colors cursor-pointer"
     >
       {/* Thumbnail */}
