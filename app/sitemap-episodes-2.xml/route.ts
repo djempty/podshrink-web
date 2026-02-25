@@ -1,7 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
-
-export const dynamic = 'force-dynamic';
-export const revalidate = 3600;
+import { NextResponse } from 'next/server';
 
 const BASE = 'https://podshrink.com';
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://podshrink-production.up.railway.app';
@@ -16,19 +13,8 @@ async function fetchJson(path: string) {
   }
 }
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { page: string } }
-) {
-  const page = parseInt(params.page, 10);
-  
-  if (isNaN(page) || page < 1) {
-    return new NextResponse('Invalid page number', { status: 400 });
-  }
-
-  // Fetch episodes for this page (10k per page)
-  const episodesPerPage = 10000;
-  const episodes = await fetchJson(`/api/episodes?page=${page}&limit=${episodesPerPage}`);
+export async function GET() {
+  const episodes = await fetchJson('/api/episodes?page=2&limit=10000');
 
   let xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`;
@@ -44,7 +30,7 @@ export async function GET(
   <url>
     <loc>${BASE}/shows/${episode.showId}/episodes/${episode.id}</loc>
     <lastmod>${lastmod}</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>`;
   }
