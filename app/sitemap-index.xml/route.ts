@@ -45,6 +45,10 @@ export async function GET() {
   <sitemap>
     <loc>${BASE}/sitemap-transcripts.xml</loc>
     <lastmod>${now}</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>${BASE}/sitemap-blog.xml</loc>
+    <lastmod>${now}</lastmod>
   </sitemap>`;
 
   // Add episode sub-sitemaps
