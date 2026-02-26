@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Play, Clock, Mic, Zap, Headphones, ArrowRight, Sparkles, Timer, Brain, Coffee } from 'lucide-react';
+import { Play, Clock, Mic, Zap, Headphones, ArrowRight, Sparkles, Timer, Brain, Coffee, Globe, Settings } from 'lucide-react';
 import SearchInput from '@/components/SearchInput';
 import { api, DiscoverPodcast } from '@/lib/api';
 import Footer from '@/components/Footer';
@@ -174,9 +174,9 @@ export default function LandingPage() {
               color: 'from-purple-500 to-indigo-600',
             },
             {
-              icon: Clock,
-              title: 'Choose Your Duration',
-              desc: 'Want a 1-minute briefing or a 10-minute deep dive? You decide how much time you have.',
+              icon: Settings,
+              title: 'Choose Your Settings',
+              desc: 'Pick your duration, voice, and language. Get a 1-minute briefing or a 10-minute deep dive — in any of 9 languages.',
               color: 'from-blue-500 to-cyan-600',
             },
             {
@@ -210,6 +210,7 @@ export default function LandingPage() {
             {[
               { icon: Zap, title: 'Lightning Fast', desc: 'Shrinks are generated in under 2 minutes, even for 3-hour episodes.' },
               { icon: Mic, title: '12 Premium Voices', desc: 'Choose from curated AI voices — each with their own personality and style.' },
+              { icon: Globe, title: '9 Languages', desc: 'Listen to any podcast summarized in English, Spanish, French, German, Portuguese, Japanese, Korean, Hindi, or Mandarin.' },
               { icon: Clock, title: 'Flexible Duration', desc: '1 minute, 5 minutes, or 10 minutes. Get exactly the depth you need.' },
               { icon: Headphones, title: 'Listen Anywhere', desc: 'Stream instantly in the browser or save shrinks to your library.' },
             ].map((feat, i) => (
