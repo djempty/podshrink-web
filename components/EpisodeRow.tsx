@@ -122,6 +122,10 @@ export default function EpisodeRow({ episode, showTitle, showImage, showId, show
               <Loader2 size={14} className="animate-spin" />
               Shrinking...
             </button>
+          ) : episode.duration > 14400 ? (
+            <span className="text-xs text-gray-500 max-w-[200px] text-center leading-tight">
+              This episode is too long to summarize. PodShrink currently supports episodes up to 4 hours.
+            </span>
           ) : (
             <button
               onClick={(e) => { e.stopPropagation(); onShrinkClick?.(); }}
