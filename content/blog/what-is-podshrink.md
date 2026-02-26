@@ -6,7 +6,7 @@ excerpt: "Discover how PodShrink uses AI to transform hours of podcast content i
 category: "Product"
 tags: ["AI", "podcast summaries", "productivity", "how-it-works"]
 author: "PodShrink Team"
-featuredImage: ""
+featuredImage: "/blog/what-is-podshrink.png"
 readTime: "5 min read"
 ---
 
@@ -14,7 +14,7 @@ readTime: "5 min read"
 
 If you're a podcast listener in 2026, you know the struggle. Your subscription list keeps growing. Your favorite shows release new episodes every week. That industry expert just launched a must-listen series. And somehow, your commute hasn't gotten any longer.
 
-**The average podcast episode is 45 minutes.** Subscribe to just 10 shows, and you're looking at over **7 hours a week** just to stay current. For most of us, that's impossible.
+**The average podcast episode is 45 minutes** ([according to industry data](https://www.edisonresearch.com/)). Subscribe to just 10 shows, and you're looking at over **7 hours a week** just to stay current. For most of us, that's impossible.
 
 You end up skipping episodes. Falling behind. Missing out on insights that could genuinely help your work, hobbies, or life.
 
@@ -22,7 +22,7 @@ You end up skipping episodes. Falling behind. Missing out on insights that could
 
 **[PodShrink](/)** solves this problem with a simple idea: what if you could get the key insights from any podcast episode in a fraction of the time?
 
-That's exactly what we do. PodShrink uses advanced AI to analyze full-length podcast episodes and generate **narrated audio summaries** that capture the most important points, arguments, and takeaways.
+That's exactly what we do. PodShrink uses advanced [AI language models](https://openai.com/) to analyze full-length podcast episodes and generate **narrated audio summaries** that capture the most important points, arguments, and takeaways.
 
 A 90-minute interview? You can absorb the core ideas in 5 minutes. A 3-hour deep dive? Listen to a 10-minute distilled version. You decide how much time you have, and we deliver the summary that fits.
 
@@ -49,6 +49,7 @@ There are other summarization tools out there. Here's what sets us apart:
 - **Audio summaries, not text.** We know you're multitasking. Listen while you cook, commute, or work out — just like the original podcast.
 - **Flexible duration.** One size doesn't fit all. Choose the depth you need.
 - **Premium voices.** Our AI narrators sound natural and engaging, not robotic.
+- **Multi-language support.** Get summaries in **9 languages** — English, Spanish, French, German, Portuguese, Italian, Japanese, Korean, and Hindi. Perfect for non-native speakers or language learners who want to consume podcast content in their preferred language.
 - **Built for podcast lovers.** We're not summarizing blogs or YouTube videos. We focus on podcasts, and we do it really well.
 
 ## Who Is PodShrink For?
@@ -64,7 +65,7 @@ If you've ever thought *"I wish I could just get the highlights,"* PodShrink is 
 
 ## Try PodShrink Today
 
-Ready to reclaim your time? [Browse our catalog](/shows) and create your first shrink. No credit card required to get started.
+Ready to reclaim your time? [Browse our catalog](/shows) and create your first shrink. No credit card required to get started. Or [view our pricing](/pricing) to see our subscription plans.
 
 Want to dive deeper into how we're using AI? Check out our post on [How AI Is Changing the Way We Listen to Podcasts](/blog/ai-changing-podcasts).
 

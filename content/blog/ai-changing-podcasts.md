@@ -6,13 +6,13 @@ excerpt: "From summarization to personalized discovery, artificial intelligence 
 category: "AI & Technology"
 tags: ["AI", "machine learning", "podcasts", "future", "technology"]
 author: "PodShrink Team"
-featuredImage: ""
+featuredImage: "/blog/ai-changing-podcasts.png"
 readTime: "7 min read"
 ---
 
 ## The Podcast Explosion — and the Time Crisis
 
-Podcasting has exploded. In 2026, there are over **5 million active podcasts** producing hundreds of thousands of new episodes every single week. That's an unprecedented amount of knowledge, insight, and entertainment at your fingertips.
+Podcasting has exploded. In 2026, there are over **5 million active podcasts** ([source: Podcast Index](https://podcastindex.org/)) producing hundreds of thousands of new episodes every single week. That's an unprecedented amount of knowledge, insight, and entertainment at your fingertips.
 
 There's just one problem: **you can't listen to all of it.**
 
@@ -29,7 +29,7 @@ AI is fundamentally changing how we discover, consume, and interact with podcast
 The most immediate application of AI in podcasting is **automatic summarization**. Tools like [PodShrink](/) use large language models to analyze full-length episodes and generate concise, narrated audio summaries.
 
 ### How it works:
-1. **Transcription:** The episode is converted from audio to text using speech recognition AI.
+1. **Transcription:** The episode is converted from audio to text using speech recognition AI (like [OpenAI's Whisper](https://openai.com/research/whisper)).
 2. **Analysis:** A language model identifies the main topics, arguments, and takeaways.
 3. **Summarization:** The AI condenses the content into a shorter script that preserves key insights.
 4. **Narration:** A text-to-speech model converts the summary back into natural-sounding audio.
@@ -163,7 +163,7 @@ The future of podcasting isn't just about listening. It's about **understanding*
 
 ## Try It Yourself
 
-Ready to experience the future of podcast listening? [Browse our catalog](/shows) and create your first AI-powered summary in under a minute.
+Ready to experience the future of podcast listening? [Browse our catalog](/shows) and create your first AI-powered summary in under a minute. Or [sign up for a free account](/signup) to save your favorite shrinks.
 
 Curious how PodShrink works? Read our explainer: [What Is PodShrink? AI Podcast Summaries Explained](/blog/what-is-podshrink).
 
