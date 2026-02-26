@@ -23,7 +23,7 @@ export default async function BlogPage() {
 
   return (
     <div className="min-h-screen bg-[#121212]">
-      <PageHeader title="Blog" showSignUp={false} />
+      <PageHeader title="Blog" />
 
       <div className="max-w-5xl mx-auto px-6 py-4 md:py-8">
         <p className="text-gray-400 text-lg text-center mb-8">
