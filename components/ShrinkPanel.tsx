@@ -76,6 +76,7 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
   const [errorMsg, setErrorMsg] = useState('');
   const [previewPlaying, setPreviewPlaying] = useState(false);
   const previewAudioRef = useRef<HTMLAudioElement | null>(null);
+  const pollingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [usageInfo, setUsageInfo] = useState<{
     plan: string;
     shrinkCount: number;
@@ -237,6 +238,7 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
 
   const pollStatus = (id: number) => {
     let failCount = 0;
+    if (pollingIntervalRef.current) clearInterval(pollingIntervalRef.current);
     const interval = setInterval(async () => {
       try {
         const shrink = await api.getShrinkStatus(episode.id, id);
@@ -297,6 +299,24 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
         // Otherwise silently retry next poll
       }
     }, 3000);
+    pollingIntervalRef.current = interval;
+  };
+
+  const cancelShrink = async () => {
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+      pollingIntervalRef.current = null;
+    }
+    if (shrinkId) {
+      try {
+        await fetch(`${API_URL}/api/shrinks/${shrinkId}/cancel`, { method: 'POST' });
+      } catch {}
+    }
+    setStatus('idle');
+    setProgress(0);
+    setProgressLabel('');
+    setShrinkId(null);
+    onShrinkError?.();
   };
 
   return (
@@ -526,6 +546,12 @@ export default function ShrinkPanel({ episode, showImage, onClose, onShrinkStart
             <p className="text-xs text-gray-500 mt-2 text-center">{Math.round(progress)}%</p>
             <p className="text-xs text-gray-400 text-center">{progressLabel}</p>
             <p className="text-xs text-purple-400/80 text-center mt-3 italic">{funMessages[funMessageIndex % funMessages.length]}</p>
+            <button
+              onClick={cancelShrink}
+              className="w-full mt-4 py-2 bg-transparent border border-gray-600 hover:border-red-500 text-gray-400 hover:text-red-400 rounded-md text-sm transition-colors"
+            >
+              Cancel
+            </button>
           </div>
         )}
 
