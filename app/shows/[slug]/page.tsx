@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
 import { Show, Episode } from '@/lib/types';
-import { Heart, Play, Pause } from 'lucide-react';
+import { Heart, Play, Pause, ArrowLeft } from 'lucide-react';
 import EpisodeRow from '@/components/EpisodeRow';
 import ShrinkPanel from '@/components/ShrinkPanel';
 import { useFavorites } from '@/lib/favoritesStore';
@@ -129,8 +129,19 @@ export default function ShowPage() {
 
   return (
     <div className="min-h-screen bg-[#121212]">
+      {/* Back to Shows */}
+      <div className="px-4 md:px-8 pt-4">
+        <button
+          onClick={() => router.push('/shows')}
+          className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+        >
+          <ArrowLeft size={18} />
+          <span className="text-sm">Back to Shows</span>
+        </button>
+      </div>
+
       {/* Show Header — Spotify-style */}
-      <div className="px-4 md:px-8 pt-6 pb-6">
+      <div className="px-4 md:px-8 pt-4 pb-6">
         {/* Top row: image + text side by side */}
         <div className="flex gap-4 md:gap-6">
           <div className="flex-shrink-0">
