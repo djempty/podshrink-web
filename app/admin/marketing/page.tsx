@@ -208,7 +208,7 @@ export default function BusinessPlanPage() {
                 { emoji: '🎙️', name: 'AI Summarization', desc: 'Full episode → concise audio summary' },
                 { emoji: '🎧', name: 'Voice Selection', desc: '12+ AI voices (male/female, accents)' },
                 { emoji: '⏱️', name: 'Duration Control', desc: 'User picks 3, 5, 8, 10, or 15 minutes' },
-                { emoji: '🌍', name: 'Multi-Language Output', desc: 'English, Spanish, French, German, etc.' },
+                { emoji: '🌍', name: 'Multi-Language Output ✅', desc: '9 languages live: EN, ES, PT, FR, DE, JA, KO, HI, ZH. Tier-gated.' },
                 { emoji: '📚', name: 'Show Library', desc: '41 top shows, 50K+ episodes' },
                 { emoji: '💾', name: 'Save & Download', desc: 'Export MP3 for offline listening' },
               ].map(f => (
@@ -449,7 +449,7 @@ export default function BusinessPlanPage() {
       {/* ── 4. SEO Strategy ── */}
       <Section title="🔍 4. SEO Strategy & Technical Status">
         <div className="mb-4 p-3 bg-green-600/10 rounded-lg border border-green-500/20">
-          <p className="text-green-300 text-xs font-medium mb-1">🚀 In Progress: Dynamic Sitemap Expansion</p>
+          <p className="text-green-300 text-xs font-medium mb-1">✅ Shipped: Dynamic Sitemap Expansion (20,183 URLs)</p>
           <p className="text-gray-400 text-xs">Expanding sitemap from 89 URLs to 50,000+ by including all episode pages across 41 shows. Each episode page is a long-tail keyword entry point (e.g. &ldquo;Joe Rogan episode 2045 summary&rdquo;).</p>
         </div>
 
@@ -467,7 +467,7 @@ export default function BusinessPlanPage() {
 
         <p className="text-white text-xs font-medium mt-4 mb-2">Technical SEO Checklist</p>
         <CheckItem id="seo1" label="Google Search Console — verified ✓" sub="Verified via Cloudflare DNS. Sitemap submitted but showing 'Couldn't fetch' for 2+ days." />
-        <CheckItem id="seo2" label="Dynamic sitemap with all episodes" sub="IN PROGRESS — building sitemap index with sub-sitemaps for shows, episodes, and transcripts." />
+        <CheckItem id="seo2" label="Dynamic sitemap with all episodes ✅" sub="DONE — 20,183 URLs across 6 sub-sitemaps. Google Search Console: Success." />
         <CheckItem id="seo3" label="robots.txt — sitemap reference present ✓" sub="Cloudflare injects managed robots.txt. Our sitemap directive is included." />
         <CheckItem id="seo4" label="OG social image — updated ✓" sub="1200×630 branded image with logo + device mockups." />
         <CheckItem id="seo5" label="Unique meta descriptions per page" sub="TODO — show pages, episode pages, category pages need unique descriptions." />
