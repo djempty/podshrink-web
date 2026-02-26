@@ -16,7 +16,7 @@ async function fetchEpisode(episodeId: string) {
   }
 }
 
-export async function generateMetadata({ params }: { params: { id: string; episodeId: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: { slug: string; episodeId: string } }): Promise<Metadata> {
   const episode = await fetchEpisode(params.episodeId);
   
   if (!episode) {
@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: { params: { id: string; episo
   };
 }
 
-export default async function EpisodeDetailPage({ params }: { params: { id: string; episodeId: string } }) {
+export default async function EpisodeDetailPage({ params }: { params: { slug: string; episodeId: string } }) {
   const episode = await fetchEpisode(params.episodeId);
 
   if (!episode) {
@@ -62,7 +62,7 @@ export default async function EpisodeDetailPage({ params }: { params: { id: stri
     name: episode.title,
     description: episode.description || '',
     datePublished: episode.pubDate,
-    url: `https://podshrink.com/shows/${params.id}/episodes/${params.episodeId}`,
+    url: `https://podshrink.com/shows/${params.slug}/episodes/${params.episodeId}`,
     image: episode.imageUrl || episode.show?.imageUrl || '',
     audio: episode.audioUrl ? {
       '@type': 'AudioObject',
@@ -72,7 +72,7 @@ export default async function EpisodeDetailPage({ params }: { params: { id: stri
     partOfSeries: episode.show ? {
       '@type': 'PodcastSeries',
       name: episode.show.title,
-      url: `https://podshrink.com/shows/${episode.show.id}`,
+      url: `https://podshrink.com/shows/${episode.show.slug || episode.show.id}`,
     } : undefined,
   };
 
@@ -82,7 +82,7 @@ export default async function EpisodeDetailPage({ params }: { params: { id: stri
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <EpisodeDetailClient episode={episode} showId={params.id} />
+      <EpisodeDetailClient episode={episode} showId={params.slug} />
     </>
   );
 }

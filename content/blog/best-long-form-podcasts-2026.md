@@ -29,7 +29,7 @@ Here are **10 long-form podcasts in 2026** that are absolutely worth summarizing
 
 **Best episodes to shrink:** Any interview with researchers at the frontier of AI, neuroscience, or physics.
 
-👉 [Explore Lex Fridman episodes on PodShrink](/shows)
+👉 [Explore Lex Fridman episodes on PodShrink](/shows/lex-fridman-podcast)
 
 ---
 
@@ -40,7 +40,7 @@ Here are **10 long-form podcasts in 2026** that are absolutely worth summarizing
 
 **Best episodes to shrink:** Protocol episodes (sleep toolkit, focus toolkit, etc.) where he distills years of research into step-by-step guidance.
 
-👉 [Listen to Huberman Lab summaries](/shows)
+👉 [Listen to Huberman Lab summaries](/shows/huberman-lab)
 
 ---
 
@@ -51,7 +51,7 @@ Here are **10 long-form podcasts in 2026** that are absolutely worth summarizing
 
 **Best episodes to shrink:** Interviews with scientists (Brian Cox, Rhonda Patrick), authors, and cultural commentators.
 
-👉 [Find Joe Rogan episodes here](/shows)
+👉 [Find Joe Rogan episodes here](/shows/the-joe-rogan-experience)
 
 ---
 

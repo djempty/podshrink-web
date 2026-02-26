@@ -23,7 +23,7 @@ export async function GET() {
     const lastmod = show.updatedAt ? new Date(show.updatedAt).toISOString() : new Date().toISOString();
     xml += `
   <url>
-    <loc>${BASE}/shows/${show.id}</loc>
+    <loc>${BASE}/shows/${show.slug}</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>

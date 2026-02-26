@@ -11,11 +11,12 @@ interface EpisodeRowProps {
   showTitle?: string;
   showImage?: string;
   showId?: number;
+  showSlug?: string;
   shrinkState?: { status: 'shrinking' | 'complete'; audioUrl?: string; audioDurationSeconds?: number };
   onShrinkClick?: () => void;
 }
 
-export default function EpisodeRow({ episode, showTitle, showImage, showId, shrinkState, onShrinkClick }: EpisodeRowProps) {
+export default function EpisodeRow({ episode, showTitle, showImage, showId, showSlug, shrinkState, onShrinkClick }: EpisodeRowProps) {
   const router = useRouter();
   const { track, isPlaying, currentTime, setTrack, play, pause } = useAudioPlayer();
 
@@ -76,7 +77,7 @@ export default function EpisodeRow({ episode, showTitle, showImage, showId, shri
 
   return (
     <div
-      onClick={() => showId ? router.push(`/shows/${showId}/episodes/${episode.id}`) : null}
+      onClick={() => (showSlug || showId) ? router.push(`/shows/${showSlug || showId}/episodes/${episode.id}`) : null}
       className="group flex items-start gap-3 md:gap-4 py-4 px-3 md:px-4 border-b border-gray-800/60 hover:bg-[#1a1a1a] transition-colors cursor-pointer"
     >
       {/* Thumbnail */}

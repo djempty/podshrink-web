@@ -17,7 +17,7 @@ export default function DiscoverHome({ sections }: DiscoverHomeProps) {
       try {
         const { api } = await import('@/lib/api');
         const show = await api.addShow(podcast.feedUrl);
-        router.push(`/shows/${show.id}`);
+        router.push(`/shows/${show.slug}`);
       } catch (error) {
         console.error('Failed to add show:', error);
       }

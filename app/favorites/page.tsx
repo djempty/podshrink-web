@@ -49,7 +49,7 @@ export default function FavoritesPage() {
             <div
               key={show.id}
               className="relative cursor-pointer group"
-              onClick={() => router.push(`/shows/${show.id}`)}
+              onClick={() => router.push(`/shows/${show.slug}`)}
             >
               <div className="relative aspect-square rounded-lg overflow-hidden mb-3 bg-[#1a1a1a]">
                 <img

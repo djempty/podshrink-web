@@ -1,6 +1,7 @@
 export interface Show {
   id: number;
   title: string;
+  slug: string;
   author: string;
   description: string;
   imageUrl: string;

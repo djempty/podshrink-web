@@ -30,7 +30,7 @@ export const api = {
   // Shows
   getShows: () => fetchAPI<Show[]>('/api/shows'),
   
-  getShow: (id: number) => fetchAPI<Show>(`/api/shows/${id}`),
+  getShow: (idOrSlug: number | string) => fetchAPI<Show>(`/api/shows/${idOrSlug}`),
   
   addShow: (rssUrl: string) => 
     fetchAPI<Show>('/api/shows', {
@@ -42,8 +42,8 @@ export const api = {
     fetchAPI<Show[]>(`/api/shows?search=${encodeURIComponent(query)}`),
 
   // Episodes
-  getEpisodes: (showId: number) => 
-    fetchAPI<Episode[]>(`/api/shows/${showId}/episodes`),
+  getEpisodes: (showIdOrSlug: number | string) => 
+    fetchAPI<Episode[]>(`/api/shows/${showIdOrSlug}/episodes`),
   
   getEpisode: (id: number) => 
     fetchAPI<Episode>(`/api/episodes/${id}`),

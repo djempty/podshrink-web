@@ -10,7 +10,7 @@ interface ShowCardProps {
 
 export default function ShowCard({ show }: ShowCardProps) {
   return (
-    <Link href={`/shows/${show.id}`} className="group">
+    <Link href={`/shows/${show.slug}`} className="group">
       <div className="bg-dark-card rounded-lg overflow-hidden hover:bg-dark-hover transition-all duration-200 hover:scale-105">
         <div className="relative aspect-square">
           <Image

@@ -60,12 +60,12 @@ export default function SearchInput({ className = '', onSelect }: { className?: 
     if (podcast.feedUrl) {
       try {
         const show = await api.addShow(podcast.feedUrl);
-        router.push(`/shows/${show.id}`);
+        router.push(`/shows/${show.slug}`);
       } catch {
         // Show might already exist
         const shows = await api.getShows();
         const match = shows.find(s => s.title === podcast.title || s.rssUrl === podcast.feedUrl);
-        if (match) router.push(`/shows/${match.id}`);
+        if (match) router.push(`/shows/${match.slug}`);
       }
     }
   };

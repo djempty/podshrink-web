@@ -45,11 +45,11 @@ export default function CategoriesPage() {
     if (podcast.feedUrl) {
       try {
         const show = await api.addShow(podcast.feedUrl);
-        router.push(`/shows/${show.id}`);
+        router.push(`/shows/${show.slug}`);
       } catch {
         const shows = await api.getShows();
         const match = shows.find(s => s.title === podcast.title);
-        if (match) router.push(`/shows/${match.id}`);
+        if (match) router.push(`/shows/${match.slug}`);
       }
     }
   };

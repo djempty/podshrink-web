@@ -207,7 +207,7 @@ export default function EpisodePage() {
     <div className="min-h-screen bg-[#121212] px-4 md:px-8 py-6">
       {/* Back link */}
       <Link
-        href={`/shows/${episode.showId}`}
+        href={`/shows/${episode.show?.slug || episode.showId}`}
         className="text-blue-500 hover:text-blue-400 text-sm mb-6 inline-block"
       >
         &lt;&lt; Episodes
@@ -229,7 +229,7 @@ export default function EpisodePage() {
           <p className="text-xs text-gray-500 mb-1">{formatDate(episode.pubDate)}</p>
           <h1 className="text-xl md:text-2xl font-bold text-white mb-2">{episode.title}</h1>
           {episode.show && (
-            <Link href={`/shows/${episode.showId}`} className="text-blue-500 hover:text-blue-400 text-lg font-semibold block mb-1">
+            <Link href={`/shows/${episode.show.slug || episode.showId}`} className="text-blue-500 hover:text-blue-400 text-lg font-semibold block mb-1">
               {episode.show.title}
             </Link>
           )}

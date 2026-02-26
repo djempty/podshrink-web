@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
 import { Show, Episode } from '@/lib/types';
 import { Heart, Play, Pause } from 'lucide-react';
@@ -13,7 +13,8 @@ import { useSession } from 'next-auth/react';
 
 export default function ShowPage() {
   const params = useParams();
-  const showId = parseInt(params.id as string, 10);
+  const router = useRouter();
+  const slug = params.slug as string;
 
   const [show, setShow] = useState<Show | null>(null);
   const [episodes, setEpisodes] = useState<Episode[]>([]);
@@ -25,7 +26,18 @@ export default function ShowPage() {
   const { data: session } = useSession();
 
   useEffect(() => {
-    if (!showId || isNaN(showId)) return;
+    if (!slug) return;
+    
+    // If slug is numeric, fetch the show to get the real slug and redirect
+    const numericId = parseInt(slug, 10);
+    if (!isNaN(numericId)) {
+      api.getShow(numericId)
+        .then((show) => {
+          router.replace(`/shows/${show.slug}`);
+        })
+        .catch(console.error);
+      return;
+    }
     
     setLoading(true);
     setEpisodes([]);
@@ -34,7 +46,7 @@ export default function ShowPage() {
     const userId = session?.user?.email || session?.user?.id;
     
     // Load show and episodes first (critical), shrinks separately (non-blocking)
-    Promise.all([api.getShow(showId), api.getEpisodes(showId)])
+    Promise.all([api.getShow(slug), api.getEpisodes(slug)])
       .then(([s, e]) => {
         setShow(s);
         const sorted = [...e].sort((a, b) => {
@@ -64,7 +76,7 @@ export default function ShowPage() {
         })
         .catch(console.error);
     }
-  }, [showId, session?.user?.email, session?.user?.id]);
+  }, [slug, router, session?.user?.email, session?.user?.id]);
 
   const latestEpisode = episodes.length > 0 ? episodes[0] : null;
   const isLatestPlaying = latestEpisode && track?.id === latestEpisode.id && isPlaying;
@@ -164,18 +176,18 @@ export default function ShowPage() {
             </button>
           )}
           <button
-            onClick={() => toggle(showId)}
+            onClick={() => show && toggle(show.id)}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-colors border ${
-              isFavorite(showId)
+              show && isFavorite(show.id)
                 ? 'border-blue-500 text-blue-400 bg-blue-500/10'
                 : 'border-gray-600 text-gray-300 hover:border-gray-400 hover:text-white'
             }`}
           >
             <Heart
               size={16}
-              className={isFavorite(showId) ? 'fill-blue-500 text-blue-500' : ''}
+              className={show && isFavorite(show.id) ? 'fill-blue-500 text-blue-500' : ''}
             />
-            {isFavorite(showId) ? 'Favorited' : 'Add to Favorites'}
+            {show && isFavorite(show.id) ? 'Favorited' : 'Add to Favorites'}
           </button>
         </div>
       </div>
@@ -192,7 +204,7 @@ export default function ShowPage() {
                 episode={episode}
                 showTitle={show?.title}
                 showImage={show?.imageUrl}
-                showId={show?.id}
+                showSlug={show?.slug}
                 shrinkState={shrinkStates[episode.id]}
                 onShrinkClick={() => setShrinkEpisode(episode)}
               />

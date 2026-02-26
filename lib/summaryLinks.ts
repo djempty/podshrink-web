@@ -4,10 +4,10 @@ function escapeHtml(text: string) {
 
 export function injectSummaryLinks(
   summary: string,
-  options?: { episodeId?: number; showTitle?: string; showId?: number }
+  options?: { episodeId?: number; showTitle?: string; showId?: number; showSlug?: string }
 ): string {
   let html = escapeHtml(summary);
-  const { episodeId, showTitle, showId } = options || {};
+  const { episodeId, showTitle, showId, showSlug } = options || {};
 
   // Link first occurrence of episode/podcast-like phrases to episode page
   if (episodeId) {
@@ -42,10 +42,10 @@ export function injectSummaryLinks(
   }
 
   // Link first occurrence of the show name to the show page
-  if (showTitle && showId) {
+  if (showTitle && (showSlug || showId)) {
     const escaped = escapeHtml(showTitle);
     if (html.includes(escaped)) {
-      const showLink = `<a href="/shows/${showId}" class="text-purple-400 hover:text-purple-300 underline">${escaped}</a>`;
+      const showLink = `<a href="/shows/${showSlug || showId}" class="text-purple-400 hover:text-purple-300 underline">${escaped}</a>`;
       html = html.replace(escaped, showLink);
     }
   }
