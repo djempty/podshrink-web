@@ -96,9 +96,10 @@ export default function EpisodeRow({ episode, showTitle, showImage, showId, show
         <p className="text-gray-500 text-xs leading-relaxed line-clamp-2 max-w-[75%]">{episode.description || ''}</p>
 
         {episode.duration > 18000 && !shrinkState && (
-          <p className="text-[10px] text-amber-400/80 mt-2 leading-tight">
-            ⚠️ Very long episode — may take longer or fail
-          </p>
+          <div className="flex items-start gap-1 mt-2">
+            <span className="text-[10px] leading-tight flex-shrink-0">⚠️</span>
+            <span className="text-[10px] text-amber-400/80 leading-tight">Very long episode — may take longer or fail</span>
+          </div>
         )}
         <div className="flex items-center gap-2 mt-2.5">
           <button
