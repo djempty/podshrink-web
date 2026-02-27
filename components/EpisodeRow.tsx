@@ -127,12 +127,19 @@ export default function EpisodeRow({ episode, showTitle, showImage, showId, show
               Shrinking...
             </button>
           ) : (
-            <button
-              onClick={(e) => { e.stopPropagation(); onShrinkClick?.(); }}
-              className="px-5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-sm font-medium transition-colors"
-            >
-              Shrink It!
-            </button>
+            <div className="flex flex-col items-center gap-1">
+              {episode.duration > 18000 && (
+                <span className="text-[10px] text-amber-400/80 max-w-[160px] text-center leading-tight">
+                  ⚠️ Very long episode — may take longer or fail
+                </span>
+              )}
+              <button
+                onClick={(e) => { e.stopPropagation(); onShrinkClick?.(); }}
+                className="px-5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-sm font-medium transition-colors"
+              >
+                Shrink It!
+              </button>
+            </div>
           )}
         </div>
       </div>
