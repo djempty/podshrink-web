@@ -6,7 +6,7 @@ excerpt: "Turn marathon episodes into 10-minute summaries you'll actually finish
 category: "Productivity"
 tags: ["productivity", "podcast summaries", "workflow", "time management"]
 author: "PodShrink Team"
-featuredImage: "/blog/keep-up-with-long-podcasts-workflow.png"
+featuredImage: "/blog/keep-up-with-long-podcasts-workflow-v2.png"
 readTime: "4 min read"
 ---
 
