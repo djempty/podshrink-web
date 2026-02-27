@@ -95,6 +95,11 @@ export default function EpisodeRow({ episode, showTitle, showImage, showId, show
         <h3 className="text-white font-semibold text-sm leading-tight mb-1 line-clamp-1">{episode.title}</h3>
         <p className="text-gray-500 text-xs leading-relaxed line-clamp-2 max-w-[75%]">{episode.description || ''}</p>
 
+        {episode.duration > 18000 && !shrinkState && (
+          <p className="text-[10px] text-amber-400/80 mt-2 leading-tight">
+            ⚠️ Very long episode — may take longer or fail
+          </p>
+        )}
         <div className="flex items-center gap-2 mt-2.5">
           <button
             onClick={(e) => { e.stopPropagation(); handlePlay(); }}
@@ -127,19 +132,12 @@ export default function EpisodeRow({ episode, showTitle, showImage, showId, show
               Shrinking...
             </button>
           ) : (
-            <div className="flex flex-col items-center gap-1">
-              {episode.duration > 18000 && (
-                <span className="text-[10px] text-amber-400/80 max-w-[160px] text-center leading-tight">
-                  ⚠️ Very long episode — may take longer or fail
-                </span>
-              )}
-              <button
-                onClick={(e) => { e.stopPropagation(); onShrinkClick?.(); }}
-                className="px-5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-sm font-medium transition-colors"
-              >
-                Shrink It!
-              </button>
-            </div>
+            <button
+              onClick={(e) => { e.stopPropagation(); onShrinkClick?.(); }}
+              className="px-5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-sm font-medium transition-colors"
+            >
+              Shrink It!
+            </button>
           )}
         </div>
       </div>
