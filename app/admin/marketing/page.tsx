@@ -83,18 +83,18 @@ export default function BusinessPlanPage() {
           <p className="text-gray-500 text-sm mt-1">Strategic roadmap, financial projections, and operational plan for PodShrink</p>
         </div>
         <div className="text-right">
-          <Pill color="green">Live: 6 Days</Pill>
-          <p className="text-gray-600 text-xs mt-1">Last updated: Feb 25, 2026</p>
+          <Pill color="green">Live: 7 Days</Pill>
+          <p className="text-gray-600 text-xs mt-1">Last updated: Feb 26, 2026</p>
         </div>
       </div>
 
       {/* Status banner */}
       <div className="bg-purple-600/10 border border-purple-500/20 rounded-xl p-4 mb-6">
-        <p className="text-purple-300 text-sm font-medium">📊 Current Status — Feb 25, 2026</p>
+        <p className="text-purple-300 text-sm font-medium">📊 Current Status — Feb 26, 2026</p>
         <p className="text-gray-400 text-xs mt-1">
           <strong>Users:</strong> 7 total (1 paying: colin@teasdale.ca) · <strong>MRR:</strong> $9.99 · <strong>Launch:</strong> Feb 19, 2026 · 
-          <strong> Social:</strong> Accounts created (X, Instagram, TikTok, YouTube, Reddit). No posts yet — need posting solution (browser control crashed OpenClaw, exploring alternatives: Buffer API, scheduling tools, or manual draft→post workflow). 
-          <strong> SEO:</strong> Dynamic sitemap expansion in progress (89 → 50K+ pages). Google Search Console sitemap fetch failing — investigating.
+          <strong> Social:</strong> X API live (first tweet posted), YouTube API live; Instagram/TikTok manual posting for now; Reddit API blocked by captcha. 
+          <strong> SEO:</strong> Blog shipped (3 posts + sitemap); episode pages without shrinks now <em>noindexed</em>; show URLs moved to slugs; GSC sitemap reading Success.
         </p>
       </div>
 
@@ -140,9 +140,9 @@ export default function BusinessPlanPage() {
                 ['Total Users', '7', 'Live since Feb 19, 2026 (6 days)'],
                 ['Paying Users', '1', 'colin@teasdale.ca — Standard plan'],
                 ['MRR', '$9.99', 'One Standard subscription'],
-                ['Shows Indexed', '41', 'Joe Rogan, Huberman Lab, All-In, etc.'],
-                ['Episodes Available', '~50,000', 'Full back catalogs'],
-                ['Summaries Generated', '~150', 'Avg 8-12 min duration'],
+                ['Shows Indexed', '46', 'Live catalogs incl. Rogan, Huberman, All-In, etc.'],
+                ['Episodes Available', '28,687', 'From current indexed shows'],
+                ['Summaries Generated', '46', 'Completed shrinks across languages'],
               ]}
             />
           </div>
@@ -229,7 +229,7 @@ export default function BusinessPlanPage() {
               headers={['Feature', 'Target', 'Impact', 'Effort', 'Notes']}
               rows={[
                 ['🎤 PodShrink for Creators', 'Q1 2026', 'High (New Revenue)', 'Medium', 'Voice cloning, B2B tier, $49-99/mo'],
-                ['📝 Blog/Content Section', 'Q1 2026', 'High (SEO)', 'Low', '20+ SEO-optimized posts'],
+                ['📝 Blog/Content Section', 'Shipped (Feb 26)', 'High (SEO)', 'Low', 'Live at /blog with sitemap'],
                 ['🔌 Chrome Extension', 'Q2 2026', 'High (Distribution)', 'Medium', 'Summarize from any podcast page'],
                 ['📱 Mobile App (iOS/Android)', 'Q2 2026', 'High (Engagement)', 'High', 'Native listening experience'],
                 ['🔗 Public API for Developers', 'Q2 2026', 'Medium (Partnerships)', 'Medium', 'Podcast apps can integrate'],
