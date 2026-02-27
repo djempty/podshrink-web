@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PodShrink — Growth Playbook: 0 → 100K Subscribers</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#d1d5db;line-height:1.7;overflow-x:hidden;}
+.bg-glow{position:fixed;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 25% 35%,rgba(147,51,234,.06) 0%,transparent 50%),radial-gradient(circle at 75% 65%,rgba(59,130,246,.04) 0%,transparent 50%);animation:gm 25s ease-in-out infinite;pointer-events:none;z-index:0;}
+@keyframes gm{0%,100%{transform:translate(0,0)}50%{transform:translate(-2%,1.5%)}}
+.container{max-width:1100px;margin:0 auto;padding:1.5rem;position:relative;z-index:1;}
+.header{text-align:center;padding:3rem 0 1.5rem;}
+.header h1{font-size:2.8rem;font-weight:900;background:linear-gradient(135deg,#a855f7,#3b82f6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.5rem;}
+.header .sub{color:#6b7280;font-size:1rem;font-weight:300;}
+.header .date{color:#4b5563;font-size:.75rem;margin-top:.5rem;}
+.sep{border:none;height:1px;background:linear-gradient(90deg,transparent,#a855f733,transparent);margin:2.5rem 0;}
+
+/* Sections */
+.section{margin-bottom:1rem;}
+.section-header{cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;background:#141414;border:1px solid #1f1f1f;border-radius:12px;transition:all .3s;user-select:none;}
+.section-header:hover{border-color:#a855f733;background:#171717;}
+.section-header h2{font-size:1.15rem;font-weight:700;color:#f3f4f6;display:flex;align-items:center;gap:.6rem;}
+.section-header .num{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#7c3aed);color:white;font-size:.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.section-header .chev{color:#6b7280;transition:transform .3s;font-size:.8rem;}
+.section-header.open .chev{transform:rotate(180deg);}
+.section-body{max-height:0;overflow:hidden;transition:max-height .5s ease;}
+.section-body.open{max-height:50000px;}
+.section-content{padding:1.25rem;background:#111;border:1px solid #1a1a1a;border-top:none;border-radius:0 0 12px 12px;}
+
+/* Cards */
+.card{background:#141414;border:1px solid #1f1f1f;border-radius:12px;padding:1.25rem;margin-bottom:.75rem;}
+.card h3{font-weight:600;font-size:.95rem;color:#e5e7eb;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem;}
+.card p,.card li{font-size:.82rem;color:#9ca3af;}
+.card ul{padding-left:1.2rem;margin-top:.3rem;}
+.card li{margin-bottom:.25rem;}
+
+/* Tags */
+.tag{display:inline-block;padding:.15rem .5rem;border-radius:5px;font-size:.65rem;font-weight:600;margin:.1rem;}
+.tag-p{background:#a855f720;color:#a855f7;}
+.tag-b{background:#3b82f620;color:#3b82f6;}
+.tag-g{background:#22c55e20;color:#22c55e;}
+.tag-r{background:#ef444420;color:#ef4444;}
+.tag-a{background:#f59e0b20;color:#f59e0b;}
+.tag-gr{background:#6b728020;color:#9ca3af;}
+
+/* Tables */
+.tbl{width:100%;border-collapse:collapse;font-size:.78rem;margin:.75rem 0;}
+.tbl th{text-align:left;padding:.5rem .6rem;color:#a855f7;font-weight:600;font-size:.68rem;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #1f1f1f;}
+.tbl td{padding:.45rem .6rem;border-bottom:1px solid #111;color:#d1d5db;}
+.tbl tr:hover td{background:#1a1a1a;}
+.tbl code{background:#1f1f1f;padding:.1rem .3rem;border-radius:3px;font-size:.72rem;color:#c084fc;}
+
+/* Phase timeline */
+.phase{display:flex;align-items:center;gap:.5rem;margin:.5rem 0;}
+.phase-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
+.phase-line{flex:1;height:2px;background:#1f1f1f;position:relative;}
+.phase-line .fill{height:100%;border-radius:1px;}
+.phase-label{font-size:.7rem;font-weight:600;min-width:80px;}
+
+/* Grid */
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:.75rem;}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:.75rem;}
+.grid-4{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.75rem;}
+
+/* Stat cards */
+.stat{background:#141414;border:1px solid #1f1f1f;border-radius:10px;padding:1rem;text-align:center;}
+.stat .val{font-size:1.8rem;font-weight:800;color:white;}
+.stat .lbl{font-size:.7rem;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin-top:.25rem;}
+
+/* Highlight boxes */
+.hi{padding:.75rem 1rem;border-radius:8px;margin:.5rem 0;font-size:.82rem;}
+.hi-p{background:#a855f710;border-left:3px solid #a855f7;}
+.hi-b{background:#3b82f610;border-left:3px solid #3b82f6;}
+.hi-g{background:#22c55e10;border-left:3px solid #22c55e;}
+.hi-r{background:#ef444410;border-left:3px solid #ef4444;}
+.hi-a{background:#f59e0b10;border-left:3px solid #f59e0b;}
+
+h4{font-size:.9rem;font-weight:600;color:#e5e7eb;margin:1rem 0 .5rem;}
+strong{color:#e5e7eb;}
+a{color:#a855f7;text-decoration:none;}
+a:hover{color:#c084fc;}
+
+.check{color:#22c55e;}
+.cross{color:#ef4444;}
+.warn{color:#f59e0b;}
+
+@media(max-width:768px){
+  .header h1{font-size:1.8rem;}
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr;}
+  .tbl{font-size:.7rem;}
+}
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+<div class="container">
+
+<div class="header">
+  <h1>PodShrink Growth Playbook</h1>
+  <div class="sub">The Direct Path: 0 → 1,000 → 10,000 → 100,000 Paying Subscribers</div>
+  <div class="date">Prepared by Isaac · February 2026 · podshrink.com</div>
+</div>
+
+<!-- EXEC SUMMARY -->
+<div class="section">
+<div class="section-header open" onclick="toggle(this)">
+  <h2><span class="num">1</span> Executive Summary</h2>
+  <span class="chev">▼</span>
+</div>
+<div class="section-body open"><div class="section-content">
+
+<div class="grid-4" style="margin-bottom:1rem;">
+  <div class="stat"><div class="val" style="color:#a855f7;">100K</div><div class="lbl">Subscriber Target</div></div>
+  <div class="stat"><div class="val" style="color:#3b82f6;">18 mo</div><div class="lbl">Timeline</div></div>
+  <div class="stat"><div class="val" style="color:#22c55e;">$1.5M</div><div class="lbl">Monthly Revenue @ 100K</div></div>
+  <div class="stat"><div class="val" style="color:#f59e0b;">$180K</div><div class="lbl">Total Marketing Invest</div></div>
+</div>
+
+<div class="hi hi-p"><strong>The Opportunity:</strong> 500M+ monthly podcast listeners globally. Average listener subscribes to 8 shows. That's 6+ hours/week. PodShrink is the only product that delivers AI audio summaries (not just text). First-mover advantage in audio-first summarization.</div>
+
+<div class="hi hi-b"><strong>The Strategy:</strong> Organic-first growth (SEO + social + content), layered with paid acquisition after product-market fit is validated. Agent-automated content pipeline generates 50+ pieces of social content per week with near-zero manual effort.</div>
+
+<h4>Revenue Model</h4>
+<table class="tbl">
+<tr><th>Milestone</th><th>Free Users</th><th>Paid Subs</th><th>Blended ARPU</th><th>MRR</th><th>ARR</th></tr>
+<tr><td><span class="tag tag-gr">Month 3</span></td><td>500</td><td>50</td><td>$12</td><td>$600</td><td>$7.2K</td></tr>
+<tr><td><span class="tag tag-b">Month 6</span></td><td>5,000</td><td>500</td><td>$13</td><td>$6.5K</td><td>$78K</td></tr>
+<tr><td><span class="tag tag-p">Month 12</span></td><td>50,000</td><td>5,000</td><td>$14</td><td>$70K</td><td>$840K</td></tr>
+<tr><td><span class="tag tag-a">Month 18</span></td><td>500,000</td><td>100,000</td><td>$15</td><td>$1.5M</td><td>$18M</td></tr>
+</table>
+<p style="font-size:.72rem;color:#6b7280;">*Blended ARPU assumes 60% Standard ($9.99), 30% Pro ($19.99), 10% annual discount. Conversion rate: free→paid 10%.</p>
+
+</div></div></div>
+
+<!-- SEO STRATEGY -->
+<div class="section">
+<div class="section-header" onclick="toggle(this)">
+  <h2><span class="num">2</span> SEO Strategy — The Foundation</h2>
+  <span class="chev">▼</span>
+</div>
+<div class="section-body"><div class="section-content">
+
+<h4>🔍 Current SEO Audit</h4>
+<div class="grid-2">
+<div class="card">
+  <h3><span class="check">✅</span> What's Good</h3>
+  <ul>
+    <li>Title tag: "PodShrink - AI Podcast Summaries"</li>
+    <li>Meta description present and keyword-rich</li>
+    <li>Open Graph + Twitter Card tags</li>
+    <li>Canonical URL set</li>
+    <li>JSON-LD WebSite structured data</li>
+    <li>sitemap.xml exists</li>
+    <li>Favicon + Apple touch icon</li>
+    <li>SSL/HTTPS via Cloudflare</li>
+  </ul>
+</div>
+<div class="card">
+  <h3><span class="cross">❌</span> Critical Fixes Needed</h3>
+  <ul>
+    <li><strong>robots.txt</strong> — default, needs proper directives + sitemap reference</li>
+    <li><strong>Sitemap</strong> — only 3 URLs! Needs all shows, episodes, transcripts (could be 1000s)</li>
+    <li><strong>No Google Search Console</strong> — not submitted to Google at all</li>
+    <li><strong>No Google Analytics</strong> — zero traffic data</li>
+    <li><strong>OG image</strong> — just logo.png, needs proper 1200×630 social card</li>
+    <li><strong>Missing page meta</strong> — /shows, /pricing, /transcripts have no unique meta descriptions</li>
+    <li><strong>No structured data</strong> on transcript pages (Article schema)</li>
+    <li><strong>Popular Shows empty</strong> — home page section renders no shows server-side (SSR issue)</li>
+    <li><strong>Missing alt text</strong> on podcast artwork images</li>
+    <li><strong>No /blog</strong> — zero content marketing footprint</li>
+  </ul>
+</div>
+</div>
+
+<h4>🎯 Keyword Strategy</h4>
+<table class="tbl">
+<tr><th>Priority</th><th>Keyword</th><th>Monthly Volume (est)</th><th>Difficulty</th><th>Intent</th></tr>
+<tr><td><span class="tag tag-r">P1</span></td><td>podcast summary</td><td>14,800</td><td>Medium</td><td>Transactional</td></tr>
+<tr><td><span class="tag tag-r">P1</span></td><td>AI podcast summary</td><td>5,400</td><td>Low-Med</td><td>Transactional</td></tr>
+<tr><td><span class="tag tag-r">P1</span></td><td>podcast summarizer</td><td>3,600</td><td>Medium</td><td>Transactional</td></tr>
+<tr><td><span class="tag tag-a">P2</span></td><td>shorten podcasts</td><td>1,200</td><td>Low</td><td>Transactional</td></tr>
+<tr><td><span class="tag tag-a">P2</span></td><td>podcast cliff notes</td><td>880</td><td>Low</td><td>Transactional</td></tr>
+<tr><td><span class="tag tag-a">P2</span></td><td>podcast recap app</td><td>720</td><td>Low</td><td>Transactional</td></tr>
+<tr><td><span class="tag tag-a">P2</span></td><td>best podcast summary app</td><td>1,900</td><td>Medium</td><td>Commercial</td></tr>
+<tr><td><span class="tag tag-b">P3</span></td><td>[show name] summary (e.g., "joe rogan summary")</td><td>50,000+</td><td>Low</td><td>Informational</td></tr>
+<tr><td><span class="tag tag-b">P3</span></td><td>[episode name] recap</td><td>10,000+</td><td>Very Low</td><td>Informational</td></tr>
+<tr><td><span class="tag tag-b">P3</span></td><td>too many podcasts not enough time</td><td>480</td><td>Very Low</td><td>Problem-aware</td></tr>
+<tr><td><span class="tag tag-gr">Long-tail</span></td><td>how to keep up with podcasts</td><td>390</td><td>Low</td><td>Informational</td></tr>
+<tr><td><span class="tag tag-gr">Long-tail</span></td><td>AI podcast app</td><td>2,100</td><td>Medium</td><td>Commercial</td></tr>
+</table>
+
+<div class="hi hi-g"><strong>SEO Gold Mine:</strong> Every completed shrink transcript = a unique, keyword-rich page targeting "[show name] [episode title] summary". This is your competitive moat. At scale, 10,000 transcript pages = 10,000 long-tail keyword entry points. Competitors like Snipd don't publish public transcripts.</div>
+
+<h4>📋 Technical SEO Fixes (Priority Order)</h4>
+<table class="tbl">
+<tr><th>#</th><th>Fix</th><th>Owner</th><th>Impact</th></tr>
+<tr><td>1</td><td>Submit to Google Search Console (verify via Cloudflare DNS TXT record)</td><td><span class="tag tag-a">Mike</span></td><td>🔴 Critical</td></tr>
+<tr><td>2</td><td>Add Google Analytics 4 tag</td><td><span class="tag tag-p">Isaac</span></td><td>🔴 Critical</td></tr>
+<tr><td>3</td><td>Dynamic sitemap — auto-include all shows, episodes, transcripts</td><td><span class="tag tag-p">Isaac</span></td><td>🔴 Critical</td></tr>
+<tr><td>4</td><td>Fix robots.txt — add Sitemap: directive, allow all crawlers</td><td><span class="tag tag-p">Isaac</span></td><td>🔴 Critical</td></tr>
+<tr><td>5</td><td>Unique meta descriptions for every page (/shows, /pricing, /transcripts, each show page)</td><td><span class="tag tag-p">Isaac</span></td><td>🟡 High</td></tr>
+<tr><td>6</td><td>Article structured data on each transcript page</td><td><span class="tag tag-p">Isaac</span></td><td>🟡 High</td></tr>
+<tr><td>7</td><td>Create proper 1200×630 OG social image</td><td><span class="tag tag-p">Isaac</span></td><td>🟡 High</td></tr>
+<tr><td>8</td><td>Alt text on all podcast artwork images</td><td><span class="tag tag-p">Isaac</span></td><td>🟢 Medium</td></tr>
+<tr><td>9</td><td>Launch /blog with first 5 SEO-optimized posts</td><td><span class="tag tag-p">Isaac</span></td><td>🟡 High</td></tr>
+<tr><td>10</td><td>Internal linking: transcript pages → show pages → category pages</td><td><span class="tag tag-p">Isaac</span></td><td>🟢 Medium</td></tr>
+</table>
+
+<h4>📝 Blog Content Strategy (20 Posts)</h4>
+<div class="grid-2">
+<div class="card">
+<h3>🎯 Transactional / Commercial</h3>
+<ul>
+<li>"Best Podcast Summary Apps in 2026 (Honest Comparison)"</li>
+<li>"PodShrink vs Snipd: Which Podcast Summarizer is Better?"</li>
+<li>"How to Summarize Any Podcast Episode in 60 Seconds"</li>
+<li>"Is PodShrink Worth It? Honest Review + Free Trial"</li>
+<li>"Best AI Voices for Podcast Summaries (Ranked)"</li>
+</ul>
+</div>
+<div class="card">
+<h3>📚 Informational / SEO</h3>
+<ul>
+<li>"How to Keep Up With 20+ Podcasts (Without Losing Your Mind)"</li>
+<li>"The Science of Audio Summaries: Why Listening Beats Reading"</li>
+<li>"50 Best Podcasts for Entrepreneurs in 2026"</li>
+<li>"Podcast Overload Is Real: Here's How to Fix It"</li>
+<li>"AI in Podcasting: How Technology is Changing How We Listen"</li>
+<li>"10 Must-Listen Joe Rogan Episodes (With AI Summaries)"</li>
+<li>"How Busy Executives Stay Current on Industry Podcasts"</li>
+<li>"Podcast Summaries for Students: Study Smarter"</li>
+<li>"The Best True Crime Podcasts — With Quick Summaries"</li>
+<li>"ADHD and Podcasts: How AI Summaries Help You Focus"</li>
+<li>"How to Listen to More Podcasts in Less Time"</li>
+<li>"From 3 Hours to 5 Minutes: The Art of Podcast Summarization"</li>
+<li>"Why Audio Summaries Are Better Than Text Summaries"</li>
+<li>"Podcast Discovery: How to Find Your Next Favorite Show"</li>
+<li>"The Future of Podcasting: AI, Personalization, and Time"</li>
+</ul>
+</div>
+</div>
+
+</div></div></div>
+
+<!-- SOCIAL MEDIA -->
+<div class="section">
+<div class="section-header" onclick="toggle(this)">
+  <h2><span class="num">3</span> Social Media Strategy</h2>
+  <span class="chev">▼</span>
+</div>
+<div class="section-body"><div class="section-content">
+
+<div class="grid-2">
+
+<div class="card">
+<h3>📸 Instagram</h3>
+<p><strong>Handle:</strong> @podshrink</p>
+<p><strong>Frequency:</strong> 5-7 posts/week + daily stories</p>
+<p><strong>Content Types:</strong></p>
+<ul>
+  <li><strong>Reels (60-90s):</strong> "I shrunk a 3-hour Joe Rogan episode" — play audio snippet with waveform animation + captions</li>
+  <li><strong>Carousels:</strong> Episode highlight cards — key quotes/takeaways from popular episodes, PodShrink-branded</li>
+  <li><strong>Stories:</strong> Daily podcast picks, polls ("Which episode should we shrink next?"), user testimonials</li>
+  <li><strong>Static posts:</strong> "Podcast of the Day" branded cards</li>
+</ul>
+<p><strong>Hashtags:</strong> #podcast #podcastsummary #podshrink #aisummary #podcastlife #podcastrecommendation #listennotes #podcastaddict #truecrime #joerogan #productivity #timemanagement</p>
+<p style="margin-top:.5rem;"><span class="tag tag-g">🤖 Agent-Automated</span> Generate episode highlight images from shrink transcripts, create waveform videos from audio, auto-schedule posts</p>
+</div>
+
+<div class="card">
+<h3>🎵 TikTok</h3>
+<p><strong>Handle:</strong> @podshrink</p>
+<p><strong>Frequency:</strong> 1-2 videos/day</p>
+<p><strong>Content Types:</strong></p>
+<ul>
+  <li><strong>Core format:</strong> "I shrunk [famous podcast] into [X] minutes" — hook + audio clip + reactions</li>
+  <li><strong>Voice comparison:</strong> Same summary in different AI voices — "Which sounds best?"</li>
+  <li><strong>Hot takes:</strong> 60-second podcast takeaways on trending topics</li>
+  <li><strong>Before/After:</strong> "3 hours → 5 minutes" with timer visual</li>
+  <li><strong>Duets:</strong> React to podcast clips with "here's the summary"</li>
+</ul>
+<p><strong>Viral hooks:</strong> "POV: You don't have 3 hours for Joe Rogan" / "This AI summarized 100 podcast episodes and here's what it found" / "Podcast listeners HATE this app"</p>
+<p style="margin-top:.5rem;"><span class="tag tag-g">🤖 Agent-Automated</span> Generate short video clips: waveform animation + captions over shrink audio + branded intro/outro</p>
+</div>
+
+<div class="card">
+<h3>🐦 X / Twitter</h3>
+<p><strong>Handle:</strong> @podshrink</p>
+<p><strong>Frequency:</strong> 3-5 tweets/day + 2 threads/week</p>
+<p><strong>Content Types:</strong></p>
+<ul>
+  <li><strong>Summary threads:</strong> "🧵 Here's what you missed on [Podcast] this week:" — 5-7 key points from shrink transcript</li>
+  <li><strong>Quote tweets:</strong> Reply to podcast hosts/guests sharing episodes with "Here's the 5-min summary →"</li>
+  <li><strong>Engagement:</strong> Polls, hot takes, "What podcast should we shrink next?"</li>
+  <li><strong>Product updates:</strong> New features, voice additions</li>
+</ul>
+<p style="margin-top:.5rem;"><span class="tag tag-g">🤖 Agent-Automated</span> Auto-generate summary threads from every completed shrink, monitor podcast-related conversations for engagement</p>
+</div>
+
+<div class="card">
+<h3>📺 YouTube Shorts</h3>
+<p><strong>Handle:</strong> PodShrink</p>
+<p><strong>Frequency:</strong> 3-5 Shorts/week</p>
+<p><strong>Content Types:</strong></p>
+<ul>
+  <li>Repurpose TikTok content (same format)</li>
+  <li>"Podcast Summary in 60 Seconds" series — optimized for YouTube search</li>
+  <li>Future: long-form "Top 10 Podcast Summaries This Week" (10-15 min)</li>
+</ul>
+<p><strong>SEO:</strong> Title each Short as "[Show Name] [Episode] Summary" — YouTube is the #2 search engine</p>
+<p style="margin-top:.5rem;"><span class="tag tag-g">🤖 Agent-Automated</span> Same pipeline as TikTok — cross-post with platform-specific formatting</p>
+</div>
+
+<div class="card">
+<h3>💬 Reddit</h3>
+<p><strong>Subreddits:</strong> r/podcasts (2.5M), r/productivity (2.1M), r/ADHD (1.8M), r/podcasting (150K), r/SaaS (80K), r/ArtificialIntelligence (500K)</p>
+<p><strong>Strategy:</strong></p>
+<ul>
+  <li><strong>Value first:</strong> Post episode summaries/takeaways in relevant threads (no direct promotion)</li>
+  <li><strong>Launch post:</strong> r/SaaS "Show HN"-style introduction</li>
+  <li><strong>ADHD angle:</strong> "I built an AI tool that shrinks podcasts for people who can't sit through 3 hours"</li>
+  <li><strong>Weekly:</strong> "This Week in Podcasts" summary roundup posts</li>
+</ul>
+<p style="margin-top:.5rem;"><span class="tag tag-g">🤖 Agent-Automated</span> Monitor subreddits for "podcast summary" / "too many podcasts" threads, draft helpful replies</p>
+</div>
+
+<div class="card">
+<h3>💼 LinkedIn</h3>
+<p><strong>Frequency:</strong> 2-3 posts/week</p>
+<p><strong>Angle:</strong> Professional — "Stay informed on industry podcasts in 5 minutes"</p>
+<p><strong>Content:</strong></p>
+<ul>
+  <li>Business/tech podcast summaries (a]16z, All-In, Lex Fridman)</li>
+  <li>"How I keep up with 20 business podcasts as a founder"</li>
+  <li>Thought leadership on AI + productivity</li>
+  <li>Target: busy execs, founders, consultants</li>
+</ul>
+<p style="margin-top:.5rem;"><span class="tag tag-a">Semi-Automated</span> Agent drafts posts, Mike reviews + publishes (LinkedIn penalizes automation)</p>
+</div>
+
+</div>
+
+</div></div></div>
+
+<!-- CONTENT MARKETING -->
+<div class="section">
+<div class="section-header" onclick="toggle(this)">
+  <h2><span class="num">4</span> Content Marketing & Email</h2>
+  <span class="chev">▼</span>
+</div>
+<div class="section-body"><div class="section-content">
+
+<div class="grid-2">
+<div class="card">
+<h3>📧 Email Marketing</h3>
+<ul>
+  <li><strong>Welcome sequence:</strong> 5-email drip (Day 0: welcome, Day 1: "your first shrink", Day 3: "try a different voice", Day 5: "save time every week", Day 7: upgrade CTA)</li>
+  <li><strong>Weekly newsletter:</strong> "This Week in Podcasts" — top 5 episode summaries, auto-generated from most-shrunk episodes</li>
+  <li><strong>Win-back:</strong> 30-day inactive users → "We missed you + here's what's new"</li>
+  <li><strong>Upgrade nudge:</strong> Free users at limit → "You've used all 3 shrinks — unlock unlimited"</li>
+</ul>
+<p style="margin-top:.5rem;"><span class="tag tag-g">🤖 Agent-Automated</span> Generate newsletter content from week's shrink data, trigger emails via Resend</p>
+</div>
+
+<div class="card">
+<h3>🎙️ Meta-Strategy: Go On Podcasts</h3>
+<ul>
+  <li>Pitch Mike as a guest on productivity/tech/startup podcasts</li>
+  <li>Story: "I built an AI that summarizes podcasts because I couldn't keep up"</li>
+  <li>Target 20 podcasts with 10K-100K listeners</li>
+  <li>Each appearance = backlink + brand awareness + credibility</li>
+</ul>
+<p style="margin-top:.5rem;">The irony of promoting a podcast summary tool ON podcasts is pure marketing gold.</p>
+</div>
+</div>
+
+</div></div></div>
+
+<!-- GROWTH HACKING -->
+<div class="section">
+<div class="section-header" onclick="toggle(this)">
+  <h2><span class="num">5</span> Growth Hacking</h2>
+  <span class="chev">▼</span>
+</div>
+<div class="section-body"><div class="section-content">
+
+<div class="grid-2">
+<div class="card">
+<h3>🚀 Product Hunt Launch</h3>
+<ul>
+  <li><strong>When:</strong> Month 2-3 (after SEO fixes + social presence established)</li>
+  <li><strong>Prep:</strong> 2 weeks before — build hunter network, prepare assets, line up supporters</li>
+  <li><strong>Tagline:</strong> "Hours of podcasts. Minutes to listen."</li>
+  <li><strong>Target:</strong> Top 5 product of the day = 5,000-15,000 visitors in 48 hours</li>
+  <li><strong>Offer:</strong> 50% off first 3 months for PH users</li>
+</ul>
+</div>
+<div class="card">
+<h3>🎁 Referral Program</h3>
+<ul>
+  <li><strong>Mechanic:</strong> Give 5 shrinks, get 5 shrinks (for free users)</li>
+  <li><strong>Paid users:</strong> Refer a friend → both get 1 month free</li>
+  <li><strong>Share:</strong> Custom referral link + "Share your shrink" button after each summary</li>
+  <li><strong>Viral loop:</strong> Friend receives a sample shrink audio → hooked → signs up</li>
+</ul>
+</div>
+<div class="card">
+<h3>🤝 Podcast Host Partnerships</h3>
+<ul>
+  <li>Offer podcast hosts free PodShrink integration: "Official AI summaries for [Show Name]"</li>
+  <li>Host shares the summary page → drives their audience to PodShrink</li>
+  <li>Revenue share on subscribers who come through</li>
+  <li>Embed summaries in show notes</li>
+</ul>
+</div>
+<div class="card">
+<h3>💡 Other Tactics</h3>
+<ul>
+  <li><strong>AppSumo:</strong> Lifetime deal ($99) → burst of 500-2000 users, great for social proof + reviews</li>
+  <li><strong>Chrome Extension:</strong> "Shrink this episode" button on Spotify/Apple Podcasts web player</li>
+  <li><strong>API:</strong> Let developers build on PodShrink → ecosystem play</li>
+  <li><strong>Affiliate program:</strong> Pay $5/referral to bloggers and newsletter writers</li>
+  <li><strong>Hacker News:</strong> "Show HN" post → dev audience → organic shares</li>
+</ul>
+</div>
+</div>
+
+</div></div></div>
+
+<!-- PAID ADS -->
+<div class="section">
+<div class="section-header" onclick="toggle(this)">
+  <h2><span class="num">6</span> Paid Advertising (Phase 2+)</h2>
+  <span class="chev">▼</span>
+</div>
+<div class="section-body"><div class="section-content">
+
+<div class="hi hi-a"><strong>Don't spend on ads until Month 4.</strong> First, validate with organic. Once you see free→paid conversion above 8%, turn on the paid faucet.</div>
+
+<table class="tbl">
+<tr><th>Channel</th><th>Budget/mo</th><th>CPA Target</th><th>Strategy</th><th>Phase</th></tr>
+<tr><td>Google Search Ads</td><td>$500-2,000</td><td>$3-5/free signup</td><td>Target "podcast summary" keywords, competitor names</td><td><span class="tag tag-b">Phase 2</span></td></tr>
+<tr><td>Meta (IG/FB)</td><td>$500-1,500</td><td>$2-4/free signup</td><td>Video ads (shrink demos), lookalike audiences from existing users</td><td><span class="tag tag-b">Phase 2</span></td></tr>
+<tr><td>TikTok Ads</td><td>$300-1,000</td><td>$1-3/free signup</td><td>Spark Ads on best-performing organic content</td><td><span class="tag tag-p">Phase 3</span></td></tr>
+<tr><td>YouTube Ads</td><td>$500-2,000</td><td>$2-5/free signup</td><td>Pre-roll on podcast-related videos, in-feed ads</td><td><span class="tag tag-p">Phase 3</span></td></tr>
+<tr><td>Reddit Ads</td><td>$200-500</td><td>$3-6/free signup</td><td>Target r/podcasts, r/productivity, r/ADHD</td><td><span class="tag tag-b">Phase 2</span></td></tr>
+<tr><td>Podcast Ads</td><td>$1,000-5,000</td><td>$5-10/free signup</td><td>Sponsor mid-tier podcasts (10K-50K listeners)</td><td><span class="tag tag-p">Phase 3</span></td></tr>
+</table>
+
+<div class="hi hi-g"><strong>Expected ROAS:</strong> At $3 CPA for free signup and 10% free→paid conversion, each paying subscriber costs $30. At $12 ARPU × 8 months avg lifetime = $96 LTV. That's a 3.2x return on ad spend.</div>
+
+</div></div></div>
+
+<!-- AGENT AUTOMATION -->
+<div class="section">
+<div class="section-header" onclick="toggle(this)">
+  <h2><span class="num">7</span> Agent Automation Plan — Isaac's Army</h2>
+  <span class="chev">▼</span>
+</div>
+<div class="section-body"><div class="section-content">
+
+<div class="hi hi-p"><strong>This is the secret weapon.</strong> While competitors hire content teams, we build agent skills that generate, schedule, and post content 24/7. The content pipeline runs on autopilot.</div>
+
+<h4>Skills to Build</h4>
+<table class="tbl">
+<tr><th>Skill</th><th>What It Does</th><th>Frequency</th><th>Model</th><th>Priority</th></tr>
+<tr><td><code>content-generator</code></td><td>Generates social media posts, blog drafts, email newsletters from shrink transcripts</td><td>Daily</td><td><span class="tag tag-p">Sonnet 4.5</span></td><td><span class="tag tag-r">P1</span></td></tr>
+<tr><td><code>video-creator</code></td><td>Creates waveform animation videos from shrink audio + captions for TikTok/Reels/Shorts</td><td>Daily</td><td><span class="tag tag-gr">Haiku 4.5</span></td><td><span class="tag tag-r">P1</span></td></tr>
+<tr><td><code>social-poster</code></td><td>Schedules and posts to Instagram, TikTok, X, YouTube via APIs/automation</td><td>Daily</td><td><span class="tag tag-gr">Haiku 4.5</span></td><td><span class="tag tag-r">P1</span></td></tr>
+<tr><td><code>seo-monitor</code></td><td>Checks Google rankings, Search Console data, site health, broken links</td><td>Weekly</td><td><span class="tag tag-gr">Haiku 4.5</span></td><td><span class="tag tag-a">P2</span></td></tr>
+<tr><td><code>blog-writer</code></td><td>Writes SEO-optimized blog posts from keyword list, publishes to /blog</td><td>3x/day</td><td><span class="tag tag-p">Sonnet 4.5</span></td><td><span class="tag tag-r">P1</span></td></tr>
+<tr><td><code>image-generator</code></td><td>Constructs DALL-E prompts from brand guide, generates hero images</td><td>3x/day</td><td><span class="tag tag-gr">Haiku 4.5</span></td><td><span class="tag tag-r">P1</span></td></tr>
+<tr><td><code>tweet-agent</code></td><td>Composes tweet copy, uploads image, posts via X API v2</td><td>3x/day</td><td><span class="tag tag-gr">Haiku 4.5</span></td><td><span class="tag tag-r">P1</span></td></tr>
+<tr><td><code>email-automator</code></td><td>Generates weekly newsletter, triggers drip campaigns via Resend API</td><td>Weekly</td><td><span class="tag tag-p">Sonnet 4.5</span></td><td><span class="tag tag-a">P2</span></td></tr>
+<tr><td><code>reddit-monitor</code></td><td>Monitors podcast subreddits, drafts helpful replies, flags opportunities</td><td>Daily</td><td><span class="tag tag-p">Sonnet 4.5</span></td><td><span class="tag tag-b">P3</span></td></tr>
+<tr><td><code>competitor-tracker</code></td><td>Monitors Snipd, Podwise, etc. for feature changes, pricing, reviews</td><td>Weekly</td><td><span class="tag tag-gr">Haiku 4.5</span></td><td><span class="tag tag-b">P3</span></td></tr>
+<tr><td><code>analytics-reporter</code></td><td>Pulls GA4 + Search Console + Stripe data, generates weekly KPI report</td><td>Weekly</td><td><span class="tag tag-gr">Haiku 4.5</span></td><td><span class="tag tag-a">P2</span></td></tr>
+</table>
+
+<h4>Model Cost Strategy</h4>
+<div class="hi hi-p"><strong>Isaac (Orchestrator):</strong> <span class="tag tag-p">Sonnet 4.5</span> — Reviews all output, talks to Mike, quality control, judgment calls. Escalates to <span class="tag tag-a">Opus 4.6</span> only for strategy, architecture, or complex debugging.</div>
+<div class="grid-2">
+<div class="card">
+<h3>🧠 Sonnet 4.5 — Creative/Writing Tasks</h3>
+<ul>
+<li>Blog writing (tone, SEO, quality matter)</li>
+<li>Content generation (social posts, newsletters)</li>
+<li>Reddit engagement (nuance required)</li>
+<li>Email campaigns (persuasion, voice)</li>
+</ul>
+<p style="margin-top:.5rem;"><strong>Why:</strong> Best writing quality per dollar. Handles brand voice and style consistently.</p>
+</div>
+<div class="card">
+<h3>⚡ Haiku 4.5 — Mechanical/Execution Tasks</h3>
+<ul>
+<li>Image prompt construction (follows template)</li>
+<li>Tweet posting (short format, API calls)</li>
+<li>Git publish (commit + push)</li>
+<li>SEO monitoring (data collection)</li>
+<li>Analytics reporting (pull + format)</li>
+<li>Video creation (script execution)</li>
+</ul>
+<p style="margin-top:.5rem;"><strong>Why:</strong> Cheapest model. These tasks follow clear templates — no creativity needed.</p>
+</div>
+</div>
+
+<h4>Daily Automated Pipeline</h4>
+<div class="card">
+<ol style="padding-left:1.2rem;font-size:.82rem;">
+  <li><strong>6:00 AM</strong> — content-generator scans yesterday's completed shrinks, generates 3-5 social posts + 1 thread</li>
+  <li><strong>7:00 AM</strong> — video-creator generates 1-2 TikTok/Reel videos from best shrinks</li>
+  <li><strong>8:00 AM</strong> — social-poster publishes morning batch (Instagram carousel, X thread)</li>
+  <li><strong>12:00 PM</strong> — social-poster publishes midday batch (TikTok, YouTube Short)</li>
+  <li><strong>5:00 PM</strong> — social-poster publishes evening batch (Instagram Reel, X engagement posts)</li>
+  <li><strong>9:00 PM</strong> — reddit-monitor checks for opportunities, drafts replies for Mike to approve</li>
+  <li><strong>Monday AM</strong> — email-automator generates weekly newsletter, seo-monitor runs audit, analytics-reporter generates KPI report</li>
+</ol>
+</div>
+
+<div class="hi hi-g"><strong>Result:</strong> 50+ pieces of content per week, generated and posted with near-zero manual effort from Mike. Isaac reviews quality, Mike approves anything flagged as sensitive.</div>
+
+</div></div></div>
+
+<!-- FINANCIAL MODEL -->
+<div class="section">
+<div class="section-header" onclick="toggle(this)">
+  <h2><span class="num">8</span> Financial Model — 18-Month Projection</h2>
+  <span class="chev">▼</span>
+</div>
+<div class="section-body"><div class="section-content">
+
+<h4>Phase 1: Foundation (Months 1-3)</h4>
+<div class="hi hi-b"><strong>Focus:</strong> SEO fixes, social accounts, content pipeline, organic growth<br><strong>Budget:</strong> $200-500/mo (tools + minor freelance)</div>
+<table class="tbl">
+<tr><th>Month</th><th>Marketing $</th><th>Infra Cost</th><th>Free Users</th><th>Paid Subs</th><th>MRR</th><th>Net</th></tr>
+<tr><td>1</td><td>$200</td><td>$50</td><td>50</td><td>5</td><td>$65</td><td style="color:#ef4444;">-$185</td></tr>
+<tr><td>2</td><td>$300</td><td>$50</td><td>150</td><td>15</td><td>$195</td><td style="color:#ef4444;">-$155</td></tr>
+<tr><td>3</td><td>$500</td><td>$75</td><td>500</td><td>50</td><td>$650</td><td style="color:#22c55e;">+$75</td></tr>
+</table>
+
+<h4>Phase 2: Growth (Months 4-6)</h4>
+<div class="hi hi-p"><strong>Focus:</strong> Product Hunt launch, paid ads begin, influencer outreach<br><strong>Budget:</strong> $1,000-2,000/mo</div>
+<table class="tbl">
+<tr><th>Month</th><th>Marketing $</th><th>Infra Cost</th><th>Free Users</th><th>Paid Subs</th><th>MRR</th><th>Net</th></tr>
+<tr><td>4</td><td>$1,000</td><td>$100</td><td>1,500</td><td>150</td><td>$1,950</td><td style="color:#22c55e;">+$850</td></tr>
+<tr><td>5</td><td>$1,500</td><td>$150</td><td>3,000</td><td>300</td><td>$3,900</td><td style="color:#22c55e;">+$2,250</td></tr>
+<tr><td>6</td><td>$2,000</td><td>$200</td><td>5,000</td><td>500</td><td>$6,500</td><td style="color:#22c55e;">+$4,300</td></tr>
+</table>
+
+<h4>Phase 3: Scale (Months 7-12)</h4>
+<div class="hi hi-a"><strong>Focus:</strong> Increase ad spend, referral program, podcast host partnerships<br><strong>Budget:</strong> $3,000-5,000/mo</div>
+<table class="tbl">
+<tr><th>Month</th><th>Marketing $</th><th>Infra Cost</th><th>Free Users</th><th>Paid Subs</th><th>MRR</th><th>Net</th></tr>
+<tr><td>7</td><td>$3,000</td><td>$300</td><td>10,000</td><td>1,000</td><td>$13K</td><td style="color:#22c55e;">+$9.7K</td></tr>
+<tr><td>9</td><td>$4,000</td><td>$500</td><td>25,000</td><td>2,500</td><td>$32.5K</td><td style="color:#22c55e;">+$28K</td></tr>
+<tr><td>12</td><td>$5,000</td><td>$1,000</td><td>50,000</td><td>5,000</td><td>$65K</td><td style="color:#22c55e;">+$59K</td></tr>
+</table>
+
+<h4>Phase 4: Dominate (Months 13-18)</h4>
+<div class="hi hi-g"><strong>Focus:</strong> Aggressive paid, brand campaigns, international, enterprise<br><strong>Budget:</strong> $10,000-20,000/mo</div>
+<table class="tbl">
+<tr><th>Month</th><th>Marketing $</th><th>Infra Cost</th><th>Free Users</th><th>Paid Subs</th><th>MRR</th><th>Net</th></tr>
+<tr><td>13</td><td>$10,000</td><td>$2,000</td><td>75,000</td><td>10,000</td><td>$130K</td><td style="color:#22c55e;">+$118K</td></tr>
+<tr><td>15</td><td>$15,000</td><td>$5,000</td><td>200,000</td><td>30,000</td><td>$390K</td><td style="color:#22c55e;">+$370K</td></tr>
+<tr><td>18</td><td>$20,000</td><td>$10,000</td><td>500,000</td><td>100,000</td><td>$1.5M</td><td style="color:#22c55e;">+$1.47M</td></tr>
+</table>
+
+<h4>Totals</h4>
+<div class="grid-3">
+  <div class="stat"><div class="val" style="color:#ef4444;">$178K</div><div class="lbl">Total Marketing Spend</div></div>
+  <div class="stat"><div class="val" style="color:#22c55e;">$4.8M</div><div class="lbl">Total Revenue (18mo)</div></div>
+  <div class="stat"><div class="val" style="color:#a855f7;">27x</div><div class="lbl">Return on Investment</div></div>
+</div>
+
+</div></div></div>
+
+<!-- KPIs -->
+<div class="section">
+<div class="section-header" onclick="toggle(this)">
+  <h2><span class="num">9</span> KPI Dashboard & Tracking</h2>
+  <span class="chev">▼</span>
+</div>
+<div class="section-body"><div class="section-content">
+
+<h4>Weekly Metrics</h4>
+<table class="tbl">
+<tr><th>Metric</th><th>Tool</th><th>Target (Phase 1)</th><th>Target (Phase 3)</th></tr>
+<tr><td>Website visitors</td><td>Google Analytics 4</td><td>500/week</td><td>50,000/week</td></tr>
+<tr><td>New signups</td><td>Admin Dashboard</td><td>30/week</td><td>3,000/week</td></tr>
+<tr><td>Free → Paid conversion</td><td>Stripe + Admin</td><td>8%</td><td>10%</td></tr>
+<tr><td>Churn rate</td><td>Stripe</td><td>&lt;8%/mo</td><td>&lt;5%/mo</td></tr>
+<tr><td>MRR</td><td>Stripe</td><td>$650</td><td>$65K</td></tr>
+<tr><td>Shrinks generated</td><td>Admin Dashboard</td><td>100/week</td><td>10,000/week</td></tr>
+<tr><td>Social followers (total)</td><td>Platform analytics</td><td>1,000</td><td>100,000</td></tr>
+<tr><td>Social engagement rate</td><td>Platform analytics</td><td>5%</td><td>3%</td></tr>
+<tr><td>Google rankings (#1 page)</td><td>Search Console</td><td>5 keywords</td><td>100 keywords</td></tr>
+<tr><td>Organic search traffic</td><td>GA4 + Search Console</td><td>100/week</td><td>20,000/week</td></tr>
+<tr><td>Email open rate</td><td>Resend</td><td>35%</td><td>30%</td></tr>
+<tr><td>CAC (paid)</td><td>Calculated</td><td>$30</td><td>$20</td></tr>
+</table>
+
+</div></div></div>
+
+<!-- IMMEDIATE ACTIONS -->
+<div class="section">
+<div class="section-header open" onclick="toggle(this)">
+  <h2><span class="num">10</span> Immediate Action Items — Week 1</h2>
+  <span class="chev">▼</span>
+</div>
+<div class="section-body open"><div class="section-content">
+
+<h4>🤖 Isaac Does (No Mike Input Needed)</h4>
+<table class="tbl">
+<tr><th>#</th><th>Task</th><th>Timeline</th></tr>
+<tr><td>1</td><td>Fix robots.txt — proper directives + sitemap reference</td><td>Day 1</td></tr>
+<tr><td>2</td><td>Build dynamic sitemap (all shows, episodes, transcripts)</td><td>Day 1</td></tr>
+<tr><td>3</td><td>Add unique meta descriptions to all pages</td><td>Day 1-2</td></tr>
+<tr><td>4</td><td>Add Article structured data to transcript pages</td><td>Day 2</td></tr>
+<tr><td>5</td><td>Create 1200×630 OG social image</td><td>Day 2</td></tr>
+<tr><td>6</td><td>Add alt text to all podcast artwork</td><td>Day 2</td></tr>
+<tr><td>7</td><td>Fix Popular Shows section (SSR)</td><td>Day 2</td></tr>
+<tr><td>8</td><td>Build /blog page + write first 3 SEO blog posts</td><td>Day 3-5</td></tr>
+<tr><td>9</td><td>Build content-generator skill (social posts from shrinks)</td><td>Day 3-5</td></tr>
+<tr><td>10</td><td>Build video-creator skill (waveform + caption videos)</td><td>Day 5-7</td></tr>
+</table>
+
+<h4>👤 Mike Does (5-10 min each)</h4>
+<table class="tbl">
+<tr><th>#</th><th>Task</th><th>Timeline</th></tr>
+<tr><td>1</td><td>Create Google Search Console account → verify podshrink.com via Cloudflare DNS TXT</td><td>Day 1 (5 min)</td></tr>
+<tr><td>2</td><td>Create Google Analytics 4 property → give Isaac the Measurement ID</td><td>Day 1 (5 min)</td></tr>
+<tr><td>3</td><td>Register @podshrink on Instagram, TikTok, X, YouTube</td><td>Day 1-2 (10 min)</td></tr>
+<tr><td>4</td><td>Set up Buffer or Later (free tier) for social scheduling → give Isaac access</td><td>Day 2 (5 min)</td></tr>
+<tr><td>5</td><td>Review and approve Isaac's first batch of social content</td><td>Day 5 (10 min)</td></tr>
+</table>
+
+<div class="hi hi-g" style="margin-top:1rem;"><strong>Bottom line:</strong> Mike spends ~35 minutes in Week 1. Isaac and agents handle everything else. From Week 2 onward, Mike's weekly time commitment drops to ~15 minutes (content approvals + occasional LinkedIn posts).</div>
+
+</div></div></div>
+
+<hr class="sep">
+<div style="text-align:center;padding:2rem;color:#4b5563;font-size:.75rem;">
+  PodShrink Growth Playbook · Prepared by Isaac · February 2026<br>
+  Confidential — For Internal Use Only
+</div>
+
+</div>
+
+<script>
+function toggle(el){
+  el.classList.toggle('open');
+  const body=el.nextElementSibling;
+  body.classList.toggle('open');
+}
+</script>
+</body>
+</html>
