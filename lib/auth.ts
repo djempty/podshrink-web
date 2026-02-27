@@ -59,6 +59,27 @@ export const authConfig: NextAuthConfig = {
     error: '/login',
   },
   callbacks: {
+    async signIn({ user, account }) {
+      // For Google sign-in, ensure user exists in backend DB
+      if (account?.provider === 'google' && user?.email) {
+        try {
+          const response = await fetch(`${API_URL}/api/auth/google-signin`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: user.email, name: user.name })
+          });
+          if (response.ok) {
+            const data = await response.json();
+            if (data.user?.id) {
+              user.id = String(data.user.id);
+            }
+          }
+        } catch (error) {
+          console.error('Error creating Google user:', error);
+        }
+      }
+      return true;
+    },
     async jwt({ token, user, trigger }) {
       if (user) {
         token.id = user.id;
