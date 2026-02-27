@@ -102,6 +102,8 @@ export default function EpisodeRow({ episode, showTitle, showImage, showId, show
           >
             {isCurrentTrack && isPlaying ? (
               <><Pause size={14} fill="white" />Pause</>
+            ) : isCurrentTrack && currentTime > 0 ? (
+              <><Play size={14} fill="white" />Resume</>
             ) : (
               <><Play size={14} fill="white" />Play</>
             )}
@@ -113,6 +115,8 @@ export default function EpisodeRow({ episode, showTitle, showImage, showId, show
             >
               {isShrinkTrack && isPlaying ? (
                 <><Pause size={14} fill="white" /><span className="hidden md:inline">Pause PodShrink</span><span className="md:hidden">Pause</span></>
+              ) : isShrinkTrack && currentTime > 0 ? (
+                <><Play size={14} fill="white" /> Resume Shrink</>
               ) : (
                 <><Play size={14} fill="white" /> Play Shrink</>
               )}
