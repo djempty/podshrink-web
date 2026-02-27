@@ -114,7 +114,7 @@ export default function EpisodeRow({ episode, showTitle, showImage, showId, show
               className="flex items-center gap-2 px-5 py-2 bg-[#2EA84A] hover:bg-[#259A3F] text-white rounded-md text-sm font-medium transition-colors whitespace-nowrap"
             >
               {isShrinkTrack && isPlaying ? (
-                <><Pause size={14} fill="white" /><span className="hidden md:inline">Pause PodShrink</span><span className="md:hidden">Pause</span></>
+                <><Pause size={14} fill="white" /><span className="hidden md:inline">Pause Shrink</span><span className="md:hidden">Pause</span></>
               ) : isShrinkTrack && currentTime > 0 ? (
                 <><Play size={14} fill="white" /> Resume Shrink</>
               ) : (
