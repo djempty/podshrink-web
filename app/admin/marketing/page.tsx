@@ -946,34 +946,56 @@ export default function BusinessPlanPage() {
 
       {/* ── 8. Agent Automation ── */}
       <Section title="🤖 8. Agent Automation (Isaac's Army)">
-        <p className="text-gray-500 text-xs mb-3">Planned automation team (activation pending platform setup):</p>
+        <p className="text-gray-500 text-xs mb-3">Active automation team with model assignments:</p>
         {[
-          { emoji: '🎨', name: 'Luna', role: 'Content & Creative Director', desc: 'Generates social posts, blog drafts, episode highlight cards from shrink data' },
-          { emoji: '📹', name: 'Reel', role: 'Video Producer', desc: 'Short-form video content — waveform animations + captions + branded intro/outro' },
-          { emoji: '📡', name: 'Echo', role: 'Social Media Manager', desc: 'Schedules, posts, and engages across all platforms' },
-          { emoji: '🔍', name: 'Radar', role: 'SEO & Analytics', desc: 'Rankings, traffic, site health, competitor movements, weekly KPI reports' },
-          { emoji: '💬', name: 'Scout', role: 'Community & Outreach', desc: 'Reddit/forum monitoring, partnership outreach to podcast hosts' },
-          { emoji: '📧', name: 'Pulse', role: 'Email & Retention', desc: 'Newsletters, win-back campaigns, upgrade nudges' },
+          { emoji: '🧠', name: 'Isaac', role: 'Orchestrator & QA', model: 'Sonnet 4.5', modelColor: 'text-purple-400', desc: 'Reviews all output, sends daily previews to Mike, handles approvals, trains agents' },
+          { emoji: '✍️', name: 'blog-writer', role: 'Blog Author', model: 'Sonnet 4.5', modelColor: 'text-purple-400', desc: 'Writes 800-1000 word SEO blog posts from topic briefs, matching brand voice' },
+          { emoji: '🎨', name: 'image-generator', role: 'Hero Image Creator', model: 'Haiku 4.5', modelColor: 'text-gray-400', desc: 'Constructs DALL-E prompts from brand guide, generates cinematic hero images' },
+          { emoji: '🐦', name: 'tweet-agent', role: 'X/Twitter Publisher', model: 'Haiku 4.5', modelColor: 'text-gray-400', desc: 'Composes tweet copy, uploads images, posts via X API v2' },
+          { emoji: '📝', name: 'content-generator', role: 'Social Content', model: 'Sonnet 4.5', modelColor: 'text-purple-400', desc: 'Generates social posts, newsletters from shrink transcripts' },
+          { emoji: '📹', name: 'video-creator', role: 'Video Producer', model: 'Haiku 4.5', modelColor: 'text-gray-400', desc: 'Waveform animation videos + captions for TikTok/Reels/Shorts' },
+          { emoji: '📡', name: 'social-poster', role: 'Social Scheduler', model: 'Haiku 4.5', modelColor: 'text-gray-400', desc: 'Schedules and posts to Instagram, TikTok, X, YouTube via APIs' },
+          { emoji: '🔍', name: 'seo-monitor', role: 'SEO & Analytics', model: 'Haiku 4.5', modelColor: 'text-gray-400', desc: 'Google rankings, Search Console, site health, broken links' },
+          { emoji: '📧', name: 'email-automator', role: 'Email & Retention', model: 'Sonnet 4.5', modelColor: 'text-purple-400', desc: 'Weekly newsletters, drip campaigns, win-back via Resend API' },
+          { emoji: '💬', name: 'reddit-monitor', role: 'Community & Outreach', model: 'Sonnet 4.5', modelColor: 'text-purple-400', desc: 'Monitors podcast subreddits, drafts helpful replies' },
+          { emoji: '🕵️', name: 'competitor-tracker', role: 'Competitor Intel', model: 'Haiku 4.5', modelColor: 'text-gray-400', desc: 'Monitors Snipd, Podwise for feature/pricing changes' },
+          { emoji: '📊', name: 'analytics-reporter', role: 'KPI Reporter', model: 'Haiku 4.5', modelColor: 'text-gray-400', desc: 'GA4 + Search Console + Stripe weekly KPI reports' },
         ].map(a => (
           <div key={a.name} className="flex items-start gap-3 mb-3 p-3 bg-[#141414] rounded-lg border border-gray-800">
             <span className="text-lg">{a.emoji}</span>
             <div>
               <p className="text-white text-sm font-medium">{a.name} — <span className="text-gray-400 font-normal">{a.role}</span></p>
-              <p className="text-gray-500 text-xs mt-0.5">{a.desc}</p>
+              <p className="text-xs mt-0.5"><span className={`${a.modelColor} font-medium`}>{a.model}</span> <span className="text-gray-600">•</span> <span className="text-gray-500">{a.desc}</span></p>
             </div>
           </div>
         ))}
-        <p className="text-gray-600 text-xs mt-2">Activation order: Luna → Radar → Reel → Echo → Scout → Pulse</p>
+
+        <div className="mt-3 p-3 bg-[#0a0a2a] rounded-lg border border-purple-900/30">
+          <p className="text-white text-xs font-medium mb-2">Model Cost Strategy</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-xs">
+            <div className="p-2 bg-[#141414] rounded border border-gray-800">
+              <p className="text-red-400 font-medium">Opus 4.6</p>
+              <p className="text-gray-500">Strategy, architecture, complex debugging ONLY</p>
+            </div>
+            <div className="p-2 bg-[#141414] rounded border border-gray-800">
+              <p className="text-purple-400 font-medium">Sonnet 4.5</p>
+              <p className="text-gray-500">Writing, content, QA review — quality matters</p>
+            </div>
+            <div className="p-2 bg-[#141414] rounded border border-gray-800">
+              <p className="text-gray-400 font-medium">Haiku 4.5</p>
+              <p className="text-gray-500">Mechanical tasks — templates, APIs, monitoring</p>
+            </div>
+          </div>
+        </div>
 
         <div className="mt-4 p-3 bg-[#141414] rounded-lg border border-gray-800">
-          <p className="text-white text-xs font-medium mb-2">Daily/Weekly Automation Schedule (Once Active)</p>
+          <p className="text-white text-xs font-medium mb-2">Daily Content Schedule (Active)</p>
           <ul className="text-gray-400 text-xs space-y-1 list-disc pl-4">
-            <li><strong>Daily (Luna):</strong> Draft 1-2 social posts based on trending podcast topics + PodShrink data</li>
-            <li><strong>Daily (Echo):</strong> Schedule posts, engage with comments within 2 hours, monitor brand mentions</li>
-            <li><strong>Weekly (Radar):</strong> SEO health check, traffic report, keyword ranking updates, competitor analysis</li>
-            <li><strong>Weekly (Scout):</strong> Scan Reddit/HN/forums for podcast discussions, identify 3-5 partnership targets</li>
-            <li><strong>Bi-weekly (Pulse):</strong> Email newsletter to all users with top episodes, new features, tips</li>
-            <li><strong>Monthly (Reel):</strong> Produce 4-6 branded video assets for Instagram Reels, TikTok, YouTube Shorts</li>
+            <li><strong>8:00 AM PT:</strong> Isaac sends Mike 3 blog titles + 3 hero images for approval</li>
+            <li><strong>9:30 AM PT:</strong> Publish blog post #1 + tweet at 10:00 AM</li>
+            <li><strong>1:30 PM PT:</strong> Publish blog post #2 + tweet at 2:00 PM</li>
+            <li><strong>6:00 PM PT:</strong> Publish blog post #3 + tweet at 6:30 PM</li>
+            <li><strong>Evening:</strong> Isaac updates WORKLOG + BRIEFING, preps next day&apos;s content</li>
           </ul>
         </div>
       </Section>
