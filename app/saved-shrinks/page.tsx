@@ -44,7 +44,7 @@ export default function SavedShrinksPage() {
       showTitle: (shrink as any).show?.title || '',
       audioUrl: resolveAudioUrl(shrink.audioUrl),
       imageUrl: shrink.episode?.imageUrl || (shrink as any).show?.imageUrl || '',
-      duration: ((shrink as any).targetDurationMinutes || shrink.targetDuration || 0) * 60,
+      duration: (shrink as any).audioDurationSeconds || ((shrink as any).targetDurationMinutes || shrink.targetDuration || 0) * 60,
     });
     play();
   };
@@ -148,9 +148,18 @@ export default function SavedShrinksPage() {
                   </p>
                   <p className="text-gray-500 text-xs truncate">{(shrink as any).show?.title || ''}</p>
                   <div className="flex items-center gap-2 text-xs text-gray-500 mt-1 flex-wrap">
-                    <span className="flex items-center gap-1 whitespace-nowrap"><Clock size={11} />{(shrink as any).targetDurationMinutes || shrink.targetDuration}m</span>
+                    <span className="flex items-center gap-1 whitespace-nowrap"><Clock size={11} />{(shrink as any).audioDurationSeconds ? `${Math.floor((shrink as any).audioDurationSeconds / 60)}:${String((shrink as any).audioDurationSeconds % 60).padStart(2, '0')}` : `${(shrink as any).targetDurationMinutes || shrink.targetDuration}m`}</span>
                     <span className="text-gray-700">·</span>
                     <span className="flex items-center gap-1 whitespace-nowrap">{formatDate(shrink.createdAt)}</span>
+                    {(shrink as any).language && (shrink as any).language !== 'en' && (
+                      <>
+                        <span className="text-gray-700">·</span>
+                        <span className="whitespace-nowrap">{({
+                          es: '🇪🇸 Spanish', pt: '🇧🇷 Portuguese', fr: '🇫🇷 French', de: '🇩🇪 German',
+                          ja: '🇯🇵 Japanese', ko: '🇰🇷 Korean', hi: '🇮🇳 Hindi', zh: '🇨🇳 Chinese',
+                        } as Record<string, string>)[(shrink as any).language] || (shrink as any).language}</span>
+                      </>
+                    )}
                     <span className="text-gray-700">·</span>
                     <span className={`font-medium whitespace-nowrap ${shrink.status === 'complete' ? 'text-green-500' : shrink.status === 'error' ? 'text-red-400' : 'text-yellow-500'}`}>
                       {shrink.status}

@@ -13,6 +13,7 @@ interface RecentShrinksProps {
     episode: Episode;
     audioUrl: string;
     targetDurationMinutes?: number;
+    audioDurationSeconds?: number;
     createdAt?: string;
   }[];
 }
@@ -41,7 +42,7 @@ export default function RecentShrinks({ shrinks }: RecentShrinksProps) {
       showTitle: shrink.episode.show?.title || '',
       audioUrl: resolveAudioUrl(shrink.audioUrl),
       imageUrl: shrink.episode.imageUrl || shrink.episode.show?.imageUrl || '',
-      duration: 0,
+      duration: shrink.audioDurationSeconds || (shrink.targetDurationMinutes || 0) * 60,
     });
     play();
   };
@@ -84,9 +85,9 @@ export default function RecentShrinks({ shrinks }: RecentShrinksProps) {
               </p>
               <p className="text-gray-500 text-xs truncate">{shrink.episode.show?.title || ''}</p>
               <div className="flex items-center gap-2 text-xs text-gray-500 mt-1 flex-wrap">
-                {shrink.targetDurationMinutes && (
+                {(shrink.audioDurationSeconds || shrink.targetDurationMinutes) && (
                   <>
-                    <span className="flex items-center gap-1 whitespace-nowrap"><Clock size={11} />{shrink.targetDurationMinutes}m</span>
+                    <span className="flex items-center gap-1 whitespace-nowrap"><Clock size={11} />{shrink.audioDurationSeconds ? `${Math.floor(shrink.audioDurationSeconds / 60)}:${String(shrink.audioDurationSeconds % 60).padStart(2, '0')}` : `${shrink.targetDurationMinutes}m`}</span>
                     <span className="text-gray-700">·</span>
                   </>
                 )}
