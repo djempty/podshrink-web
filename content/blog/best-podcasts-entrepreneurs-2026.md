@@ -6,7 +6,7 @@ excerpt: "The 10 podcasts every founder should follow in 2026 — and why each o
 category: "Recommendations"
 tags: ["entrepreneurs", "business podcasts", "startup", "podcast recommendations", "2026"]
 author: "PodShrink Team"
-featuredImage: "/blog/best-podcasts-entrepreneurs-2026.png"
+featuredImage: "/blog/best-podcasts-entrepreneurs-2026.png?v=2"
 readTime: "6 min read"
 ---
 

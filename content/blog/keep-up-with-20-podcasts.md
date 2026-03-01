@@ -6,7 +6,7 @@ excerpt: "You subscribed to 20 shows because they're all great. Now you're 50 ep
 category: "Productivity"
 tags: ["productivity", "podcast management", "podcast summaries", "time management"]
 author: "PodShrink Team"
-featuredImage: "/blog/keep-up-with-20-podcasts.png"
+featuredImage: "/blog/keep-up-with-20-podcasts.png?v=2"
 readTime: "5 min read"
 ---
 

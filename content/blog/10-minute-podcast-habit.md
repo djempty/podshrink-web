@@ -6,7 +6,7 @@ excerpt: "One small change to my morning routine and I went from 30 unplayed epi
 category: "Productivity"
 tags: ["habits", "productivity", "podcast summaries", "daily routine"]
 author: "PodShrink Team"
-featuredImage: "/blog/10-minute-podcast-habit.png"
+featuredImage: "/blog/10-minute-podcast-habit.png?v=2"
 readTime: "4 min read"
 ---
 
