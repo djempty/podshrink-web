@@ -1,7 +1,7 @@
 ---
 title: "ADHD and Podcasts: How Summaries Help You Actually Finish Episodes"
 slug: adhd-and-podcasts
-date: "2026-02-27"
+date: "2026-03-01"
 excerpt: "Long podcasts and ADHD don't mix well. But the ideas in those episodes are worth hearing. Here's how summaries bridge the gap."
 category: "Accessibility"
 tags: ["ADHD", "podcast summaries", "accessibility", "neurodivergent", "focus"]
